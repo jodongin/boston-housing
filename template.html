@@ -72,7 +72,16 @@ tr.opened{background:#f9fafb}
 <header><h1>보스턴 집 찾기</h1>
 <div class="sub">마지막 업데이트 <span id="upd"></span> · 가격은 확인한 날 기준 · 출근은 Google 지도 평일 8:30 출발 대중교통 · 치안은 2026 살인 사건 지점까지 직선거리</div></header>
 <div class="wrap">
-<details class="card"><summary>기준과 점수 계산 방법 보기</summary><div class="crit" id="crit" style="margin-top:8px"></div><div id="scorehelp" style="margin-top:8px"><div><b>점수 계산 방법 (새 기준을 모두 통과한 매물만 순위)</b><br><small>· 출근 시간 25점: 8:30 출발 후 도착까지 10분 이하 만점, 45분 0점<br>· 치안 25점: 가장 가까운 2026 살인 지점까지 0.5마일 0점, 3마일 이상 만점<br>· 월세 15점: $2,200 이하 만점, $3,000 0점<br>· 예상 월 총액 10점: $2,500 이하 만점, $3,300 0점 (월세 + 공과금 추정, 주차 제외)<br>· 면적 10점: 500 sq ft 0점, 1,100 sq ft 이상 만점 (면적 미표기는 4점)<br>· 생활 인프라 10점: 반경 800m 식당·카페 수 + 슈퍼마켓×10 + 약국·도서관·영화관×3 (OpenStreetMap), 150 이상 만점<br>· 출근 중 도보 5점: 0분 만점, 25분 0점<br>· 세탁기가 글로만 확인되거나 미확인인 곳은 순위는 매기되 상태를 "보류·조건부"로 둠</small></div></div></details>
+<details class="card"><summary>기준과 점수 계산 방법 보기</summary><div class="crit" id="crit" style="margin-top:8px"></div><div id="scorehelp" style="margin-top:8px"><div><b>점수 계산 방법 (100점, 기준을 모두 통과하고 세탁기가 확인된 곳만 순위)</b><br><small>
+· 면적 20: 450 sq ft 0점 → 1,100 sq ft 이상 만점 (면적 미표기는 8점)<br>
+· 가격 20: 월세 10 ($3,000 0점 → $2,000 만점) + 예상 월 총액 10 ($3,400 0점 → $2,300 만점, 공과금 추정 포함·주차 제외)<br>
+· 출근 15: 8:30 출발 후 도착까지 45분 0점 → 10분 이하 만점 (환승 없는 경로)<br>
+· 건물·시설 15: 헬스장 4 · 관리 회사 4 · 엘리베이터 2 · 건축 연도 최대 3 (2010년 이후 3, 1990년대~ 2, 1960년대~ 1) · 컨시어지/루프탑/수영장/택배실 2<br>
+· 치안 10: 인구 10만 명당 강력범죄 추정치. 50건 이하 만점 → 1,500건 이상 0점 (로그 비율). 보스턴·케임브리지는 반경 0.5마일 최근 12개월 경찰 공개 데이터로 동네 차이 반영(시 평균 대비 비율 × FBI 2024 시 강력범죄율), 브루클라인·뉴턴·서머빌·워터타운은 FBI 2024 시 전체 수치<br>
+· 생활 인프라 10: 반경 800m 식당·카페 수 + 슈퍼마켓×10 + 약국·도서관·영화관×3 (OpenStreetMap), 150 이상 만점<br>
+· 출근 중 도보 5: 0분 만점 → 25분 0점<br>
+· 주차 5: 포함 5 · 유료 단지 주차 2~4 · 노상(거주자 허가) 1.5 · 없음/브루클라인 노상 0 · 미확인 1<br>
+· 살인 지점 거리는 점수에 넣지 않음</small></div></div></details>
 <div class="bar" id="filters"></div>
 <details class="card"><summary>세부 필터</summary>
 <div class="fp">
@@ -109,7 +118,7 @@ tr.opened{background:#f9fafb}
 <p><small>예상 월 총액 = 월세(+필수 수수료) + 주차 + 공과금 약 $100~150 (추정). 지하철 도보 시간은 직선거리 × 1.3 기준 추정.</small></p>
 </div>
 <script>
-const UPDATED="2026-11-04 (30차)";
+const UPDATED="2026-11-04 (31차, 전수조사)";
 const SK="bh_settings_v1",STK="bh_stars_v1";let SV={};try{SV=JSON.parse(localStorage.getItem(SK)||"{}")}catch(e){}
 let MY={};try{MY=JSON.parse(localStorage.getItem(STK)||"{}")}catch(e){}
 const XK="bh_ex_v1";let XU={};try{XU=JSON.parse(localStorage.getItem(XK)||"{}")}catch(e){}
@@ -118,19 +127,19 @@ function esc(n){return n.replace(/'/g,"\\'")}
 function setEx(n,on){const r=L.find(x=>x.n===n);if(!r)return;if(on)XU[n]=1;else delete XU[n];localStorage.setItem(XK,JSON.stringify(XU));r.s=XU[n]?5:r.s0;r.ux=!!XU[n];const m=MK[n];if(m){m.setStyle({fillColor:ST[r.s][2]});m.setRadius(r.s<=2?9:7);m._orig=null;}M.closePopup();pinned=null;render();}
 function exBtn(r){if(r.ux)return `<button class="delb rs" onclick="event.stopPropagation();setEx('${esc(r.n)}',false)">제외 취소</button>`;if(r.s0===5)return `<small style="color:#9ca3af">기본 제외</small>`;return `<button class="delb" onclick="event.stopPropagation();setEx('${esc(r.n)}',true)">제외</button>`}
 
-const CRITERIA=[["월세","기본 월세 $3,000 이하 (공과금·주차·수수료 등 부대비용은 따로 조사해 표기, 총액은 초과 가능)"],["출근","Google 지도 평일 오전 8:30 출발 대중교통으로 9:15까지 도착(45분 이내), 환승 없음 (환승 있으면 탈락)"],["치안","2026년 보스턴 살인 사건 지점(Universal Hub 목록) 반경 0.5마일 밖"],["세탁","집 안 세탁기·건조기 필수"],["구조","1베드 또는 2베드, 집 전체, 반지하·전대 제외"],["입주","11월 말~12월 초"],["건물","관리 회사 여부 상관없음"],["기준점","Landmark Center (401 Park Dr)"]];
+const CRITERIA=[["월세","기본 월세 $3,000 이하 (공과금·주차·수수료 등은 따로 표기, 총액은 초과 가능)"],["출근","Google 지도 평일 8:30 출발 대중교통, 환승 없이 9:15까지 도착 (45분 이내)"],["세탁","집 안 세탁기·건조기 필수 (글·사진·외부 사이트로 확인 안 되면 순위 제외)"],["구조","1베드 또는 2베드, 집 전체, 반지하 아님"],["계약","전대(sublet)·단기 계약 제외, 12개월 이상"],["입주","12월 15일까지 입주 가능"],["살인 지점","2026 살인 사건 반경 0.5마일은 표시만 (제외 여부는 직접 판단)"],["기준점","Harvard Pilgrim Health Care Institute (401 Park Dr)"]];
 /*DATA*/
 const PG=["미연락","문의함","답장 받음","투어 예정","투어 완료","신청함","계약","불가"],PGC=["#9ca3af","#2563eb","#7c3aed","#d97706","#d97706","#16a34a","#15803d","#b91c1c"];
 function pgCell(r){const p=r.pg;if(!p)return '<small style="color:#9ca3af">미연락</small>';const i=PG.indexOf(p.st);return `<b style="color:${PGC[i]||"#374151"}">${p.st}</b>${p.d?`<br><small>${p.d.slice(5).replace("-","/")}${p.via?" · "+p.via:""}</small>`:""}${p.next?`<br><small>${p.next}</small>`:""}`}
 const ST={1:["1순위 그룹","s1","#16a34a"],2:["후보","s2","#2563eb"],3:["보류·조건부","s3","#d97706"],4:["예산 초과","s4","#dc2626"],5:["제외","s5","#9ca3af"]};
 const YN=v=>v==="y"?'<span class="ok">O</span>':v==="n"?'<span class="no">X</span>':v==="?"?'<span class="q">?</span>':'-';
 L.forEach(r=>{const t=TR[r.n];if(t){r.dist=t.distWork;r.subTxt=`${t.sub.name} (${t.sub.lines}) 도보 ${t.sub.walk}분`;r.subWalk=t.sub.walk;r.crTxt=t.cr?`${t.cr.name} (${t.cr.lines}) 도보 ${t.cr.walk}분`:"";r.bus=t.buses.length?t.buses.join(", "):"-";}const e=EX[r.n];if(e){r.shuttle=e[0];r.tcom=e[1];r.tcomLo=parseInt(e[1]);}r.geo=GEO[r.n];r.my=(r.n in MY)?MY[r.n]:(r.star||0);const gg=GG[r.n]||{};r.gR=gg.r||null;r.gC=gg.c||null;r.gUrl=gg.url;r.gS=gg.s||"";r.beds=/2베드/.test(r.unit)?(/1베드/.test(r.unit)?[1,2]:[2]):[1];const dv=DRIVE[r.n];if(dv){r.drvHi=dv.hi;r.drv=dv.lo===dv.hi?`${dv.lo}분`:`${dv.lo}~${dv.hi}분`;r.drvLo=dv.lo;r.drvMi=dv.mi;}});
-L.forEach(r=>{const ev=EV[r.n]||{};r.tq=ev.tq||null;r.md=ev.md||null;r.score=ev.score??null;r.parts=ev.parts||null;r.rank=ev.rank??null;r.fail=ev.fail||null;r.fees=r.fees||"";r.tqArr=r.tq?(r.tq.pass?r.tq.arrAfter??5:900+(r.tq.direct?r.tq.direct.arrAfter:99)):null;r.mdD=r.md?r.md.d:null;});
+L.forEach(r=>{const ev=EV[r.n]||{};if(ev.tq){for(const k of ["dep","arr"])if(ev.tq[k])ev.tq[k]=String(ev.tq[k]).replace(/[\s\u202f]*[AP]M/g,"").trim();}r.tq=ev.tq||null;r.md=ev.md||null;r.score=ev.score??null;r.parts=ev.parts||null;r.rank=ev.rank??null;r.fail=ev.fail||null;r.fees=r.fees||"";r.tqArr=r.tq?(r.tq.pass?r.tq.arrAfter??5:900+(r.tq.direct?r.tq.direct.arrAfter:99)):null;r.mdD=r.md?r.md.d:null;r.sf=ev.sf||null;r.sfR=r.sf?r.sf.rate:null;});
 L.forEach(r=>{r.pgK=r.pg?Math.max(0,PG.indexOf(r.pg.st)):0;});
 L.forEach(r=>{r.bedsK=Math.max(...(r.beds||[0]));});
 L.forEach(r=>{r.s0=r.s;r.ux=!!XU[r.n]&&r.s0!==5;if(r.ux)r.s=5;});
-const CW={rank:"5%",my:"8%",n:"21%",rent:"8%",tqArr:"14%",sq:"6%",bedsK:"7%",wd:"4.5%",gym:"4.5%",mgd:"4.5%",s:"9%",mdD:"8.5%"};
-const COLS=[["rank","순위"],["my","별점"],["n","매물 · 주소"],["rent","월세 · 총액"],["tqArr","출근 (8:30, 환승 없음)"],["sq","면적"],["bedsK","구조"],["wd","세탁기"],["gym","헬스장"],["mgd","관리형"],["s","상태 · 진행"],["mdD","치안"]];
+const CW={rank:"5%",my:"8%",n:"20%",rent:"8%",tqArr:"14%",sq:"6%",bedsK:"7%",wd:"4.5%",gym:"4.5%",mgd:"4.5%",s:"9%",sfR:"9.5%"};
+const COLS=[["rank","순위"],["my","별점"],["n","매물 · 주소"],["rent","월세 · 총액"],["tqArr","출근 (8:30, 환승 없음)"],["sq","면적"],["bedsK","구조"],["wd","세탁기"],["gym","헬스장"],["mgd","관리형"],["s","상태 · 진행"],["sfR","치안"]];
 let sortK=SV.sortK||"rank",asc=SV.asc!==undefined?SV.asc:true,fs=new Set(SV.fs||[1,2,3,4]);
 document.getElementById("upd").textContent=UPDATED;
 document.getElementById("crit").innerHTML=CRITERIA.map(([k,v])=>`<div><b>${k}</b>${v}</div>`).join("");
@@ -145,7 +154,7 @@ let pinned=null,overPopup=false,T=null;const MK={};
 M.on("popupopen",e=>{const el=e.popup.getElement();el.querySelectorAll(".popstars").forEach(ps=>{const r=L.find(x=>x.n===ps.dataset.n);if(r)ps.innerHTML=stars(r)});el.onmouseenter=()=>{overPopup=true;clearTimeout(T)};el.onmouseleave=()=>{overPopup=false;if(!pinned)M.closePopup()};});
 M.on("popupclose",e=>{overPopup=false;if(pinned&&e.popup._source===pinned)pinned=null;});
 const popHTML=r=>`<div class="pop">
-<div class="ph"><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""}${r.src==="search"?' <span class="zb" style="background:#7c3aed">신규</span>':""}</div>
+<div class="ph"><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""}${(r.src==="search"||r.src==="sweep")?' <span class="zb" style="background:#7c3aed">신규</span>':""}</div>
 <div class="pr"><span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span>${r.rank?` <b>${r.rank}위</b> <small>${r.score.toFixed(1)}점</small>`:""}${r.fail&&r.s===5?`<br><small class="no">${r.fail}</small>`:""}</div>
 ${r.addr?`<div><a href="${gmap(r.addr)}" target="_blank">📍 ${r.addr}</a></div>`:""}
 <table class="pt">
@@ -153,7 +162,7 @@ ${r.addr?`<div><a href="${gmap(r.addr)}" target="_blank">📍 ${r.addr}</a></div
 <tr><th>출근</th><td>${r.tq?(r.tq.pass?`<b>${r.tq.line}</b> ${r.tq.min}분 <small>(도보 ${r.tq.walk??"?"}분 · ${r.tq.dep}→${r.tq.arr})</small>`:'<span class="no">탈락</span>'):"-"}</td></tr>
 <tr><th>집</th><td>${bedTxt(r).replace(/<br>/g," ")}${r.sq?` · ${r.sq.toLocaleString()} sq ft`:""}</td></tr>
 <tr><th>시설</th><td>세탁기 ${YN(r.wd)} · 헬스장 ${YN(r.gym)} · 관리형 ${YN(r.mgd)}</td></tr>
-<tr><th>치안</th><td>${r.md?`살인 지점까지 <b class="${r.md.d>0.5?"in":"over"}">${r.md.d.toFixed(2)} mi</b>`:"-"}</td></tr>
+<tr><th>치안</th><td>${r.sf?`10만 명당 <b>${r.sf.rate.toLocaleString()}</b> (${r.sf.city}) · `:""}${r.md?`살인 지점 <span class="${r.md.d>0.5?"":"no"}">${r.md.d.toFixed(2)} mi</span>`:"-"}</td></tr>
 <tr><th>진행</th><td>${pgCell(r).replace(/<br>/g," ")}</td></tr>
 </table>
 <div class="pf"><span class="popstars" data-n="${r.n}">${stars(r)}</span>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 보기</a>`:""}${exBtn(r)}</div></div>`;
@@ -171,7 +180,7 @@ document.getElementById("allopen").onclick=()=>{ALLOPEN=!ALLOPEN;OPEN.clear();do
 const FIDS=["f_pass","f_src","f_my","f_gr","f_beds","f_est","f_rent","f_drv","f_drvlo","f_built","f_sq","f_walk","f_wd","f_gym","f_mgd","f_lma"];
 function getF(){const g=id=>document.getElementById(id);return{pass:g("f_pass").checked,src:g("f_src").value,my:+g("f_my").value||0,gr:+g("f_gr").value||0,beds:g("f_beds").value,est:g("f_est").value,rent:+g("f_rent").value||0,drv:+g("f_drv").value||0,drvlo:+g("f_drvlo").value||0,built:+g("f_built").value||0,sq:+g("f_sq").value||0,walk:+g("f_walk").value||0,wd:g("f_wd").checked,gym:g("f_gym").checked,mgd:g("f_mgd").checked,lma:g("f_lma").checked}}
 function passF(r,F){
- if(F.pass&&!(r.tq&&r.tq.pass&&r.md&&r.md.d>0.5))return false;
+ if(F.pass&&!(r.tq&&r.tq.pass&&r.s!==5))return false;
  if(F.src==="zillow"&&r.src!=="zillow")return false;if(F.src==="mgd"&&r.src==="zillow")return false;
  if(F.my&&(r.my||0)<F.my)return false;
  if(F.gr&&(r.gR==null||r.gR<F.gr))return false;
@@ -199,10 +208,11 @@ function bedTxt(r){const u=r.unit||"";const b=[...new Set((u.match(/(스튜디�
 const shortLine=s=>(s||"").replace("통근열차 Framingham/Worcester Line","통근열차 Worcester").replace("Framingham/Worcester Line","Worcester선");
 const CELL={
 rank:r=>`<td class="n" style="width:56px">${r.rank?`<b style="font-size:17px">${r.rank}</b><small>위</small><br><small>${r.score.toFixed(1)}점</small><div class="sbar"><i style="width:${r.score}%"></i></div>`:"<small>-</small>"}</td>`,
-n:r=>`<td style="min-width:220px"><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""}${r.src==="search"?' <span class="zb" style="background:#7c3aed">신규</span>':""}<br>${r.addr?`<a class="addr" href="${gmap(r.addr)}" target="_blank" onclick="event.stopPropagation()" title="Google 지도에서 열기">📍 ${r.addr}</a>`:`<small>${r.area}</small>`}<br>${r.url?`<a class="go" href="${r.url}" target="_blank" onclick="event.stopPropagation()">매물 보기</a>`:""} <span onclick="event.stopPropagation()"><button class="xb" onclick="togDet('${esc(r.n)}')">${OPEN.has(r.n)||ALLOPEN?"접기 ▴":"자세히 ▾"}</button> ${exBtn(r)}</span>${r.addr?"":` <small>${r.area}</small>`}</td>`,
+n:r=>`<td style="min-width:220px"><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""}${(r.src==="search"||r.src==="sweep")?' <span class="zb" style="background:#7c3aed">신규</span>':""}<br>${r.addr?`<a class="addr" href="${gmap(r.addr)}" target="_blank" onclick="event.stopPropagation()" title="Google 지도에서 열기">📍 ${r.addr}</a>`:`<small>${r.area}</small>`}<br>${r.url?`<a class="go" href="${r.url}" target="_blank" onclick="event.stopPropagation()">매물 보기</a>`:""} <span onclick="event.stopPropagation()"><button class="xb" onclick="togDet('${esc(r.n)}')">${OPEN.has(r.n)||ALLOPEN?"접기 ▴":"자세히 ▾"}</button> ${exBtn(r)}</span>${r.addr?"":` <small>${r.area}</small>`}</td>`,
 rent:r=>`<td class="n"><b class="${r.rent==null?"":r.rent<=3000?"":"over"}">${fmt$(r.rent)}</b><br><small class="${r.estLo==null?"":r.estLo<=3000?"in":"over"}">총 ${r.estLo?"$"+r.estLo.toLocaleString():"?"}</small></td>`,
 tqArr:r=>`<td style="min-width:140px">${tqShort(r.tq)}</td>`,
-mdD:r=>`<td style="white-space:nowrap;font-size:13px">${r.md?`<b class="${r.md.d>0.5?"in":"over"}">${r.md.d<0.55?r.md.d.toFixed(3):r.md.d.toFixed(2)} mi</b><br><small>${r.md.nb} 사건</small>`:"-"}</td>`,
+sfR:r=>`<td style="white-space:nowrap;font-size:13px">${r.sf?`<b class="${r.sf.rate<=150?"in":r.sf.rate>=800?"over":""}">${r.sf.rate.toLocaleString()}</b><small>/10만</small><br><small>${r.sf.city}</small><br>`:""}<small class="${r.md&&r.md.d<=0.5?"no":""}" title="가장 가까운 2026 살인 지점">✖ ${r.md?r.md.d.toFixed(2)+"mi":"-"}</small></td>`,
+mdD_old:r=>`<td style="white-space:nowrap;font-size:13px">${r.md?`<b class="${r.md.d>0.5?"in":"over"}">${r.md.d<0.55?r.md.d.toFixed(3):r.md.d.toFixed(2)} mi</b><br><small>${r.md.nb} 사건</small>`:"-"}</td>`,
 sq:r=>`<td class="n">${r.sq?`<b>${r.sq.toLocaleString()}</b><br><small>sq ft</small>`:"<small>미표기</small>"}</td>`,
 bedsK:r=>`<td style="white-space:nowrap">${bedTxt(r)}</td>`,
 wd:r=>`<td class="c">${YN(r.wd)}</td>`,
@@ -214,8 +224,8 @@ x:r=>`<td style="white-space:nowrap" onclick="event.stopPropagation()"><button c
 function DET(r){return `<div class="detg">
 <div><b>부대비용</b>${r.est}${r.fees?`<br>${r.fees}`:""}<br>주차: ${r.park}</div>
 <div><b>출근</b>${tqHTML(r.tq)}</div>
-<div><b>치안</b>${mdHTML(r.md)}</div>
-<div><b>집</b>${r.unit}<br>입주: ${r.move}<br>건축: ${r.built??"미확인"}${r.reno?` (${r.reno} 리모델링)`:""}${r.gR?`<br>구글 ${r.gR} (${r.gC})${r.gS?" · "+r.gS:""}`:""}</div>
+<div><b>치안</b>${r.sf?`인구 10만 명당 강력범죄 약 <b>${r.sf.rate.toLocaleString()}</b>건<br><small>${r.sf.src}</small><br>`:""}가장 가까운 2026 살인 지점: ${mdHTML(r.md)}</div>
+<div><b>집</b>${r.unit}${r.elev?`<br>엘리베이터: ${r.elev==="y"?"있음":r.elev==="n"?"없음":"미확인"}`:""}${r.lease?`<br>계약: ${r.lease}`:""}<br>입주: ${r.move}<br>건축: ${r.built??"미확인"}${r.reno?` (${r.reno} 리모델링)`:""}${r.gR?`<br>구글 ${r.gR} (${r.gC})${r.gS?" · "+r.gS:""}`:""}</div>
 <div class="wide"><b>메모</b>${r.memo}${r.fail?`<br><span class="no">${r.fail}</span>`:""}${r.parts?`<br><small>점수 내역: ${Object.entries(r.parts).map(([k,v])=>k+" "+v.toFixed(1)).join(" · ")}</small>`:""}</div></div>`}
 function togDet(n){OPEN.has(n)?OPEN.delete(n):OPEN.add(n);render()}
 
