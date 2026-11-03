@@ -3,12 +3,12 @@ L = open('data/listings.js', encoding='utf-8').read().strip()
 # split combined excluded rows into separate rows with links
 old1 = re.search(r' \{n:"3 Essex St G2 / 356-358 Main St G2".*?\},\n', L, re.S).group(0)
 L = L.replace(old1,
- ' {reno:1986,n:"3 Essex St G2",area:"Charlestown",built:1900,unit:"2베드 730",sq:730,rent:2800,rentT:"Plus Fees",park:"-",est:"-",estLo:null,wd:"y",gym:"n",mgd:"n",dist:null,move:"-",sp:"-",s:5,url:"https://www.harvardhousingoffcampus.com/housing/property/3-essex-st-unit-g2/fmqw7dv",memo:"제외: 반지하(garden level)"},\n'
- ' {n:"356-358 Main St G2",area:"Charlestown",built:1900,unit:"2베드 730",sq:730,rent:2800,rentT:"Plus Fees",park:"-",est:"-",estLo:null,wd:"y",gym:"n",mgd:"n",dist:null,move:"-",sp:"-",s:5,url:"https://www.harvardhousingoffcampus.com/housing/property/356-358-main-st-unit-g2/kx3y50b",memo:"제외: 반지하(garden level)"},\n')
+ ' {reno:1986,n:"3 Essex St G2",addr:"3 Essex St G2, Charlestown, MA 02129",area:"Charlestown",built:1900,unit:"2베드 730",sq:730,rent:2800,rentT:"Plus Fees",park:"-",est:"-",estLo:null,wd:"y",gym:"n",mgd:"n",dist:null,move:"-",sp:"-",s:5,url:"https://www.harvardhousingoffcampus.com/housing/property/3-essex-st-unit-g2/fmqw7dv",memo:"제외: 반지하(garden level)"},\n'
+ ' {n:"356-358 Main St G2",addr:"356-358 Main St G2, Charlestown, MA 02129",area:"Charlestown",built:1900,unit:"2베드 730",sq:730,rent:2800,rentT:"Plus Fees",park:"-",est:"-",estLo:null,wd:"y",gym:"n",mgd:"n",dist:null,move:"-",sp:"-",s:5,url:"https://www.harvardhousingoffcampus.com/housing/property/356-358-main-st-unit-g2/kx3y50b",memo:"제외: 반지하(garden level)"},\n')
 old2 = re.search(r' \{n:"1410 Columbia Rd 6A / 4 Elko St".*?\},\n', L, re.S).group(0)
 L = L.replace(old2,
- ' {n:"1410 Columbia Rd 6A",area:"South Boston",built:1972,unit:"1베드 557",sq:557,rent:2950,rentT:"Plus Fees",park:"-",est:"-",estLo:null,wd:"y",gym:"y",mgd:"n",dist:null,move:"-",sp:"-",s:5,url:"https://www.harvardhousingoffcampus.com/housing/property/1410-columbia-rd-unit-6a/8nfvp53",memo:"제외: 신청비 1인 $500 (주의 신호)"},\n'
- ' {reno:2024,n:"4 Elko St B3",area:"Brighton",built:1920,unit:"2베드 600",sq:600,rent:2350,rentT:"Plus Fees",park:"-",est:"-",estLo:null,wd:"y",gym:"n",mgd:"n",dist:null,move:"-",sp:"-",s:5,url:"https://www.harvardhousingoffcampus.com/housing/property/4-elko-st-unit-b3/xcqmrwq",memo:"제외: 신청비 1인 $500, 600 sq ft로 좁음"},\n')
+ ' {n:"1410 Columbia Rd 6A",addr:"1410 Columbia Rd #6A, South Boston, MA 02127",area:"South Boston",built:1972,unit:"1베드 557",sq:557,rent:2950,rentT:"Plus Fees",park:"-",est:"-",estLo:null,wd:"y",gym:"y",mgd:"n",dist:null,move:"-",sp:"-",s:5,url:"https://www.harvardhousingoffcampus.com/housing/property/1410-columbia-rd-unit-6a/8nfvp53",memo:"제외: 신청비 1인 $500 (주의 신호)"},\n'
+ ' {reno:2024,n:"4 Elko St B3",addr:"4 Elko St #B3, Brighton, MA 02135",area:"Brighton",built:1920,unit:"2베드 600",sq:600,rent:2350,rentT:"Plus Fees",park:"-",est:"-",estLo:null,wd:"y",gym:"n",mgd:"n",dist:null,move:"-",sp:"-",s:5,url:"https://www.harvardhousingoffcampus.com/housing/property/4-elko-st-unit-b3/xcqmrwq",memo:"제외: 신청비 1인 $500, 600 sq ft로 좁음"},\n')
 T = json.load(open('data/transit.json', encoding='utf-8'))
 # shuttle hub + transit commute estimate to 401 Park Drive (agent estimates)
 EX = {
