@@ -32,6 +32,7 @@ a{color:var(--a);text-decoration:none}a:hover{text-decoration:underline}
 small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;margin-right:12px;font-size:12px}
 .fp{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px 16px;margin-top:8px}.fp label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--m)}.fp select,.fp input[type=number]{border:1px solid var(--b);border-radius:8px;padding:6px 8px;font-size:14px;color:#111;background:#fff}.chk{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:13px}.chk label{flex-direction:row;align-items:center;gap:5px;color:#111;font-size:13px}.rst{border:1px solid var(--b);background:#fff;border-radius:8px;padding:6px 12px;cursor:pointer}
 .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.unilbl{font-size:11px;padding:1px 5px;background:rgba(255,255,255,.85);border:1px solid #c4b5fd;color:#4c1d95;box-shadow:none}.unilbl:before{display:none}
 .st{cursor:pointer;font-size:17px;color:#d1d5db;user-select:none;letter-spacing:-1px}.st.on{color:#f59e0b}.st:hover{color:#fbbf24}
 .pop{font-size:13px;line-height:1.5;min-width:230px}.pop b{font-size:14px}
 </style></head><body>
@@ -72,7 +73,7 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 <p><small>예상 월 총액 = 월세(+필수 수수료) + 주차 + 공과금 약 $100~150 (추정). 지하철 도보 시간은 직선거리 × 1.3 기준 추정.</small></p>
 </div>
 <script>
-const UPDATED="2026-11-03 (13차)";
+const UPDATED="2026-11-03 (14차)";
 const SK="bh_settings_v1",STK="bh_stars_v1";let SV={};try{SV=JSON.parse(localStorage.getItem(SK)||"{}")}catch(e){}
 let MY={};try{MY=JSON.parse(localStorage.getItem(STK)||"{}")}catch(e){}
 
@@ -140,7 +141,7 @@ function hl(m,on){if(on){m._orig=m._orig||{radius:m.getRadius(),color:m.options.
 
 function stars(r){let h="";for(let i=1;i<=5;i++)h+=`<span class="st ${i<=(r.my||0)?"on":""}" data-n="${r.n.replace(/"/g,'&quot;')}" data-v="${i}">★</span>`;return h}
 document.addEventListener("click",e=>{const s=e.target.closest(".st");if(!s)return;e.stopPropagation();const n=s.dataset.n,v=+s.dataset.v;const r=L.find(x=>x.n===n);if(!r)return;r.my=(r.my===v)?0:v;if(r.my)MY[n]=r.my;else delete MY[n];localStorage.setItem(STK,JSON.stringify(MY));document.querySelectorAll(`.st[data-n="${CSS.escape(n)}"]`).forEach(el=>{el.classList.toggle("on",+el.dataset.v<=r.my)});if(sortK==="my"||getF().my)render();},true);
-const UNI_LAYER=window.L.layerGroup();Object.entries(UNIS).forEach(([n,g])=>{if(!g)return;window.L.marker(g,{icon:window.L.divIcon({html:'<div style="font-size:20px;line-height:20px;filter:drop-shadow(0 1px 1px #fff)">🎓</div>',className:"",iconSize:[20,20],iconAnchor:[10,10]})}).bindTooltip(n,{direction:"top",offset:[0,-8]}).addTo(UNI_LAYER)});
+const UDIR={"Simmons University":"left","Harvard Medical School":"left","Harvard T.H. Chan School of Public Health":"bottom","Northeastern University":"right"};const UNI_LAYER=window.L.layerGroup();Object.entries(UNIS).forEach(([n,g])=>{if(!g)return;window.L.marker(g,{icon:window.L.divIcon({html:'<div style="font-size:20px;line-height:20px;filter:drop-shadow(0 1px 1px #fff)">🎓</div>',className:"",iconSize:[20,20],iconAnchor:[10,10]})}).bindTooltip(n,{permanent:true,direction:(UDIR[n]||"right"),offset:(UDIR[n]==="left"?[-8,0]:UDIR[n]==="bottom"?[0,8]:[8,0]),className:"unilbl"}).addTo(UNI_LAYER)});
 function saveS(){const v={};FIDS.forEach(id=>{const el=document.getElementById(id);v[id]=el.type==="checkbox"?el.checked:el.value});SV={fs:[...fs],sortK,asc,f:v,q:document.getElementById("q").value,uni:document.getElementById("f_uni").checked,c:[M.getCenter().lat,M.getCenter().lng],z:M.getZoom()};localStorage.setItem(SK,JSON.stringify(SV))}
 (function restore(){if(SV.f)FIDS.forEach(id=>{const el=document.getElementById(id);if(SV.f[id]===undefined)return;if(el.type==="checkbox")el.checked=SV.f[id];else el.value=SV.f[id]});if(SV.q)document.getElementById("q").value=SV.q;if(SV.uni===false)document.getElementById("f_uni").checked=false;if(SV.c&&SV.z)M.setView(SV.c,SV.z);document.querySelectorAll("#filters button").forEach((b,i)=>{b.className=fs.has(i+1)?"on":""});})();
 function uniToggle(){document.getElementById("f_uni").checked?UNI_LAYER.addTo(M):UNI_LAYER.remove()}
