@@ -66,7 +66,7 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 </div></details>
 <div class="leg"><span><i class="dot" style="background:#16a34a"></i>1순위 그룹</span><span><i class="dot" style="background:#2563eb"></i>후보</span><span><i class="dot" style="background:#d97706"></i>보류·조건부</span><span><i class="dot" style="background:#dc2626"></i>예산 초과</span><span><i class="dot" style="background:#9ca3af"></i>제외</span><span>★ 기준점 (Landmark Center)</span><span>선: 지하철 노선</span><span>🎓 주요 대학</span><label style="font-size:12px;margin-right:12px"><input type="checkbox" id="f_uni" checked> 대학 표시</label><span>점에 마우스를 올리면 정보가 잠깐 뜨고, 클릭하면 고정돼요</span></div>
 <div id="map"></div>
-<div class="bar"><input id="q" placeholder="이름·지역·메모 검색"><small id="cnt"></small><button id="delv" class="rst" style="display:none;margin-left:auto"></button></div>
+<div class="bar"><input id="q" placeholder="이름·지역·메모 검색"><small id="cnt"></small></div>
 <div class="tw"><table><thead><tr id="head"></tr></thead><tbody id="body"></tbody></table></div>
 <div class="card"><b>셔틀 이용 조건</b><br>
 <small>· M2 (Harvard Square ↔ Central ↔ Kenmore ↔ LMA): Harvard ID 있으면 무료, 없으면 1회권 구매. 가족은 티켓 구매 필요.<br>
@@ -76,12 +76,14 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 <p><small>예상 월 총액 = 월세(+필수 수수료) + 주차 + 공과금 약 $100~150 (추정). 지하철 도보 시간은 직선거리 × 1.3 기준 추정.</small></p>
 </div>
 <script>
-const UPDATED="2026-11-04 (22차)";
+const UPDATED="2026-11-04 (23차)";
 const SK="bh_settings_v1",STK="bh_stars_v1";let SV={};try{SV=JSON.parse(localStorage.getItem(SK)||"{}")}catch(e){}
 let MY={};try{MY=JSON.parse(localStorage.getItem(STK)||"{}")}catch(e){}
-const DK="bh_del_v1";let DEL={};try{DEL=JSON.parse(localStorage.getItem(DK)||"{}")}catch(e){}let showDel=false;
-function setDel(n,on){if(on)DEL[n]=1;else delete DEL[n];localStorage.setItem(DK,JSON.stringify(DEL));if(!on&&!Object.keys(DEL).length)showDel=false;M.closePopup();pinned=null;render();}
-function askDel(n){if(confirm(`"${n}" 매물을 목록과 지도에서 삭제할까요?\n(이 브라우저에만 적용, 아래 "삭제한 매물 보기"에서 복구 가능)`))setDel(n,true);}
+const XK="bh_ex_v1";let XU={};try{XU=JSON.parse(localStorage.getItem(XK)||"{}")}catch(e){}
+try{const old=JSON.parse(localStorage.getItem("bh_del_v1")||"{}");if(Object.keys(old).length){Object.assign(XU,old);localStorage.setItem(XK,JSON.stringify(XU));}localStorage.removeItem("bh_del_v1");}catch(e){}
+function esc(n){return n.replace(/'/g,"\\'")}
+function setEx(n,on){const r=L.find(x=>x.n===n);if(!r)return;if(on)XU[n]=1;else delete XU[n];localStorage.setItem(XK,JSON.stringify(XU));r.s=XU[n]?5:r.s0;r.ux=!!XU[n];const m=MK[n];if(m){m.setStyle({fillColor:ST[r.s][2]});m.setRadius(r.s<=2?9:7);m._orig=null;}M.closePopup();pinned=null;render();}
+function exBtn(r){if(r.ux)return `<button class="delb rs" onclick="event.stopPropagation();setEx('${esc(r.n)}',false)">제외 취소</button>`;if(r.s0===5)return `<small style="color:#9ca3af">기본 제외</small>`;return `<button class="delb" onclick="event.stopPropagation();setEx('${esc(r.n)}',true)">제외</button>`}
 
 const CRITERIA=[["예산","월세·주차·공과금 합쳐 월 약 $3,000 이하"],["구조","1베드 또는 2베드"],["세탁","집 안 세탁기·건조기 필수"],["건물","관리형 아파트 단지 위주, 반지하 제외. Zillow 즐겨찾기에서 직접 고른 개별 매물은 Zillow 표시로 구분"],["헬스장","있으면 가산점"],["주차","주차 가능 여부·주차비 반영"],["입주","11월 말~12월 초 입주 가능"],["기준점","Landmark Center (401 Park Dr, Fenway)"],["거리","기준점에서 차로 편도 30분 이내"],["대중교통","지하철·버스·하버드/LMA 셔틀 접근성 반영"]];
 const L = [
@@ -162,7 +164,8 @@ const SHAPES={"Red": ["}nwaG~|eqLGyNIqAAc@S_CAEWu@g@}@u@k@u@Wu@OMGIMISQkAOcAGw@S
 const ST={1:["1순위 그룹","s1","#16a34a"],2:["후보","s2","#2563eb"],3:["보류·조건부","s3","#d97706"],4:["예산 초과","s4","#dc2626"],5:["제외","s5","#9ca3af"]};
 const YN=v=>v==="y"?'<span class="ok">O</span>':v==="n"?'<span class="no">X</span>':v==="?"?'<span class="q">?</span>':'-';
 L.forEach(r=>{const t=TR[r.n];if(t){r.dist=t.distWork;r.subTxt=`${t.sub.name} (${t.sub.lines}) 도보 ${t.sub.walk}분`;r.subWalk=t.sub.walk;r.crTxt=t.cr?`${t.cr.name} (${t.cr.lines}) 도보 ${t.cr.walk}분`:"";r.bus=t.buses.length?t.buses.join(", "):"-";}const e=EX[r.n];if(e){r.shuttle=e[0];r.tcom=e[1];r.tcomLo=parseInt(e[1]);}r.geo=GEO[r.n];r.my=(r.n in MY)?MY[r.n]:(r.star||0);const gg=GG[r.n]||{};r.gR=gg.r||null;r.gC=gg.c||null;r.gUrl=gg.url;r.gS=gg.s||"";r.beds=/2베드/.test(r.unit)?(/1베드/.test(r.unit)?[1,2]:[2]):[1];const dv=DRIVE[r.n];if(dv){r.drvHi=dv.hi;r.drv=dv.lo===dv.hi?`${dv.lo}분`:`${dv.lo}~${dv.hi}분`;r.drvLo=dv.lo;r.drvMi=dv.mi;}});
-const COLS=[["s","상태"],["my","내 별점"],["n","매물"],["link","링크"],["area","지역"],["built","건축 연도"],["unit","집 (sq ft)"],["rent","월세"],["park","주차"],["estLo","예상 월 총액"],["wd","세탁기"],["gym","헬스장"],["mgd","관리형"],["gR","구글 평점"],["dist","기준점 거리(mi)"],["drvLo","자차 (평일 8:30 출발)"],["subWalk","가까운 지하철"],["bus","LMA 직행 버스"],["tcomLo","대중교통 출근(추정)"],["move","입주"],["sp","혜택"],["memo","메모"],["del","삭제"]];
+L.forEach(r=>{r.s0=r.s;r.ux=!!XU[r.n]&&r.s0!==5;if(r.ux)r.s=5;});
+const COLS=[["s","상태"],["my","내 별점"],["n","매물"],["link","링크"],["area","지역"],["built","건축 연도"],["unit","집 (sq ft)"],["rent","월세"],["park","주차"],["estLo","예상 월 총액"],["wd","세탁기"],["gym","헬스장"],["mgd","관리형"],["gR","구글 평점"],["dist","기준점 거리(mi)"],["drvLo","자차 (평일 8:30 출발)"],["subWalk","가까운 지하철"],["bus","LMA 직행 버스"],["tcomLo","대중교통 출근(추정)"],["move","입주"],["sp","혜택"],["memo","메모"],["ux","제외"]];
 let sortK=SV.sortK||"s",asc=SV.asc!==undefined?SV.asc:true,fs=new Set(SV.fs||[1,2,3,4]);
 document.getElementById("upd").textContent=UPDATED;
 document.getElementById("crit").innerHTML=CRITERIA.map(([k,v])=>`<div><b>${k}</b>${v}</div>`).join("");
@@ -176,15 +179,15 @@ window.L.marker(GEO.WORK,{icon:window.L.divIcon({html:'<div style="font-size:26p
 let pinned=null,overPopup=false,T=null;const MK={};
 M.on("popupopen",e=>{const el=e.popup.getElement();el.querySelectorAll(".popstars").forEach(ps=>{const r=L.find(x=>x.n===ps.dataset.n);if(r)ps.innerHTML=stars(r)});el.onmouseenter=()=>{overPopup=true;clearTimeout(T)};el.onmouseleave=()=>{overPopup=false;if(!pinned)M.closePopup()};});
 M.on("popupclose",e=>{overPopup=false;if(pinned&&e.popup._source===pinned)pinned=null;});
+const popHTML=r=>`<div class="pop"><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""} <span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span><br>내 별점 <span class="popstars" data-n="${r.n}">${stars(r)}</span> ${exBtn(r)}<br>${r.area} · ${r.unit}<br>🏗 건축 ${r.built?r.built+"년":"미확인"}${r.reno?` (${r.reno}년 리모델링)`:""}<br>월세 ${r.rent?"$"+r.rent.toLocaleString():"-"} <small>${r.rentT}</small> · 주차 ${r.park}<br>예상 월 총액 <b>${r.est}</b><br>세탁기 ${YN(r.wd)} 헬스장 ${YN(r.gym)} 관리형 ${YN(r.mgd)}<br>⭐ 구글 ${r.gR?r.gR+" ("+r.gC+"개)":"리뷰 없음"} ${r.gUrl?`<a href="${r.gUrl}" target="_blank">리뷰 보기</a>`:""}${r.gS?`<br><small>${r.gS}</small>`:""} · 기준점까지 ${r.dist??"-"}mi<br>🚗 자차 ${r.drv||"-"} <small>(Google 지도, 평일 오전 8:30 출발 기준)</small><br>🚇 ${r.subTxt||"-"}${r.crTxt?"<br>🚆 "+r.crTxt:""}<br>🚌 LMA 직행 버스: ${r.bus||"-"}<br>🚐 ${r.shuttle||"-"} (${r.tcom||"-"})<br><small>${r.memo}</small><br>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 페이지 열기 →</a>`:""}</div>`;
 L.forEach(r=>{if(!r.geo)return;const m=window.L.circleMarker(r.geo,{radius:r.s<=2?9:7,color:"#fff",weight:2,fillColor:ST[r.s][2],fillOpacity:.95});
-m.bindPopup(`<div class="pop"><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""} <span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span><br>내 별점 <span class="popstars" data-n="${r.n}">${stars(r)}</span> <button class="delb" onclick="askDel('${r.n.replace(/'/g,"\\'")}')">🗑 삭제</button><br>${r.area} · ${r.unit}<br>🏗 건축 ${r.built?r.built+"년":"미확인"}${r.reno?` (${r.reno}년 리모델링)`:""}<br>월세 ${r.rent?"$"+r.rent.toLocaleString():"-"} <small>${r.rentT}</small> · 주차 ${r.park}<br>예상 월 총액 <b>${r.est}</b><br>세탁기 ${YN(r.wd)} 헬스장 ${YN(r.gym)} 관리형 ${YN(r.mgd)}<br>⭐ 구글 ${r.gR?r.gR+" ("+r.gC+"개)":"리뷰 없음"} ${r.gUrl?`<a href="${r.gUrl}" target="_blank">리뷰 보기</a>`:""}${r.gS?`<br><small>${r.gS}</small>`:""} · 기준점까지 ${r.dist??"-"}mi<br>🚗 자차 ${r.drv||"-"} <small>(Google 지도, 평일 오전 8:30 출발 기준)</small><br>🚇 ${r.subTxt||"-"}${r.crTxt?"<br>🚆 "+r.crTxt:""}<br>🚌 LMA 직행 버스: ${r.bus||"-"}<br>🚐 ${r.shuttle||"-"} (${r.tcom||"-"})<br><small>${r.memo}</small><br>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 페이지 열기 →</a>`:""}</div>`);
+m.bindPopup(()=>popHTML(r));
 m.bindTooltip(r.n,{direction:"top",offset:[0,-10]});m.off("click");m.on("mouseover",()=>{clearTimeout(T);if(pinned){if(pinned!==m)m.openTooltip();return;}m.closeTooltip();m.openPopup();});m.on("mouseout",()=>{if(pinned){if(pinned!==m)m.closeTooltip();return;}T=setTimeout(()=>{if(!overPopup&&!pinned)m.closePopup()},200);});m.on("click",e=>{window.L.DomEvent.stop(e);pinned=null;m.closeTooltip();m.openPopup();pinned=m;});m.addTo(M);MK[r.n]=m;});
 const fb=document.getElementById("filters");
 Object.entries(ST).forEach(([k,[t]])=>{const b=document.createElement("button");b.textContent=t;b.className=fs.has(+k)?"on":"";b.onclick=()=>{fs.has(+k)?fs.delete(+k):fs.add(+k);b.className=fs.has(+k)?"on":"";render()};fb.appendChild(b)});
 document.getElementById("head").innerHTML=COLS.map(([k,t])=>`<th data-k="${k}">${t}</th>`).join("");
 document.querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;asc=sortK===k?!asc:true;sortK=k;render()});
 document.getElementById("q").oninput=render;
-document.getElementById("delv").onclick=()=>{showDel=!showDel;render()};
 const FIDS=["f_src","f_my","f_gr","f_beds","f_est","f_rent","f_drv","f_drvlo","f_built","f_sq","f_walk","f_wd","f_gym","f_mgd","f_lma"];
 function getF(){const g=id=>document.getElementById(id);return{src:g("f_src").value,my:+g("f_my").value||0,gr:+g("f_gr").value||0,beds:g("f_beds").value,est:g("f_est").value,rent:+g("f_rent").value||0,drv:+g("f_drv").value||0,drvlo:+g("f_drvlo").value||0,built:+g("f_built").value||0,sq:+g("f_sq").value||0,walk:+g("f_walk").value||0,wd:g("f_wd").checked,gym:g("f_gym").checked,mgd:g("f_mgd").checked,lma:g("f_lma").checked}}
 function passF(r,F){
@@ -204,18 +207,17 @@ function passF(r,F){
 FIDS.forEach(id=>{const el=document.getElementById(id);el.addEventListener(el.type==="number"?"input":"change",render)});
 document.getElementById("f_reset").onclick=()=>{FIDS.forEach(id=>{const el=document.getElementById(id);if(el.type==="checkbox")el.checked=false;else el.value=""});document.getElementById("q").value="";render()};
 function render(){const q=document.getElementById("q").value.toLowerCase();
- const F=getF();let rows=L.filter(r=>(showDel?!!DEL[r.n]:!DEL[r.n])&&fs.has(r.s)&&(!q||JSON.stringify(r).toLowerCase().includes(q))&&passF(r,F));
+ const F=getF();let rows=L.filter(r=>fs.has(r.s)&&(!q||JSON.stringify(r).toLowerCase().includes(q))&&passF(r,F));
  L.forEach(r=>{const m=MK[r.n];if(!m)return;rows.includes(r)?m.addTo(M):m.remove()});
  rows.sort((a,b)=>{let x=a[sortK],y=b[sortK];if(x==null)return 1;if(y==null)return -1;if(typeof x==="number")return asc?x-y:y-x;return asc?String(x).localeCompare(String(y)):String(y).localeCompare(String(x))});
- const nd=Object.keys(DEL).filter(k=>L.some(x=>x.n===k)).length;const db=document.getElementById("delv");db.textContent=showDel?"← 전체 목록으로":`삭제한 매물 보기 (${nd})`;db.style.display=(nd||showDel)?"":"none";
- document.getElementById("cnt").textContent=`${showDel?"삭제한 매물 ":""}${rows.length}곳 표시 / 전체 ${L.length-nd}곳 · 행에 마우스를 올리면 지도에서 강조, 누르면 정보창이 열려요`;
+ document.getElementById("cnt").textContent=`${rows.length}곳 표시 / 전체 ${L.length}곳 (직접 제외 ${L.filter(r=>r.ux).length}곳, 위쪽 "제외" 버튼을 켜면 보여요) · 행에 마우스를 올리면 지도에서 강조, 누르면 정보창이 열려요`;
  document.getElementById("body").innerHTML=rows.map(r=>`<tr class="row" data-n="${r.n}">
- <td><span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span></td><td style="white-space:nowrap" onclick="event.stopPropagation()">${stars(r)}</td><td><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""}</td>
+ <td><span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span>${r.ux?'<br><small style="color:#6b7280">직접 제외</small>':""}</td><td style="white-space:nowrap" onclick="event.stopPropagation()">${stars(r)}</td><td><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""}</td>
  <td>${r.url?`<a class="go" href="${r.url}" target="_blank" onclick="event.stopPropagation()">매물 보기</a>`:"-"}</td>
  <td>${r.area}</td><td class="n ${r.built==null?"":r.built>=2015?"in":r.built<1980?"over":""}"><b>${r.built??"미확인"}</b>${r.reno?`<br><small>${r.reno} 리모델링</small>`:""}</td><td>${r.unit}</td><td class="n">${r.rent?"$"+r.rent.toLocaleString():"-"}<br><small>${r.rentT}</small></td><td>${r.park}</td>
  <td class="${r.estLo==null?"":r.estLo<=3000?"in":"over"}">${r.est}</td><td>${YN(r.wd)}</td><td>${YN(r.gym)}</td><td>${YN(r.mgd)}</td>
  <td style="min-width:150px;max-width:220px" class="${r.gR==null?"":r.gR>=4.3?"in":r.gR<3.8?"over":""}">${r.gR?`<b>${r.gR}</b> <small>(${r.gC})</small>`:"<small>없음</small>"}${r.gUrl?`<br><a href="${r.gUrl}" target="_blank" onclick="event.stopPropagation()" style="font-size:12px">구글 리뷰</a>`:""}${r.gS?`<br><small>${r.gS}</small>`:""}</td><td class="n">${r.dist??"-"}</td><td class="${r.drvLo==null?"":r.drvLo<=20?"in":r.drvLo<=28?"":"over"}"><b>${r.drv||"-"}</b><br><small>${r.drvMi?r.drvMi+" mi 경로":""}</small></td><td class="note">${r.subTxt||"-"}${r.crTxt?"<br>"+r.crTxt:""}</td><td>${r.bus||"-"}</td>
- <td class="note"><b>${r.tcom||"-"}</b><br>${r.shuttle||""}</td><td>${r.move}</td><td class="note">${r.sp}</td><td class="note">${r.memo}</td><td onclick="event.stopPropagation()">${DEL[r.n]?`<button class="delb rs" onclick="setDel('${r.n.replace(/'/g,"\\'")}',false)">복구</button>`:`<button class="delb" title="삭제" onclick="askDel('${r.n.replace(/'/g,"\\'")}')">🗑 삭제</button>`}</td></tr>`).join("");
+ <td class="note"><b>${r.tcom||"-"}</b><br>${r.shuttle||""}</td><td>${r.move}</td><td class="note">${r.sp}</td><td class="note">${r.memo}</td><td onclick="event.stopPropagation()">${exBtn(r)}</td></tr>`).join("");
  if(typeof saveS==="function"&&typeof M!=="undefined")try{saveS()}catch(e){}
  document.querySelectorAll("tr.row").forEach(tr=>{const m=MK[tr.dataset.n];if(!m)return;
  tr.onmouseenter=()=>hl(m,true);tr.onmouseleave=()=>hl(m,false);
