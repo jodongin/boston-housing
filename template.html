@@ -34,7 +34,7 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 .pop{font-size:13px;line-height:1.5;min-width:230px}.pop b{font-size:14px}
 </style></head><body>
 <header><h1>보스턴 집 찾기</h1>
-<div class="sub">마지막 업데이트 <span id="upd"></span> · 가격은 확인 당일 기준(매일 변동) · 거리는 401 Park Drive 기준 직선거리 · 대중교통 출근 시간은 추정치 · 자차 시간은 Google 지도 평일 오전 8:30 출발 기준 범위</div></header>
+<div class="sub">마지막 업데이트 <span id="upd"></span> · 가격은 확인 당일 기준(매일 변동) · 거리는 401 Park Drive 기준 직선거리 · 대중교통 출근 시간은 추정치 · 자차 시간은 Google 지도 평일 오전 8:30 출발 기준 범위 · 건축 연도는 매물 사이트·보스턴시 재산평가 자료 기준(초록 2015년 이후, 빨강 1980년 이전)</div></header>
 <div class="wrap">
 <details class="card" open><summary>확정된 기준</summary><div class="crit" id="crit" style="margin-top:8px"></div></details>
 <div class="bar" id="filters"></div>
@@ -50,13 +50,13 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 <p><small>예상 월 총액 = 월세(+필수 수수료) + 주차 + 공과금 약 $100~150 (추정). 지하철 도보 시간은 직선거리 × 1.3 기준 추정.</small></p>
 </div>
 <script>
-const UPDATED="2026-11-03 (2차)";
+const UPDATED="2026-11-03 (3차)";
 const CRITERIA=[["예산","월세·주차·공과금 합쳐 월 약 $3,000 이하"],["구조","1베드 또는 2베드"],["세탁","집 안 세탁기·건조기 필수"],["건물","관리형 아파트 선호, 반지하 제외"],["헬스장","있으면 가산점"],["주차","주차 가능 여부·주차비 반영"],["입주","11월 말~12월 초 입주 가능"],["기준점","Landmark Center (401 Park Dr, Fenway)"],["거리","기준점에서 차로 편도 30분 이내"],["대중교통","지하철·버스·하버드/LMA 셔틀 접근성 반영"]];
 /*DATA*/
 const ST={1:["1순위 그룹","s1","#16a34a"],2:["후보","s2","#2563eb"],3:["보류·조건부","s3","#d97706"],4:["예산 초과","s4","#dc2626"],5:["제외","s5","#9ca3af"]};
 const YN=v=>v==="y"?'<span class="ok">O</span>':v==="n"?'<span class="no">X</span>':v==="?"?'<span class="q">?</span>':'-';
 L.forEach(r=>{const t=TR[r.n];if(t){r.dist=t.distWork;r.subTxt=`${t.sub.name} (${t.sub.lines}) 도보 ${t.sub.walk}분`;r.subWalk=t.sub.walk;r.crTxt=t.cr?`${t.cr.name} (${t.cr.lines}) 도보 ${t.cr.walk}분`:"";r.bus=t.buses.length?t.buses.join(", "):"-";}const e=EX[r.n];if(e){r.shuttle=e[0];r.tcom=e[1];r.tcomLo=parseInt(e[1]);}r.geo=GEO[r.n];const dv=DRIVE[r.n];if(dv){r.drv=dv.lo===dv.hi?`${dv.lo}분`:`${dv.lo}~${dv.hi}분`;r.drvLo=dv.lo;r.drvMi=dv.mi;}});
-const COLS=[["s","상태"],["n","매물"],["link","링크"],["area","지역"],["unit","집 (sq ft)"],["rent","월세"],["park","주차"],["estLo","예상 월 총액"],["wd","세탁기"],["gym","헬스장"],["mgd","관리형"],["dist","기준점 거리(mi)"],["drvLo","자차 (평일 8:30 출발)"],["subWalk","가까운 지하철"],["bus","LMA 직행 버스"],["tcomLo","대중교통 출근(추정)"],["move","입주"],["sp","혜택"],["memo","메모"]];
+const COLS=[["s","상태"],["n","매물"],["link","링크"],["area","지역"],["built","건축 연도"],["unit","집 (sq ft)"],["rent","월세"],["park","주차"],["estLo","예상 월 총액"],["wd","세탁기"],["gym","헬스장"],["mgd","관리형"],["dist","기준점 거리(mi)"],["drvLo","자차 (평일 8:30 출발)"],["subWalk","가까운 지하철"],["bus","LMA 직행 버스"],["tcomLo","대중교통 출근(추정)"],["move","입주"],["sp","혜택"],["memo","메모"]];
 let sortK="s",asc=true,fs=new Set([1,2,3,4]);
 document.getElementById("upd").textContent=UPDATED;
 document.getElementById("crit").innerHTML=CRITERIA.map(([k,v])=>`<div><b>${k}</b>${v}</div>`).join("");
@@ -69,7 +69,7 @@ Object.entries(SHAPES).forEach(([k,arr])=>arr.forEach(p=>window.L.polyline(dec(p
 window.L.marker(GEO.WORK,{icon:window.L.divIcon({html:'<div style="font-size:26px;line-height:26px;color:#7c3aed">★</div>',className:"",iconSize:[26,26],iconAnchor:[13,13]})}).addTo(M).bindPopup("<b>기준점</b><br>Landmark Center (401 Park Drive)<br>Green D Fenway역 도보 1분 · 버스 8, 19, 47, 60");
 const MK={};
 L.forEach(r=>{if(!r.geo)return;const m=window.L.circleMarker(r.geo,{radius:r.s<=2?9:7,color:"#fff",weight:2,fillColor:ST[r.s][2],fillOpacity:.95});
-m.bindPopup(`<div class="pop"><b>${r.n}</b> <span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span><br>${r.area} · ${r.unit}<br>월세 ${r.rent?"$"+r.rent.toLocaleString():"-"} <small>${r.rentT}</small> · 주차 ${r.park}<br>예상 월 총액 <b>${r.est}</b><br>세탁기 ${YN(r.wd)} 헬스장 ${YN(r.gym)} 관리형 ${YN(r.mgd)} · 기준점까지 ${r.dist??"-"}mi<br>🚗 자차 ${r.drv||"-"} <small>(Google 지도, 평일 오전 8:30 출발 기준)</small><br>🚇 ${r.subTxt||"-"}${r.crTxt?"<br>🚆 "+r.crTxt:""}<br>🚌 LMA 직행 버스: ${r.bus||"-"}<br>🚐 ${r.shuttle||"-"} (${r.tcom||"-"})<br><small>${r.memo}</small><br>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 페이지 열기 →</a>`:""}</div>`);
+m.bindPopup(`<div class="pop"><b>${r.n}</b> <span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span><br>${r.area} · ${r.unit}<br>🏗 건축 ${r.built?r.built+"년":"미확인"}${r.reno?` (${r.reno}년 리모델링)`:""}<br>월세 ${r.rent?"$"+r.rent.toLocaleString():"-"} <small>${r.rentT}</small> · 주차 ${r.park}<br>예상 월 총액 <b>${r.est}</b><br>세탁기 ${YN(r.wd)} 헬스장 ${YN(r.gym)} 관리형 ${YN(r.mgd)} · 기준점까지 ${r.dist??"-"}mi<br>🚗 자차 ${r.drv||"-"} <small>(Google 지도, 평일 오전 8:30 출발 기준)</small><br>🚇 ${r.subTxt||"-"}${r.crTxt?"<br>🚆 "+r.crTxt:""}<br>🚌 LMA 직행 버스: ${r.bus||"-"}<br>🚐 ${r.shuttle||"-"} (${r.tcom||"-"})<br><small>${r.memo}</small><br>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 페이지 열기 →</a>`:""}</div>`);
 m.on("mouseover",()=>m.openPopup());m.addTo(M);MK[r.n]=m;});
 const fb=document.getElementById("filters");
 Object.entries(ST).forEach(([k,[t]])=>{const b=document.createElement("button");b.textContent=t;b.className=fs.has(+k)?"on":"";b.onclick=()=>{fs.has(+k)?fs.delete(+k):fs.add(+k);b.className=fs.has(+k)?"on":"";render()};fb.appendChild(b)});
@@ -84,7 +84,7 @@ function render(){const q=document.getElementById("q").value.toLowerCase();
  document.getElementById("body").innerHTML=rows.map(r=>`<tr class="row" data-n="${r.n}">
  <td><span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span></td><td><b>${r.n}</b></td>
  <td>${r.url?`<a class="go" href="${r.url}" target="_blank" onclick="event.stopPropagation()">매물 보기</a>`:"-"}</td>
- <td>${r.area}</td><td>${r.unit}</td><td class="n">${r.rent?"$"+r.rent.toLocaleString():"-"}<br><small>${r.rentT}</small></td><td>${r.park}</td>
+ <td>${r.area}</td><td class="n ${r.built==null?"":r.built>=2015?"in":r.built<1980?"over":""}"><b>${r.built??"미확인"}</b>${r.reno?`<br><small>${r.reno} 리모델링</small>`:""}</td><td>${r.unit}</td><td class="n">${r.rent?"$"+r.rent.toLocaleString():"-"}<br><small>${r.rentT}</small></td><td>${r.park}</td>
  <td class="${r.estLo==null?"":r.estLo<=3000?"in":"over"}">${r.est}</td><td>${YN(r.wd)}</td><td>${YN(r.gym)}</td><td>${YN(r.mgd)}</td>
  <td class="n">${r.dist??"-"}</td><td class="${r.drvLo==null?"":r.drvLo<=20?"in":r.drvLo<=28?"":"over"}"><b>${r.drv||"-"}</b><br><small>${r.drvMi?r.drvMi+" mi 경로":""}</small></td><td class="note">${r.subTxt||"-"}${r.crTxt?"<br>"+r.crTxt:""}</td><td>${r.bus||"-"}</td>
  <td class="note"><b>${r.tcom||"-"}</b><br>${r.shuttle||""}</td><td>${r.move}</td><td class="note">${r.sp}</td><td class="note">${r.memo}</td></tr>`).join("");
