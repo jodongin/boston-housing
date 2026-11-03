@@ -22,7 +22,6 @@ EX = {
 "Jade":["버스 → Wellington(Orange) → Ruggles에서 LMA 셔틀","60~75분"],
 "Neponset Landing":["North Quincy(Red) → JFK/UMass에서 LMA 셔틀","45~55분"],
 "MetroMark":["Forest Hills(Orange) → Ruggles에서 LMA 셔틀, 또는 버스 39","30~40분"],
-"Harbor Point":["버스 8이 LMA·Brookline Ave까지 직행. JFK/UMass LMA 셔틀도 가능","40~50분"],
 "175 Cottage St #702":["버스 → Wood Island(Blue) → 환승","55~65분"],
 "36 Gove St":["Maverick(Blue) → Government Center → Green D Fenway","40~50분"],
 "110 Lucerne St":["Morton St 통근열차 또는 버스 28 → Ruggles에서 LMA 셔틀","45~55분"],
