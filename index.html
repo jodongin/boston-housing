@@ -38,7 +38,7 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 <div class="wrap">
 <details class="card" open><summary>확정된 기준</summary><div class="crit" id="crit" style="margin-top:8px"></div></details>
 <div class="bar" id="filters"></div>
-<div class="leg"><span><i class="dot" style="background:#16a34a"></i>1순위 그룹</span><span><i class="dot" style="background:#2563eb"></i>후보</span><span><i class="dot" style="background:#d97706"></i>보류·조건부</span><span><i class="dot" style="background:#dc2626"></i>예산 초과</span><span><i class="dot" style="background:#9ca3af"></i>제외</span><span>★ 기준점 (Landmark Center)</span><span>선: 지하철 노선</span><span>점에 마우스를 올리면 정보가 떠요</span></div>
+<div class="leg"><span><i class="dot" style="background:#16a34a"></i>1순위 그룹</span><span><i class="dot" style="background:#2563eb"></i>후보</span><span><i class="dot" style="background:#d97706"></i>보류·조건부</span><span><i class="dot" style="background:#dc2626"></i>예산 초과</span><span><i class="dot" style="background:#9ca3af"></i>제외</span><span>★ 기준점 (Landmark Center)</span><span>선: 지하철 노선</span><span>점에 마우스를 올리면 정보가 잠깐 뜨고, 클릭하면 고정돼요</span></div>
 <div id="map"></div>
 <div class="bar"><input id="q" placeholder="이름·지역·메모 검색"><small id="cnt"></small></div>
 <div class="tw"><table><thead><tr id="head"></tr></thead><tbody id="body"></tbody></table></div>
@@ -50,7 +50,7 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 <p><small>예상 월 총액 = 월세(+필수 수수료) + 주차 + 공과금 약 $100~150 (추정). 지하철 도보 시간은 직선거리 × 1.3 기준 추정.</small></p>
 </div>
 <script>
-const UPDATED="2026-11-03 (4차)";
+const UPDATED="2026-11-03 (5차)";
 const CRITERIA=[["예산","월세·주차·공과금 합쳐 월 약 $3,000 이하"],["구조","1베드 또는 2베드"],["세탁","집 안 세탁기·건조기 필수"],["건물","관리형 아파트 선호, 반지하 제외"],["헬스장","있으면 가산점"],["주차","주차 가능 여부·주차비 반영"],["입주","11월 말~12월 초 입주 가능"],["기준점","Landmark Center (401 Park Dr, Fenway)"],["거리","기준점에서 차로 편도 30분 이내"],["대중교통","지하철·버스·하버드/LMA 셔틀 접근성 반영"]];
 const L = [
  {n:"Schoolhouse at Lower Mills",area:"Dorchester (Lower Mills)",built:2008,unit:"2베드 1베스 850~1,013 / 1베드 749~923",sq:850,rent:2800,rentT:"월세 (1베드 $2,600)",park:"야외 $50 / 실내 $200",est:"2베드 $2,950~3,000",estLo:2950,wd:"y",gym:"y",mgd:"y",dist:5.4,move:"지금 입주 가능",sp:"13개월 계약 1개월 무료 + 24시간 내 계약 시 $1,000",s:1,url:"https://www.apartments.com/schoolhouse-at-lower-mills-dorchester-ma/fpb4g0r/",memo:"예산 안에서 2베드가 되는 곳. 62세대 소규모. 평점 5.0"},
@@ -122,10 +122,12 @@ function dec(s){let i=0,la=0,lo=0,o=[];while(i<s.length){let b,sh=0,r=0;do{b=s.c
 const LC={Red:"#DA291C",Orange:"#ED8B00",Blue:"#003DA5","Green-B,Green-C,Green-D,Green-E":"#00843D",Mattapan:"#DA291C"};
 Object.entries(SHAPES).forEach(([k,arr])=>arr.forEach(p=>window.L.polyline(dec(p),{color:LC[k],weight:3,opacity:.55}).addTo(M)));
 window.L.marker(GEO.WORK,{icon:window.L.divIcon({html:'<div style="font-size:26px;line-height:26px;color:#7c3aed">★</div>',className:"",iconSize:[26,26],iconAnchor:[13,13]})}).addTo(M).bindPopup("<b>기준점</b><br>Landmark Center (401 Park Drive)<br>Green D Fenway역 도보 1분 · 버스 8, 19, 47, 60");
-const MK={};
+let pinned=null,overPopup=false,T=null;const MK={};
+M.on("popupopen",e=>{const el=e.popup.getElement();el.onmouseenter=()=>{overPopup=true;clearTimeout(T)};el.onmouseleave=()=>{overPopup=false;if(!pinned)M.closePopup()};});
+M.on("popupclose",e=>{overPopup=false;if(pinned&&e.popup._source===pinned)pinned=null;});
 L.forEach(r=>{if(!r.geo)return;const m=window.L.circleMarker(r.geo,{radius:r.s<=2?9:7,color:"#fff",weight:2,fillColor:ST[r.s][2],fillOpacity:.95});
 m.bindPopup(`<div class="pop"><b>${r.n}</b> <span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span><br>${r.area} · ${r.unit}<br>🏗 건축 ${r.built?r.built+"년":"미확인"}${r.reno?` (${r.reno}년 리모델링)`:""}<br>월세 ${r.rent?"$"+r.rent.toLocaleString():"-"} <small>${r.rentT}</small> · 주차 ${r.park}<br>예상 월 총액 <b>${r.est}</b><br>세탁기 ${YN(r.wd)} 헬스장 ${YN(r.gym)} 관리형 ${YN(r.mgd)} · 기준점까지 ${r.dist??"-"}mi<br>🚗 자차 ${r.drv||"-"} <small>(Google 지도, 평일 오전 8:30 출발 기준)</small><br>🚇 ${r.subTxt||"-"}${r.crTxt?"<br>🚆 "+r.crTxt:""}<br>🚌 LMA 직행 버스: ${r.bus||"-"}<br>🚐 ${r.shuttle||"-"} (${r.tcom||"-"})<br><small>${r.memo}</small><br>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 페이지 열기 →</a>`:""}</div>`);
-m.bindTooltip(r.n,{direction:"top",offset:[0,-10]});m.on("mouseover",()=>{m.closeTooltip();m.openPopup();});m.addTo(M);MK[r.n]=m;});
+m.bindTooltip(r.n,{direction:"top",offset:[0,-10]});m.off("click");m.on("mouseover",()=>{clearTimeout(T);if(pinned){if(pinned!==m)m.openTooltip();return;}m.closeTooltip();m.openPopup();});m.on("mouseout",()=>{if(pinned){if(pinned!==m)m.closeTooltip();return;}T=setTimeout(()=>{if(!overPopup&&!pinned)m.closePopup()},200);});m.on("click",e=>{window.L.DomEvent.stop(e);pinned=null;m.closeTooltip();m.openPopup();pinned=m;});m.addTo(M);MK[r.n]=m;});
 const fb=document.getElementById("filters");
 Object.entries(ST).forEach(([k,[t]])=>{const b=document.createElement("button");b.textContent=t;b.className=fs.has(+k)?"on":"";b.onclick=()=>{fs.has(+k)?fs.delete(+k):fs.add(+k);b.className=fs.has(+k)?"on":"";render()};fb.appendChild(b)});
 document.getElementById("head").innerHTML=COLS.map(([k,t])=>`<th data-k="${k}">${t}</th>`).join("");
@@ -145,7 +147,7 @@ function render(){const q=document.getElementById("q").value.toLowerCase();
  <td class="note"><b>${r.tcom||"-"}</b><br>${r.shuttle||""}</td><td>${r.move}</td><td class="note">${r.sp}</td><td class="note">${r.memo}</td></tr>`).join("");
  document.querySelectorAll("tr.row").forEach(tr=>{const m=MK[tr.dataset.n];if(!m)return;
  tr.onmouseenter=()=>hl(m,true);tr.onmouseleave=()=>hl(m,false);
- tr.onclick=()=>{if(!M.getBounds().contains(m.getLatLng()))M.panTo(m.getLatLng());m.openPopup();document.getElementById("map").scrollIntoView({behavior:"smooth",block:"center"})};});}
+ tr.onclick=()=>{if(!M.getBounds().contains(m.getLatLng()))M.panTo(m.getLatLng());pinned=null;m.openPopup();pinned=m;document.getElementById("map").scrollIntoView({behavior:"smooth",block:"center"})};});}
 function hl(m,on){if(on){m._orig=m._orig||{radius:m.getRadius(),color:m.options.color,weight:m.options.weight};m.setRadius(15);m.setStyle({color:"#111",weight:4});m.bringToFront();m.openTooltip();}else if(m._orig){m.setRadius(m._orig.radius);m.setStyle({color:m._orig.color,weight:m._orig.weight});m.closeTooltip();}}
 render();
 </script></body></html>
