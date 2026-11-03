@@ -38,12 +38,13 @@ EX = {
 "1410 Columbia Rd 6A":["Andrew(Red) → JFK/UMass LMA 셔틀 또는 버스","40~50분"],
 "4 Elko St B3":["버스 65·66 또는 Green B","35~45분"],
 }
-data = "const GEO=%s;\nconst TR=%s;\nconst EX=%s;\nconst SHAPES=%s;\n" % (
+EX.update(json.load(open("data/extra_ex.json", encoding="utf-8")))
+data = "const GEO=%s;\nconst TR=%s;\nconst EX=%s;\nconst DRIVE=%s;\nconst SHAPES=%s;\n" % (
   json.dumps(T['GEO'],ensure_ascii=False), json.dumps(T['TR'],ensure_ascii=False),
-  json.dumps(EX,ensure_ascii=False), json.dumps(T['SHAPES']))
+  json.dumps(EX,ensure_ascii=False), json.dumps(T.get('DRIVE',{})), json.dumps(T['SHAPES']))
 tpl = open('template.html', encoding='utf-8').read()
 out = tpl.replace('/*DATA*/', L + '\n' + data)
 open('index.html','w',encoding='utf-8').write(out)
-names = re.findall(r'\{n:"([^"]+)"', L)
+names = re.findall(r'\{"?n"?:\s*"([^"]+)"', L)
 missing = [n for n in names if n not in T['GEO'] or not T['GEO'][n]]
-print('listings', len(names), 'missing geo', missing, 'missing EX', [n for n in names if n not in EX])
+print('listings', len(names), 'missing geo', missing, 'missing EX', [n for n in names if n not in EX], 'missing drive', [n for n in names if n not in T.get('DRIVE',{})])
