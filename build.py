@@ -1,0 +1,49 @@
+import json, re
+L = open('data/listings.js', encoding='utf-8').read().strip()
+# split combined excluded rows into separate rows with links
+old1 = re.search(r' \{n:"3 Essex St G2 / 356-358 Main St G2".*?\},\n', L, re.S).group(0)
+L = L.replace(old1,
+ ' {n:"3 Essex St G2",area:"Charlestown",built:null,unit:"2베드 730",sq:730,rent:2800,rentT:"Plus Fees",park:"-",est:"-",estLo:null,wd:"y",gym:"n",mgd:"n",dist:null,move:"-",sp:"-",s:5,url:"https://www.harvardhousingoffcampus.com/housing/property/3-essex-st-unit-g2/fmqw7dv",memo:"제외: 반지하(garden level)"},\n'
+ ' {n:"356-358 Main St G2",area:"Charlestown",built:null,unit:"2베드 730",sq:730,rent:2800,rentT:"Plus Fees",park:"-",est:"-",estLo:null,wd:"y",gym:"n",mgd:"n",dist:null,move:"-",sp:"-",s:5,url:"https://www.harvardhousingoffcampus.com/housing/property/356-358-main-st-unit-g2/kx3y50b",memo:"제외: 반지하(garden level)"},\n')
+old2 = re.search(r' \{n:"1410 Columbia Rd 6A / 4 Elko St".*?\},\n', L, re.S).group(0)
+L = L.replace(old2,
+ ' {n:"1410 Columbia Rd 6A",area:"South Boston",built:null,unit:"1베드 557",sq:557,rent:2950,rentT:"Plus Fees",park:"-",est:"-",estLo:null,wd:"y",gym:"y",mgd:"n",dist:null,move:"-",sp:"-",s:5,url:"https://www.harvardhousingoffcampus.com/housing/property/1410-columbia-rd-unit-6a/8nfvp53",memo:"제외: 신청비 1인 $500 (주의 신호)"},\n'
+ ' {n:"4 Elko St B3",area:"Brighton",built:null,unit:"2베드 600",sq:600,rent:2350,rentT:"Plus Fees",park:"-",est:"-",estLo:null,wd:"y",gym:"n",mgd:"n",dist:null,move:"-",sp:"-",s:5,url:"https://www.harvardhousingoffcampus.com/housing/property/4-elko-st-unit-b3/xcqmrwq",memo:"제외: 신청비 1인 $500, 600 sq ft로 좁음"},\n')
+T = json.load(open('data/transit.json', encoding='utf-8'))
+# shuttle hub + transit commute estimate to 401 Park Drive (agent estimates)
+EX = {
+"Schoolhouse at Lower Mills":["Mattapan 트롤리 → Ashmont(Red) → JFK/UMass에서 LMA 셔틀","55~70분"],
+"E3 Apartments":["Green B → Kenmore 환승·도보, 또는 버스 66","35~45분"],
+"Linden Apartments":["통근열차 Needham선 → Ruggles에서 LMA 셔틀","45~60분"],
+"Imprint":["Fields Corner(Red) → JFK/UMass에서 LMA 셔틀","50~60분"],
+"The Proof":["Readville 통근열차 → Ruggles에서 LMA 셔틀","50~65분"],
+"River Park Lofts":["버스 71 → Harvard Square에서 M2 셔틀","55~70분"],
+"Tempo Cambridge":["Alewife(Red) → Harvard Square에서 M2 셔틀","45~55분"],
+"Jade":["버스 → Wellington(Orange) → Ruggles에서 LMA 셔틀","60~75분"],
+"Neponset Landing":["North Quincy(Red) → JFK/UMass에서 LMA 셔틀","45~55분"],
+"MetroMark":["Forest Hills(Orange) → Ruggles에서 LMA 셔틀, 또는 버스 39","30~40분"],
+"Harbor Point":["버스 8이 LMA·Brookline Ave까지 직행. JFK/UMass LMA 셔틀도 가능","40~50분"],
+"175 Cottage St #702":["버스 → Wood Island(Blue) → 환승","55~65분"],
+"36 Gove St":["Maverick(Blue) → Government Center → Green D Fenway","40~50분"],
+"110 Lucerne St":["Morton St 통근열차 또는 버스 28 → Ruggles에서 LMA 셔틀","45~55분"],
+"Velo Forest Hills":["Forest Hills(Orange) → Ruggles에서 LMA 셔틀, 또는 버스 39","30~40분"],
+"1550 on the Charles":["Boston Landing 통근열차 또는 Green B → Kenmore","40~50분"],
+"Dot Block":["Savin Hill(Red) → JFK/UMass에서 LMA 셔틀 또는 버스 8","40~50분"],
+"87 Murdock St":["Green B → Kenmore 환승·도보","35~45분"],
+"CHR Coolidge Corner":["Green C 또는 도보 15분","15~20분"],
+"Parmelee Court":["버스 47·8 직행","20~25분"],
+"Gamma North Quincy":["North Quincy(Red) → JFK/UMass에서 LMA 셔틀","45~55분"],
+"3 Essex St G2":["Community College(Orange) → Ruggles","45~55분"],
+"356-358 Main St G2":["Community College(Orange) → Ruggles","45~55분"],
+"1410 Columbia Rd 6A":["Andrew(Red) → JFK/UMass LMA 셔틀 또는 버스","40~50분"],
+"4 Elko St B3":["버스 65·66 또는 Green B","35~45분"],
+}
+data = "const GEO=%s;\nconst TR=%s;\nconst EX=%s;\nconst SHAPES=%s;\n" % (
+  json.dumps(T['GEO'],ensure_ascii=False), json.dumps(T['TR'],ensure_ascii=False),
+  json.dumps(EX,ensure_ascii=False), json.dumps(T['SHAPES']))
+tpl = open('template.html', encoding='utf-8').read()
+out = tpl.replace('/*DATA*/', L + '\n' + data)
+open('index.html','w',encoding='utf-8').write(out)
+names = re.findall(r'\{n:"([^"]+)"', L)
+missing = [n for n in names if n not in T['GEO'] or not T['GEO'][n]]
+print('listings', len(names), 'missing geo', missing, 'missing EX', [n for n in names if n not in EX])

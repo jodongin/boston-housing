@@ -1,0 +1,5 @@
+MEMORY.md
+.agents/
+boston-housing-db.html
+*.pyc
+.DS_Store
