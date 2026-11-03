@@ -38,7 +38,7 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 <div class="wrap">
 <details class="card" open><summary>확정된 기준</summary><div class="crit" id="crit" style="margin-top:8px"></div></details>
 <div class="bar" id="filters"></div>
-<div class="leg"><span><i class="dot" style="background:#16a34a"></i>1순위 그룹</span><span><i class="dot" style="background:#2563eb"></i>후보</span><span><i class="dot" style="background:#d97706"></i>보류·조건부</span><span><i class="dot" style="background:#dc2626"></i>예산 초과</span><span><i class="dot" style="background:#9ca3af"></i>제외</span><span>★ 아내 직장(401 Park Dr)</span><span>선: 지하철 노선</span></div>
+<div class="leg"><span><i class="dot" style="background:#16a34a"></i>1순위 그룹</span><span><i class="dot" style="background:#2563eb"></i>후보</span><span><i class="dot" style="background:#d97706"></i>보류·조건부</span><span><i class="dot" style="background:#dc2626"></i>예산 초과</span><span><i class="dot" style="background:#9ca3af"></i>제외</span><span>★ 기준점 (Landmark Center)</span><span>선: 지하철 노선</span></div>
 <div id="map"></div>
 <div class="bar"><input id="q" placeholder="이름·지역·메모 검색"><small id="cnt"></small></div>
 <div class="tw"><table><thead><tr id="head"></tr></thead><tbody id="body"></tbody></table></div>
@@ -46,17 +46,17 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 <small>· M2 (Harvard Square ↔ Central ↔ Kenmore ↔ LMA): Harvard ID 있으면 무료, 없으면 1회권 구매. 가족은 티켓 구매 필요.<br>
 · LMA 셔틀 (Ruggles, JFK/UMass, Lansdowne 등 ↔ LMA): Longwood Collective 회원기관 ID 필요. 평일만 운행.<br>
 · Landmark 셔틀 (401 Park Dr ↔ Harvard Chan School): Harvard ID 필요.<br>
-· 아내분 소속(Harvard Pilgrim Health Care Institute) ID로 탈 수 있는지는 아직 확인 전.</small></div>
+· 소속 기관 ID로 탈 수 있는지는 기관별로 확인 필요.</small></div>
 <p><small>예상 월 총액 = 월세(+필수 수수료) + 주차 + 공과금 약 $100~150 (추정). 지하철 도보 시간은 직선거리 × 1.3 기준 추정.</small></p>
 </div>
 <script>
 const UPDATED="2026-11-03";
-const CRITERIA=[["예산","월세·주차·공과금 합쳐 월 약 $3,000"],["구조","1베드 또는 2베드 (2베스 불필요)"],["세탁","집 안 세탁기·건조기 필수"],["건물","관리형 아파트 선호, 반지하 X"],["헬스장","있으면 가산점"],["주차","차 구매 예정 → 주차비 중요"],["입주","11/24 출국, 11월 말~12월 초"],["기간","2028년 6월까지 가능성 높음"],["출퇴근","401 Park Drive, 주로 차, 편도 30분 이내, 원격근무 가능"],["대중교통","지하철·버스·하버드/LMA 셔틀 접근성 반영"],["가구","있으면 좋음, 없으면 IKEA·Amazon"]];
+const CRITERIA=[["예산","월세·주차·공과금 합쳐 월 약 $3,000 이하"],["구조","1베드 또는 2베드"],["세탁","집 안 세탁기·건조기 필수"],["건물","관리형 아파트 선호, 반지하 제외"],["헬스장","있으면 가산점"],["주차","주차 가능 여부·주차비 반영"],["입주","11월 말~12월 초 입주 가능"],["기준점","Landmark Center (401 Park Dr, Fenway)"],["거리","기준점에서 차로 편도 30분 이내"],["대중교통","지하철·버스·하버드/LMA 셔틀 접근성 반영"]];
 /*DATA*/
 const ST={1:["1순위 그룹","s1","#16a34a"],2:["후보","s2","#2563eb"],3:["보류·조건부","s3","#d97706"],4:["예산 초과","s4","#dc2626"],5:["제외","s5","#9ca3af"]};
 const YN=v=>v==="y"?'<span class="ok">O</span>':v==="n"?'<span class="no">X</span>':v==="?"?'<span class="q">?</span>':'-';
 L.forEach(r=>{const t=TR[r.n];if(t){r.dist=t.distWork;r.subTxt=`${t.sub.name} (${t.sub.lines}) 도보 ${t.sub.walk}분`;r.subWalk=t.sub.walk;r.crTxt=t.cr?`${t.cr.name} (${t.cr.lines}) 도보 ${t.cr.walk}분`:"";r.bus=t.buses.length?t.buses.join(", "):"-";}const e=EX[r.n];if(e){r.shuttle=e[0];r.tcom=e[1];r.tcomLo=parseInt(e[1]);}r.geo=GEO[r.n];});
-const COLS=[["s","상태"],["n","매물"],["link","링크"],["area","지역"],["unit","집 (sq ft)"],["rent","월세"],["park","주차"],["estLo","예상 월 총액"],["wd","세탁기"],["gym","헬스장"],["mgd","관리형"],["dist","거리(mi)"],["subWalk","가까운 지하철"],["bus","LMA 직행 버스"],["tcomLo","대중교통 출근(추정)"],["move","입주"],["sp","혜택"],["memo","메모"]];
+const COLS=[["s","상태"],["n","매물"],["link","링크"],["area","지역"],["unit","집 (sq ft)"],["rent","월세"],["park","주차"],["estLo","예상 월 총액"],["wd","세탁기"],["gym","헬스장"],["mgd","관리형"],["dist","기준점 거리(mi)"],["subWalk","가까운 지하철"],["bus","LMA 직행 버스"],["tcomLo","대중교통 출근(추정)"],["move","입주"],["sp","혜택"],["memo","메모"]];
 let sortK="s",asc=true,fs=new Set([1,2,3,4]);
 document.getElementById("upd").textContent=UPDATED;
 document.getElementById("crit").innerHTML=CRITERIA.map(([k,v])=>`<div><b>${k}</b>${v}</div>`).join("");
@@ -66,10 +66,10 @@ window.L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution
 function dec(s){let i=0,la=0,lo=0,o=[];while(i<s.length){let b,sh=0,r=0;do{b=s.charCodeAt(i++)-63;r|=(b&31)<<sh;sh+=5}while(b>=32);la+=r&1?~(r>>1):r>>1;sh=0;r=0;do{b=s.charCodeAt(i++)-63;r|=(b&31)<<sh;sh+=5}while(b>=32);lo+=r&1?~(r>>1):r>>1;o.push([la/1e5,lo/1e5])}return o}
 const LC={Red:"#DA291C",Orange:"#ED8B00",Blue:"#003DA5","Green-B,Green-C,Green-D,Green-E":"#00843D",Mattapan:"#DA291C"};
 Object.entries(SHAPES).forEach(([k,arr])=>arr.forEach(p=>window.L.polyline(dec(p),{color:LC[k],weight:3,opacity:.55}).addTo(M)));
-window.L.marker(GEO.WORK,{icon:window.L.divIcon({html:'<div style="font-size:26px;line-height:26px;color:#7c3aed">★</div>',className:"",iconSize:[26,26],iconAnchor:[13,13]})}).addTo(M).bindPopup("<b>아내 직장</b><br>401 Park Drive (Landmark Center)<br>Green D Fenway역 도보 1분 · 버스 8, 19, 47, 60");
+window.L.marker(GEO.WORK,{icon:window.L.divIcon({html:'<div style="font-size:26px;line-height:26px;color:#7c3aed">★</div>',className:"",iconSize:[26,26],iconAnchor:[13,13]})}).addTo(M).bindPopup("<b>기준점</b><br>Landmark Center (401 Park Drive)<br>Green D Fenway역 도보 1분 · 버스 8, 19, 47, 60");
 const MK={};
 L.forEach(r=>{if(!r.geo)return;const m=window.L.circleMarker(r.geo,{radius:r.s<=2?9:7,color:"#fff",weight:2,fillColor:ST[r.s][2],fillOpacity:.95});
-m.bindPopup(`<div class="pop"><b>${r.n}</b> <span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span><br>${r.area} · ${r.unit}<br>월세 ${r.rent?"$"+r.rent.toLocaleString():"-"} <small>${r.rentT}</small> · 주차 ${r.park}<br>예상 월 총액 <b>${r.est}</b><br>세탁기 ${YN(r.wd)} 헬스장 ${YN(r.gym)} 관리형 ${YN(r.mgd)} · 직장까지 ${r.dist??"-"}mi<br>🚇 ${r.subTxt||"-"}${r.crTxt?"<br>🚆 "+r.crTxt:""}<br>🚌 LMA 직행 버스: ${r.bus||"-"}<br>🚐 ${r.shuttle||"-"} (${r.tcom||"-"})<br><small>${r.memo}</small><br>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 페이지 열기 →</a>`:""}</div>`);
+m.bindPopup(`<div class="pop"><b>${r.n}</b> <span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span><br>${r.area} · ${r.unit}<br>월세 ${r.rent?"$"+r.rent.toLocaleString():"-"} <small>${r.rentT}</small> · 주차 ${r.park}<br>예상 월 총액 <b>${r.est}</b><br>세탁기 ${YN(r.wd)} 헬스장 ${YN(r.gym)} 관리형 ${YN(r.mgd)} · 기준점까지 ${r.dist??"-"}mi<br>🚇 ${r.subTxt||"-"}${r.crTxt?"<br>🚆 "+r.crTxt:""}<br>🚌 LMA 직행 버스: ${r.bus||"-"}<br>🚐 ${r.shuttle||"-"} (${r.tcom||"-"})<br><small>${r.memo}</small><br>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 페이지 열기 →</a>`:""}</div>`);
 m.addTo(M);MK[r.n]=m;});
 const fb=document.getElementById("filters");
 Object.entries(ST).forEach(([k,[t]])=>{const b=document.createElement("button");b.textContent=t;b.className=fs.has(+k)?"on":"";b.onclick=()=>{fs.has(+k)?fs.delete(+k):fs.add(+k);b.className=fs.has(+k)?"on":"";render()};fb.appendChild(b)});
