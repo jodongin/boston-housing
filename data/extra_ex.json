@@ -1,1 +1,166 @@
-{"Maxwell": ["버스 → Wellington(Orange) → Ruggles에서 LMA 셔틀", "60~75분"], "The Pioneer": ["버스 → Wellington(Orange) → Ruggles에서 LMA 셔틀", "60~75분"], "One North of Boston": ["버스(SL3·111) → 시내 환승", "50~65분"], "Axis Admiral's Hill": ["버스 111 → Haymarket 환승", "50~65분"], "The Batch Yard": ["Wellington(Orange) → Ruggles에서 LMA 셔틀", "50~60분"], "The 600": ["버스 → Sullivan/Wellington(Orange) 환승", "55~70분"], "Somerville Square": ["Gilman Square(Green E) → LMA역 직행 후 도보", "45~55분"], "48-75 Strathmore": ["Cleveland Circle(Green C) 또는 Reservoir(Green D) → Fenway역 직행", "20~30분"], "The Rozzie": ["Forest Hills(Orange) → Ruggles 셔틀 또는 버스 39", "40~55분"], "Parkway Apartments": ["버스 → Forest Hills(Orange) → Ruggles 셔틀", "50~65분"], "Stony Brook Commons": ["버스 → Forest Hills(Orange) → Ruggles 셔틀", "45~60분"], "148 Newton St Apt 3": ["버스 → Green B → Kenmore 환승", "40~50분"], "43 Liszt St #2A": ["버스 → Forest Hills(Orange) → Ruggles 셔틀", "45~60분"], "59 Brainerd Rd #313": ["Green B → Kenmore 환승·도보, 또는 버스 66", "35~45분"], "75 Willow Court": ["Andrew·JFK(Red) → LMA 셔틀 또는 버스 8", "35~45분"], "The Andi": ["Andrew(Red) → 버스 8 또는 LMA 셔틀", "35~45분"], "Jefferson at Dedham Station": ["통근열차(Franklin선) → Ruggles·Back Bay", "50~65분"], "197 Green St #206": ["Green Street(Orange) → Ruggles 셔틀 또는 도보", "30~40분"], "27 Wheeler St #124": ["Alewife(Red) → Harvard Square에서 M2 셔틀", "45~55분"], "98A 2nd St #1": ["Lechmere(Green E) → LMA역 직행 후 도보", "35~45분"], "Boston East": ["Maverick(Blue) → Government Center → Green D", "45~55분"], "Hancock Village": ["버스 51 → Forest Hills(Orange) 또는 Reservoir(Green D) 환승", "45~60분"], "Transit 7 At Hyde Park Station": ["Hyde Park 통근열차 → Ruggles·Back Bay 환승", "45~60분"], "Elan Union Market": ["버스 70 → Central(Red) 또는 Kenmore 방면 환승", "45~60분"], "Gables Arsenal Street": ["버스 70 → Central(Red) 또는 Kenmore 방면 환승", "45~60분"], "Bremen 282": ["Airport(Blue) → Government Center → Green D", "40~50분"], "Windsor at Cambridge Park": ["Alewife(Red) → Harvard Square에서 M2 셔틀", "45~55분"], "The Royal Belmont": ["Alewife(Red) → Harvard Square에서 M2 셔틀", "45~55분"], "The Laurent": ["Alewife(Red) → Harvard Square에서 M2 셔틀", "45~55분"], "Urbane at Alewife": ["Alewife(Red) → Harvard Square에서 M2 셔틀", "45~55분"], "Tandem": ["버스 → Wellington(Orange) → Ruggles 셔틀", "55~70분"], "Trac 75": ["Green B → Kenmore 환승, 또는 버스 66", "35~45분"], "AVA Somerville": ["Assembly(Orange) → Ruggles 셔틀", "40~50분"]}
+{
+"Maxwell": [
+"버스 → Wellington(Orange) → Ruggles에서 LMA 셔틀",
+"60~75분"
+],
+"The Pioneer": [
+"버스 → Wellington(Orange) → Ruggles에서 LMA 셔틀",
+"60~75분"
+],
+"One North of Boston": [
+"버스(SL3·111) → 시내 환승",
+"50~65분"
+],
+"Axis Admiral's Hill": [
+"버스 111 → Haymarket 환승",
+"50~65분"
+],
+"The Batch Yard": [
+"Wellington(Orange) → Ruggles에서 LMA 셔틀",
+"50~60분"
+],
+"The 600": [
+"버스 → Sullivan/Wellington(Orange) 환승",
+"55~70분"
+],
+"Somerville Square": [
+"Gilman Square(Green E) → LMA역 직행 후 도보",
+"45~55분"
+],
+"48-75 Strathmore": [
+"Cleveland Circle(Green C) 또는 Reservoir(Green D) → Fenway역 직행",
+"20~30분"
+],
+"The Rozzie": [
+"Forest Hills(Orange) → Ruggles 셔틀 또는 버스 39",
+"40~55분"
+],
+"Parkway Apartments": [
+"버스 → Forest Hills(Orange) → Ruggles 셔틀",
+"50~65분"
+],
+"Stony Brook Commons": [
+"버스 → Forest Hills(Orange) → Ruggles 셔틀",
+"45~60분"
+],
+"148 Newton St Apt 3": [
+"버스 → Green B → Kenmore 환승",
+"40~50분"
+],
+"43 Liszt St #2A": [
+"버스 → Forest Hills(Orange) → Ruggles 셔틀",
+"45~60분"
+],
+"59 Brainerd Rd #313": [
+"Green B → Kenmore 환승·도보, 또는 버스 66",
+"35~45분"
+],
+"75 Willow Court": [
+"Andrew·JFK(Red) → LMA 셔틀 또는 버스 8",
+"35~45분"
+],
+"The Andi": [
+"Andrew(Red) → 버스 8 또는 LMA 셔틀",
+"35~45분"
+],
+"Jefferson at Dedham Station": [
+"통근열차(Franklin선) → Ruggles·Back Bay",
+"50~65분"
+],
+"197 Green St #206": [
+"Green Street(Orange) → Ruggles 셔틀 또는 도보",
+"30~40분"
+],
+"27 Wheeler St #124": [
+"Alewife(Red) → Harvard Square에서 M2 셔틀",
+"45~55분"
+],
+"98A 2nd St #1": [
+"Lechmere(Green E) → LMA역 직행 후 도보",
+"35~45분"
+],
+"Boston East": [
+"Maverick(Blue) → Government Center → Green D",
+"45~55분"
+],
+"Hancock Village": [
+"버스 51 → Forest Hills(Orange) 또는 Reservoir(Green D) 환승",
+"45~60분"
+],
+"Transit 7 At Hyde Park Station": [
+"Hyde Park 통근열차 → Ruggles·Back Bay 환승",
+"45~60분"
+],
+"Elan Union Market": [
+"버스 70 → Central(Red) 또는 Kenmore 방면 환승",
+"45~60분"
+],
+"Gables Arsenal Street": [
+"버스 70 → Central(Red) 또는 Kenmore 방면 환승",
+"45~60분"
+],
+"Bremen 282": [
+"Airport(Blue) → Government Center → Green D",
+"40~50분"
+],
+"Windsor at Cambridge Park": [
+"Alewife(Red) → Harvard Square에서 M2 셔틀",
+"45~55분"
+],
+"The Royal Belmont": [
+"Alewife(Red) → Harvard Square에서 M2 셔틀",
+"45~55분"
+],
+"The Laurent": [
+"Alewife(Red) → Harvard Square에서 M2 셔틀",
+"45~55분"
+],
+"Urbane at Alewife": [
+"Alewife(Red) → Harvard Square에서 M2 셔틀",
+"45~55분"
+],
+"Tandem": [
+"버스 → Wellington(Orange) → Ruggles 셔틀",
+"55~70분"
+],
+"Trac 75": [
+"Green B → Kenmore 환승, 또는 버스 66",
+"35~45분"
+],
+"AVA Somerville": [
+"Assembly(Orange) → Ruggles 셔틀",
+"40~50분"
+],
+"Maverick Landing": [
+"Blue Line → Government Center → Green D (Google 평일 9시 도착 기준)",
+"39~47분"
+],
+"26 Medfield St #6": [
+"걸어서 0.2 mi",
+"5분"
+],
+"187 Highland St #3": [
+"Orange Line Jackson Sq → 버스 CT3·47 (Google 기준)",
+"35~40분"
+],
+"44 Vale St #1": [
+"Orange Line Jackson Sq → 버스 CT3·8·47 (Google 기준)",
+"32~37분"
+],
+"3 Boylston St #1": [
+"버스 39 → Green D (Google 기준)",
+"28~36분"
+],
+"258 Cypress St #3": [
+"Green D Brookline Hills → Fenway 한 번에 (Google 기준)",
+"20분"
+],
+"Verge Residences": [
+"버스 85 → 환승 (Google 기준)",
+"38~40분"
+],
+"203 3rd St #3": [
+"버스 85 → 환승 (Google 기준)",
+"34~36분"
+]
+}
