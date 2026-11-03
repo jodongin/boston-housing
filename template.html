@@ -30,6 +30,7 @@ a{color:var(--a);text-decoration:none}a:hover{text-decoration:underline}
 .ok{color:#15803d}.no{color:#b91c1c}.q{color:#b45309}
 .note{color:var(--m);font-size:12px;max-width:300px}.over{color:#b91c1c;font-weight:600}.in{color:#15803d;font-weight:600}
 small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;margin-right:12px;font-size:12px}
+.fp{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px 16px;margin-top:8px}.fp label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--m)}.fp select,.fp input[type=number]{border:1px solid var(--b);border-radius:8px;padding:6px 8px;font-size:14px;color:#111;background:#fff}.chk{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:13px}.chk label{flex-direction:row;align-items:center;gap:5px;color:#111;font-size:13px}.rst{border:1px solid var(--b);background:#fff;border-radius:8px;padding:6px 12px;cursor:pointer}
 .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
 .pop{font-size:13px;line-height:1.5;min-width:230px}.pop b{font-size:14px}
 </style></head><body>
@@ -38,6 +39,24 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 <div class="wrap">
 <details class="card" open><summary>확정된 기준</summary><div class="crit" id="crit" style="margin-top:8px"></div></details>
 <div class="bar" id="filters"></div>
+<details class="card" open><summary>조건 필터</summary>
+<div class="fp">
+<label>구조<select id="f_beds"><option value="">전체</option><option value="1">1베드</option><option value="2">2베드</option></select></label>
+<label>예상 월 총액 (최대)<select id="f_est"><option value="">전체</option><option value="2800">$2,800 이하</option><option value="3000">$3,000 이하</option><option value="3200">$3,200 이하</option><option value="known">금액 확인된 곳만</option></select></label>
+<label>월세 (최대, $)<input type="number" id="f_rent" step="50" placeholder="예: 2700"></label>
+<label>자차 출근 (가장 막힐 때 최대)<select id="f_drv"><option value="">전체</option><option value="25">25분 이내</option><option value="30">30분 이내</option><option value="40">40분 이내</option><option value="55">55분 이내</option></select></label>
+<label>자차 출근 (보통 최소)<select id="f_drvlo"><option value="">전체</option><option value="15">15분 이내</option><option value="20">20분 이내</option><option value="25">25분 이내</option></select></label>
+<label>건축 연도 (이후)<select id="f_built"><option value="">전체</option><option value="2020">2020년 이후</option><option value="2015">2015년 이후</option><option value="2000">2000년 이후</option><option value="1980">1980년 이후</option></select></label>
+<label>면적 (최소, sq ft)<input type="number" id="f_sq" step="50" placeholder="예: 650"></label>
+<label>지하철역 도보 (최대)<select id="f_walk"><option value="">전체</option><option value="10">10분 이내</option><option value="15">15분 이내</option><option value="20">20분 이내</option></select></label>
+</div>
+<div class="chk" style="margin-top:10px">
+<label><input type="checkbox" id="f_wd">집 안 세탁기 확인됨</label>
+<label><input type="checkbox" id="f_gym">헬스장 있음</label>
+<label><input type="checkbox" id="f_mgd">관리형 건물</label>
+<label><input type="checkbox" id="f_lma">LMA 직행 버스 있음</label>
+<button class="rst" id="f_reset">필터 초기화</button>
+</div></details>
 <div class="leg"><span><i class="dot" style="background:#16a34a"></i>1순위 그룹</span><span><i class="dot" style="background:#2563eb"></i>후보</span><span><i class="dot" style="background:#d97706"></i>보류·조건부</span><span><i class="dot" style="background:#dc2626"></i>예산 초과</span><span><i class="dot" style="background:#9ca3af"></i>제외</span><span>★ 기준점 (Landmark Center)</span><span>선: 지하철 노선</span><span>점에 마우스를 올리면 정보가 잠깐 뜨고, 클릭하면 고정돼요</span></div>
 <div id="map"></div>
 <div class="bar"><input id="q" placeholder="이름·지역·메모 검색"><small id="cnt"></small></div>
@@ -50,12 +69,12 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 <p><small>예상 월 총액 = 월세(+필수 수수료) + 주차 + 공과금 약 $100~150 (추정). 지하철 도보 시간은 직선거리 × 1.3 기준 추정.</small></p>
 </div>
 <script>
-const UPDATED="2026-11-03 (5차)";
+const UPDATED="2026-11-03 (6차)";
 const CRITERIA=[["예산","월세·주차·공과금 합쳐 월 약 $3,000 이하"],["구조","1베드 또는 2베드"],["세탁","집 안 세탁기·건조기 필수"],["건물","관리형 아파트 선호, 반지하 제외"],["헬스장","있으면 가산점"],["주차","주차 가능 여부·주차비 반영"],["입주","11월 말~12월 초 입주 가능"],["기준점","Landmark Center (401 Park Dr, Fenway)"],["거리","기준점에서 차로 편도 30분 이내"],["대중교통","지하철·버스·하버드/LMA 셔틀 접근성 반영"]];
 /*DATA*/
 const ST={1:["1순위 그룹","s1","#16a34a"],2:["후보","s2","#2563eb"],3:["보류·조건부","s3","#d97706"],4:["예산 초과","s4","#dc2626"],5:["제외","s5","#9ca3af"]};
 const YN=v=>v==="y"?'<span class="ok">O</span>':v==="n"?'<span class="no">X</span>':v==="?"?'<span class="q">?</span>':'-';
-L.forEach(r=>{const t=TR[r.n];if(t){r.dist=t.distWork;r.subTxt=`${t.sub.name} (${t.sub.lines}) 도보 ${t.sub.walk}분`;r.subWalk=t.sub.walk;r.crTxt=t.cr?`${t.cr.name} (${t.cr.lines}) 도보 ${t.cr.walk}분`:"";r.bus=t.buses.length?t.buses.join(", "):"-";}const e=EX[r.n];if(e){r.shuttle=e[0];r.tcom=e[1];r.tcomLo=parseInt(e[1]);}r.geo=GEO[r.n];const dv=DRIVE[r.n];if(dv){r.drv=dv.lo===dv.hi?`${dv.lo}분`:`${dv.lo}~${dv.hi}분`;r.drvLo=dv.lo;r.drvMi=dv.mi;}});
+L.forEach(r=>{const t=TR[r.n];if(t){r.dist=t.distWork;r.subTxt=`${t.sub.name} (${t.sub.lines}) 도보 ${t.sub.walk}분`;r.subWalk=t.sub.walk;r.crTxt=t.cr?`${t.cr.name} (${t.cr.lines}) 도보 ${t.cr.walk}분`:"";r.bus=t.buses.length?t.buses.join(", "):"-";}const e=EX[r.n];if(e){r.shuttle=e[0];r.tcom=e[1];r.tcomLo=parseInt(e[1]);}r.geo=GEO[r.n];r.beds=/2베드/.test(r.unit)?(/1베드/.test(r.unit)?[1,2]:[2]):[1];const dv=DRIVE[r.n];if(dv){r.drvHi=dv.hi;r.drv=dv.lo===dv.hi?`${dv.lo}분`:`${dv.lo}~${dv.hi}분`;r.drvLo=dv.lo;r.drvMi=dv.mi;}});
 const COLS=[["s","상태"],["n","매물"],["link","링크"],["area","지역"],["built","건축 연도"],["unit","집 (sq ft)"],["rent","월세"],["park","주차"],["estLo","예상 월 총액"],["wd","세탁기"],["gym","헬스장"],["mgd","관리형"],["dist","기준점 거리(mi)"],["drvLo","자차 (평일 8:30 출발)"],["subWalk","가까운 지하철"],["bus","LMA 직행 버스"],["tcomLo","대중교통 출근(추정)"],["move","입주"],["sp","혜택"],["memo","메모"]];
 let sortK="s",asc=true,fs=new Set([1,2,3,4]);
 document.getElementById("upd").textContent=UPDATED;
@@ -78,8 +97,23 @@ Object.entries(ST).forEach(([k,[t]])=>{const b=document.createElement("button");
 document.getElementById("head").innerHTML=COLS.map(([k,t])=>`<th data-k="${k}">${t}</th>`).join("");
 document.querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;asc=sortK===k?!asc:true;sortK=k;render()});
 document.getElementById("q").oninput=render;
+const FIDS=["f_beds","f_est","f_rent","f_drv","f_drvlo","f_built","f_sq","f_walk","f_wd","f_gym","f_mgd","f_lma"];
+function getF(){const g=id=>document.getElementById(id);return{beds:g("f_beds").value,est:g("f_est").value,rent:+g("f_rent").value||0,drv:+g("f_drv").value||0,drvlo:+g("f_drvlo").value||0,built:+g("f_built").value||0,sq:+g("f_sq").value||0,walk:+g("f_walk").value||0,wd:g("f_wd").checked,gym:g("f_gym").checked,mgd:g("f_mgd").checked,lma:g("f_lma").checked}}
+function passF(r,F){
+ if(F.beds&&!r.beds.includes(+F.beds))return false;
+ if(F.est){if(r.estLo==null)return false;if(F.est!=="known"&&r.estLo>+F.est)return false;}
+ if(F.rent&&(!r.rent||r.rent>F.rent))return false;
+ if(F.drv&&(r.drvHi==null||r.drvHi>F.drv))return false;
+ if(F.drvlo&&(r.drvLo==null||r.drvLo>F.drvlo))return false;
+ if(F.built&&(!r.built||r.built<F.built))return false;
+ if(F.sq&&(!r.sq||r.sq<F.sq))return false;
+ if(F.walk&&(r.subWalk==null||r.subWalk>F.walk))return false;
+ if(F.wd&&r.wd!=="y")return false;if(F.gym&&r.gym!=="y")return false;if(F.mgd&&r.mgd!=="y")return false;
+ if(F.lma&&(!r.bus||r.bus==="-"))return false;return true}
+FIDS.forEach(id=>{const el=document.getElementById(id);el.addEventListener(el.type==="number"?"input":"change",render)});
+document.getElementById("f_reset").onclick=()=>{FIDS.forEach(id=>{const el=document.getElementById(id);if(el.type==="checkbox")el.checked=false;else el.value=""});render()};
 function render(){const q=document.getElementById("q").value.toLowerCase();
- let rows=L.filter(r=>fs.has(r.s)&&(!q||JSON.stringify(r).toLowerCase().includes(q)));
+ const F=getF();let rows=L.filter(r=>fs.has(r.s)&&(!q||JSON.stringify(r).toLowerCase().includes(q))&&passF(r,F));
  L.forEach(r=>{const m=MK[r.n];if(!m)return;rows.includes(r)?m.addTo(M):m.remove()});
  rows.sort((a,b)=>{let x=a[sortK],y=b[sortK];if(x==null)return 1;if(y==null)return -1;if(typeof x==="number")return asc?x-y:y-x;return asc?String(x).localeCompare(String(y)):String(y).localeCompare(String(x))});
  document.getElementById("cnt").textContent=`${rows.length}곳 표시 / 전체 ${L.length}곳 · 행에 마우스를 올리면 지도에서 강조, 누르면 정보창이 열려요`;
