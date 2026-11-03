@@ -11,7 +11,7 @@ header{padding:16px 20px 8px}h1{font-size:20px;margin:0 0 4px}.sub{color:var(--m
 .wrap{padding:0 20px 24px}
 #map{height:100%;min-height:300px;border:1px solid var(--b);border-radius:10px}
 .split{display:flex;gap:0;height:calc(100vh - 16px);margin:10px 0}
-.split .lp{flex:0 0 var(--lw,62%);min-width:0;display:flex;flex-direction:column}
+.split .lp{flex:0 0 var(--lw,68%);min-width:0;display:flex;flex-direction:column}
 .split .lp .tw{flex:1;overflow:auto}
 .split .lp thead th{position:sticky;top:0;z-index:2}
 .split .rp{flex:1;min-width:0}
@@ -32,7 +32,7 @@ details summary{cursor:pointer;font-weight:600}
 .bar input{border:1px solid var(--b);border-radius:8px;padding:6px 10px;min-width:200px}.bar input[type=checkbox]{min-width:0;padding:0}.bar label{display:inline-flex;align-items:center;gap:4px}
 .tw{overflow-x:auto;border:1px solid var(--b);border-radius:10px;background:#fff}
 table{width:100%;border-collapse:collapse;min-width:720px}
-th,td{padding:8px 8px;border-bottom:1px solid var(--b);text-align:left;vertical-align:top}
+th,td{padding:8px 6px;border-bottom:1px solid var(--b);text-align:left;vertical-align:top}
 th{background:#f3f4f6;font-weight:600;cursor:pointer;white-space:nowrap}
 tr.row:hover{background:#f9fafb;cursor:pointer}td.n{text-align:right;white-space:nowrap}
 a{color:var(--a);text-decoration:none}a:hover{text-decoration:underline}
@@ -47,14 +47,15 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 .unilbl{font-size:11px;padding:1px 5px;background:rgba(255,255,255,.85);border:1px solid #c4b5fd;color:#4c1d95;box-shadow:none}.unilbl:before{display:none}
 .delb{font-size:12px;padding:2px 8px;border:1px solid #fca5a5;background:#fff;color:#b91c1c;border-radius:6px;cursor:pointer;white-space:nowrap}.delb:hover{background:#fef2f2}.delb.rs{border-color:#86efac;color:#15803d}
 .sbar{height:5px;background:#e5e7eb;border-radius:3px;margin:3px 0}.sbar i{display:block;height:5px;background:#16a34a;border-radius:3px}
+td.c{text-align:center;width:40px;min-width:36px;padding-left:2px;padding-right:2px}th.cx{white-space:nowrap;font-size:11px;line-height:1.2;text-align:center;width:40px;min-width:36px;padding-left:2px;padding-right:2px}th{text-align:left}
 .addr{font-size:12px;color:#374151}.addr:hover{color:var(--a)}
-.xb{font-size:12px;padding:2px 8px;border:1px solid var(--b);background:#fff;border-radius:6px;cursor:pointer;white-space:nowrap;margin-bottom:4px}
+.xb{font-size:12px;padding:2px 8px;border:1px solid var(--b);background:#fff;border-radius:6px;cursor:pointer;white-space:nowrap;margin:2px 0}
 tr.det td{background:#f9fafb;padding:10px 14px}
 .detg{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 18px;font-size:12px;color:#374151}.detg b{display:block;color:#111;font-size:12px;margin-bottom:2px}.detg .wide{grid-column:1/-1}
 tr.opened{background:#f9fafb}
 .zb{display:inline-block;font-size:11px;font-weight:600;color:#fff;background:#006aff;border-radius:4px;padding:0 5px;margin-left:4px;vertical-align:1px}
 .st{cursor:pointer;font-size:15px;color:#d1d5db;user-select:none;letter-spacing:-1px}.st.on{color:#f59e0b}.st:hover{color:#fbbf24}
-.pop{font-size:13px;line-height:1.5;min-width:230px}.pop b{font-size:14px}
+.pop{font-size:13px;line-height:1.45;min-width:270px;max-width:320px}.pop .ph b{font-size:15px}.pop .pr{margin:3px 0 4px}.pop a{font-size:12px}.pt{width:100%;min-width:0;margin:6px 0;border-collapse:collapse}.pt th{width:38px;color:#6b7280;font-weight:500;background:none;padding:2px 6px 2px 0;border:0;cursor:default;font-size:12px}.pt td{padding:2px 0;border:0;font-size:12px}.pf{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid #e5e7eb;padding-top:6px}
 </style></head><body>
 <header><h1>보스턴 집 찾기</h1>
 <div class="sub">마지막 업데이트 <span id="upd"></span> · 가격은 확인한 날 기준 · 출근은 Google 지도 평일 8:30 출발 대중교통 · 치안은 2026 살인 사건 지점까지 직선거리</div></header>
@@ -96,7 +97,7 @@ tr.opened{background:#f9fafb}
 <p><small>예상 월 총액 = 월세(+필수 수수료) + 주차 + 공과금 약 $100~150 (추정). 지하철 도보 시간은 직선거리 × 1.3 기준 추정.</small></p>
 </div>
 <script>
-const UPDATED="2026-11-04 (27차)";
+const UPDATED="2026-11-04 (28차)";
 const SK="bh_settings_v1",STK="bh_stars_v1";let SV={};try{SV=JSON.parse(localStorage.getItem(SK)||"{}")}catch(e){}
 let MY={};try{MY=JSON.parse(localStorage.getItem(STK)||"{}")}catch(e){}
 const XK="bh_ex_v1";let XU={};try{XU=JSON.parse(localStorage.getItem(XK)||"{}")}catch(e){}
@@ -114,8 +115,9 @@ const YN=v=>v==="y"?'<span class="ok">O</span>':v==="n"?'<span class="no">X</spa
 L.forEach(r=>{const t=TR[r.n];if(t){r.dist=t.distWork;r.subTxt=`${t.sub.name} (${t.sub.lines}) 도보 ${t.sub.walk}분`;r.subWalk=t.sub.walk;r.crTxt=t.cr?`${t.cr.name} (${t.cr.lines}) 도보 ${t.cr.walk}분`:"";r.bus=t.buses.length?t.buses.join(", "):"-";}const e=EX[r.n];if(e){r.shuttle=e[0];r.tcom=e[1];r.tcomLo=parseInt(e[1]);}r.geo=GEO[r.n];r.my=(r.n in MY)?MY[r.n]:(r.star||0);const gg=GG[r.n]||{};r.gR=gg.r||null;r.gC=gg.c||null;r.gUrl=gg.url;r.gS=gg.s||"";r.beds=/2베드/.test(r.unit)?(/1베드/.test(r.unit)?[1,2]:[2]):[1];const dv=DRIVE[r.n];if(dv){r.drvHi=dv.hi;r.drv=dv.lo===dv.hi?`${dv.lo}분`:`${dv.lo}~${dv.hi}분`;r.drvLo=dv.lo;r.drvMi=dv.mi;}});
 L.forEach(r=>{const ev=EV[r.n]||{};r.tq=ev.tq||null;r.md=ev.md||null;r.score=ev.score??null;r.parts=ev.parts||null;r.rank=ev.rank??null;r.fail=ev.fail||null;r.fees=r.fees||"";r.tqArr=r.tq?(r.tq.pass?r.tq.arrAfter??5:900+(r.tq.direct?r.tq.direct.arrAfter:99)):null;r.mdD=r.md?r.md.d:null;});
 L.forEach(r=>{r.pgK=r.pg?Math.max(0,PG.indexOf(r.pg.st)):0;});
+L.forEach(r=>{r.bedsK=Math.max(...(r.beds||[0]));});
 L.forEach(r=>{r.s0=r.s;r.ux=!!XU[r.n]&&r.s0!==5;if(r.ux)r.s=5;});
-const COLS=[["rank","순위"],["n","매물 · 주소"],["rent","월세 · 예상 총액"],["tqArr","출근 (평일 8:30, 환승 없음)"],["mdD","치안"],["sq","집"],["s","상태 · 진행"],["my","별점"],["x",""]];
+const COLS=[["rank","순위"],["my","별점"],["n","매물 · 주소"],["rent","월세 · 총액"],["tqArr","출근 (8:30, 환승 없음)"],["sq","면적"],["bedsK","구조"],["wd","세탁기"],["gym","헬스장"],["mgd","관리형"],["s","상태 · 진행"],["mdD","치안"]];
 let sortK=SV.sortK||"rank",asc=SV.asc!==undefined?SV.asc:true,fs=new Set(SV.fs||[1,2,3,4]);
 document.getElementById("upd").textContent=UPDATED;
 document.getElementById("crit").innerHTML=CRITERIA.map(([k,v])=>`<div><b>${k}</b>${v}</div>`).join("");
@@ -129,13 +131,25 @@ window.L.marker(GEO.WORK,{icon:window.L.divIcon({html:'<div style="font-size:26p
 let pinned=null,overPopup=false,T=null;const MK={};
 M.on("popupopen",e=>{const el=e.popup.getElement();el.querySelectorAll(".popstars").forEach(ps=>{const r=L.find(x=>x.n===ps.dataset.n);if(r)ps.innerHTML=stars(r)});el.onmouseenter=()=>{overPopup=true;clearTimeout(T)};el.onmouseleave=()=>{overPopup=false;if(!pinned)M.closePopup()};});
 M.on("popupclose",e=>{overPopup=false;if(pinned&&e.popup._source===pinned)pinned=null;});
-const popHTML=r=>`<div class="pop"><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""} <span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span><br>${r.rank?`<b>${r.rank}위 · ${r.score.toFixed(1)}점</b><br>`:""}🚇 ${r.tq?(r.tq.pass?`${r.tq.line} ${r.tq.min}분 (도보 ${r.tq.walk??"?"}분, 환승 없음)`:"대중교통 기준 탈락"):"-"}<br>🛡 살인 지점까지 ${r.md?r.md.d.toFixed(2)+" mi":"-"}<br>내 별점 <span class="popstars" data-n="${r.n}">${stars(r)}</span> ${exBtn(r)}<br>📨 진행: ${pgCell(r)}<br>${r.addr?`<a href="${gmap(r.addr)}" target="_blank">📍 ${r.addr}</a><br>`:""}${r.area} · ${r.unit}<br>🏗 건축 ${r.built?r.built+"년":"미확인"}${r.reno?` (${r.reno}년 리모델링)`:""}<br>월세 ${r.rent?"$"+r.rent.toLocaleString():"-"} <small>${r.rentT}</small> · 주차 ${r.park}<br>예상 월 총액 <b>${r.est}</b><br>세탁기 ${YN(r.wd)} 헬스장 ${YN(r.gym)} 관리형 ${YN(r.mgd)}<br>⭐ 구글 ${r.gR?r.gR+" ("+r.gC+"개)":"리뷰 없음"} ${r.gUrl?`<a href="${r.gUrl}" target="_blank">리뷰 보기</a>`:""}${r.gS?`<br><small>${r.gS}</small>`:""} · 기준점까지 ${r.dist??"-"}mi<br>🚗 자차 ${r.drv||"-"} <small>(Google 지도, 평일 오전 8:30 출발 기준)</small><br>🚇 ${r.subTxt||"-"}${r.crTxt?"<br>🚆 "+r.crTxt:""}<br>🚌 LMA 직행 버스: ${r.bus||"-"}<br>🚐 ${r.shuttle||"-"} (${r.tcom||"-"})<br><small>${r.memo}</small><br>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 페이지 열기 →</a>`:""}</div>`;
+const popHTML=r=>`<div class="pop">
+<div class="ph"><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""}${r.src==="search"?' <span class="zb" style="background:#7c3aed">신규</span>':""}</div>
+<div class="pr"><span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span>${r.rank?` <b>${r.rank}위</b> <small>${r.score.toFixed(1)}점</small>`:""}${r.fail&&r.s===5?`<br><small class="no">${r.fail}</small>`:""}</div>
+${r.addr?`<div><a href="${gmap(r.addr)}" target="_blank">📍 ${r.addr}</a></div>`:""}
+<table class="pt">
+<tr><th>월세</th><td><b>${fmt$(r.rent)}</b> <small>· 총 ${r.estLo?"$"+r.estLo.toLocaleString():"?"}</small></td></tr>
+<tr><th>출근</th><td>${r.tq?(r.tq.pass?`<b>${r.tq.line}</b> ${r.tq.min}분 <small>(도보 ${r.tq.walk??"?"}분 · ${r.tq.dep}→${r.tq.arr})</small>`:'<span class="no">탈락</span>'):"-"}</td></tr>
+<tr><th>집</th><td>${bedTxt(r).replace(/<br>/g," ")}${r.sq?` · ${r.sq.toLocaleString()} sq ft`:""}</td></tr>
+<tr><th>시설</th><td>세탁기 ${YN(r.wd)} · 헬스장 ${YN(r.gym)} · 관리형 ${YN(r.mgd)}</td></tr>
+<tr><th>치안</th><td>${r.md?`살인 지점까지 <b class="${r.md.d>0.5?"in":"over"}">${r.md.d.toFixed(2)} mi</b>`:"-"}</td></tr>
+<tr><th>진행</th><td>${pgCell(r).replace(/<br>/g," ")}</td></tr>
+</table>
+<div class="pf"><span class="popstars" data-n="${r.n}">${stars(r)}</span>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 보기</a>`:""}${exBtn(r)}</div></div>`;
 L.forEach(r=>{if(!r.geo)return;const m=window.L.circleMarker(r.geo,{radius:r.s<=2?9:7,color:"#fff",weight:2,fillColor:ST[r.s][2],fillOpacity:.95});
 m.bindPopup(()=>popHTML(r));
 m.bindTooltip(r.n,{direction:"top",offset:[0,-10]});m.off("click");m.on("mouseover",()=>{clearTimeout(T);if(pinned){if(pinned!==m)m.openTooltip();return;}m.closeTooltip();m.openPopup();});m.on("mouseout",()=>{if(pinned){if(pinned!==m)m.closeTooltip();return;}T=setTimeout(()=>{if(!overPopup&&!pinned)m.closePopup()},200);});m.on("click",e=>{window.L.DomEvent.stop(e);pinned=null;m.closeTooltip();m.openPopup();pinned=m;});m.addTo(M);MK[r.n]=m;});
 const fb=document.getElementById("filters");
 Object.entries(ST).forEach(([k,[t]])=>{const b=document.createElement("button");b.textContent=t;b.className=fs.has(+k)?"on":"";b.onclick=()=>{fs.has(+k)?fs.delete(+k):fs.add(+k);b.className=fs.has(+k)?"on":"";render()};fb.appendChild(b)});
-document.getElementById("head").innerHTML=COLS.map(([k,t])=>`<th data-k="${k}">${t}</th>`).join("");
+document.getElementById("head").innerHTML=COLS.map(([k,t])=>`<th data-k="${k}"${["wd","gym","mgd"].includes(k)?' class="cx"':""}>${t}</th>`).join("");
 document.querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;asc=sortK===k?!asc:true;sortK=k;render()});
 document.getElementById("q").oninput=render;
 document.getElementById("allopen").onclick=()=>{ALLOPEN=!ALLOPEN;OPEN.clear();document.getElementById("allopen").textContent=ALLOPEN?"모두 접기":"모두 펼치기";render()};
@@ -166,14 +180,20 @@ function mdHTML(m){if(!m)return "-";return `<b class="${m.d>0.5?"in":"over"}">${
 function scoreHTML(r){if(r.score==null)return "<small>-</small>";const p=r.parts||{};return `<b>${r.score.toFixed(1)}</b><div class="sbar"><i style="width:${r.score}%"></i></div><small title="${Object.entries(p).map(([k,v])=>k+" "+v.toFixed(0)).join(", ")}">${Object.entries(p).map(([k,v])=>k+" "+v.toFixed(0)).join(" · ")}</small>`}
 const gmap=a=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(a);
 const OPEN=new Set();let ALLOPEN=false;
-function tqShort(q){if(!q)return "<small>미측정</small>";if(q.pass)return `<b>${q.line}</b> ${q.min}분<br><small>도보 ${q.walk??"?"}분 포함 · ${q.dep}→<b>${q.arr}</b></small>`;return `<span class="no">탈락</span><br><small>${q.direct?`환승 없이 ${q.direct.line} ${q.direct.arrAfter}분`:"환승 없는 경로 없음"}</small>`}
+function tqShort(q){if(!q)return "<small>미측정</small>";if(q.pass)return `<b>${shortLine(q.line)}</b> ${q.min}분<br><small>도보 ${q.walk??"?"}분 포함 · ${q.dep}→<b>${q.arr}</b></small>`;return `<span class="no">탈락</span><br><small>${q.direct?`환승 없이 ${q.direct.line} ${q.direct.arrAfter}분`:"환승 없는 경로 없음"}</small>`}
+function bedTxt(r){const u=r.unit||"";const b=[...new Set((u.match(/(스튜디오|\d)\s*베드/g)||[]).map(x=>x.replace(/\s/g,"")))];const ba=(u.match(/(\d(\.\d)?)\s*욕실/)||[])[1];return (b.join("·")||"-")+(ba?`<br><small>욕실 ${ba}</small>`:"")+(/Den/.test(u)?"<br><small>+Den</small>":"")+(/오피스/.test(u)?"<br><small>+오피스</small>":"")}
+const shortLine=s=>(s||"").replace("통근열차 Framingham/Worcester Line","통근열차 Worcester").replace("Framingham/Worcester Line","Worcester선");
 const CELL={
-rank:r=>`<td class="n" style="width:64px">${r.rank?`<b style="font-size:17px">${r.rank}</b><small>위</small><br><small>${r.score.toFixed(1)}점</small><div class="sbar"><i style="width:${r.score}%"></i></div>`:"<small>-</small>"}</td>`,
-n:r=>`<td style="min-width:200px"><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""}${r.src==="search"?' <span class="zb" style="background:#7c3aed">신규</span>':""}<br>${r.addr?`<a class="addr" href="${gmap(r.addr)}" target="_blank" onclick="event.stopPropagation()" title="Google 지도에서 열기">📍 ${r.addr}</a>`:`<small>${r.area}</small>`}<br>${r.url?`<a class="go" href="${r.url}" target="_blank" onclick="event.stopPropagation()">매물 보기</a>`:""}${r.addr?"":` <small>${r.area}</small>`}</td>`,
+rank:r=>`<td class="n" style="width:56px">${r.rank?`<b style="font-size:17px">${r.rank}</b><small>위</small><br><small>${r.score.toFixed(1)}점</small><div class="sbar"><i style="width:${r.score}%"></i></div>`:"<small>-</small>"}</td>`,
+n:r=>`<td style="min-width:220px"><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""}${r.src==="search"?' <span class="zb" style="background:#7c3aed">신규</span>':""}<br>${r.addr?`<a class="addr" href="${gmap(r.addr)}" target="_blank" onclick="event.stopPropagation()" title="Google 지도에서 열기">📍 ${r.addr}</a>`:`<small>${r.area}</small>`}<br>${r.url?`<a class="go" href="${r.url}" target="_blank" onclick="event.stopPropagation()">매물 보기</a>`:""} <span onclick="event.stopPropagation()"><button class="xb" onclick="togDet('${esc(r.n)}')">${OPEN.has(r.n)||ALLOPEN?"접기 ▴":"자세히 ▾"}</button> ${exBtn(r)}</span>${r.addr?"":` <small>${r.area}</small>`}</td>`,
 rent:r=>`<td class="n"><b class="${r.rent==null?"":r.rent<=3000?"":"over"}">${fmt$(r.rent)}</b><br><small class="${r.estLo==null?"":r.estLo<=3000?"in":"over"}">총 ${r.estLo?"$"+r.estLo.toLocaleString():"?"}</small></td>`,
 tqArr:r=>`<td style="min-width:140px">${tqShort(r.tq)}</td>`,
-mdD:r=>`<td style="white-space:nowrap">${r.md?`<b class="${r.md.d>0.5?"in":"over"}">${r.md.d<0.55?r.md.d.toFixed(3):r.md.d.toFixed(2)} mi</b><br><small>${r.md.nb} 사건</small>`:"-"}</td>`,
-sq:r=>`<td style="min-width:100px">${r.unit.length>18?r.unit.slice(0,18)+"…":r.unit}<br><small>세탁기 ${YN(r.wd)}</small></td>`,
+mdD:r=>`<td style="white-space:nowrap;font-size:13px">${r.md?`<b class="${r.md.d>0.5?"in":"over"}">${r.md.d<0.55?r.md.d.toFixed(3):r.md.d.toFixed(2)} mi</b><br><small>${r.md.nb} 사건</small>`:"-"}</td>`,
+sq:r=>`<td class="n">${r.sq?`<b>${r.sq.toLocaleString()}</b><br><small>sq ft</small>`:"<small>미표기</small>"}</td>`,
+bedsK:r=>`<td style="white-space:nowrap">${bedTxt(r)}</td>`,
+wd:r=>`<td class="c">${YN(r.wd)}</td>`,
+gym:r=>`<td class="c">${YN(r.gym)}</td>`,
+mgd:r=>`<td class="c">${YN(r.mgd)}</td>`,
 s:r=>`<td style="white-space:nowrap"><span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span>${r.ux?' <small>직접 제외</small>':""}<br>${pgCell(r)}</td>`,
 my:r=>`<td style="white-space:nowrap" onclick="event.stopPropagation()">${stars(r)}</td>`,
 x:r=>`<td style="white-space:nowrap" onclick="event.stopPropagation()"><button class="xb" onclick="togDet('${esc(r.n)}')">${OPEN.has(r.n)||ALLOPEN?"접기 ▴":"자세히 ▾"}</button><br>${exBtn(r)}</td>`};
