@@ -39,9 +39,9 @@ EX = {
 "4 Elko St B3":["버스 65·66 또는 Green B","35~45분"],
 }
 EX.update(json.load(open("data/extra_ex.json", encoding="utf-8")))
-data = "const GEO=%s;\nconst TR=%s;\nconst EX=%s;\nconst DRIVE=%s;\nconst SHAPES=%s;\n" % (
+data = "const GEO=%s;\nconst TR=%s;\nconst EX=%s;\nconst DRIVE=%s;\nconst GG=%s;\nconst SHAPES=%s;\n" % (
   json.dumps(T['GEO'],ensure_ascii=False), json.dumps(T['TR'],ensure_ascii=False),
-  json.dumps(EX,ensure_ascii=False), json.dumps(T.get('DRIVE',{})), json.dumps(T['SHAPES']))
+  json.dumps(EX,ensure_ascii=False), json.dumps(T.get('DRIVE',{})), json.dumps(json.load(open('data/google.json',encoding='utf-8')),ensure_ascii=False), json.dumps(T['SHAPES']))
 tpl = open('template.html', encoding='utf-8').read()
 out = tpl.replace('/*DATA*/', L + '\n' + data)
 open('index.html','w',encoding='utf-8').write(out)

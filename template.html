@@ -48,6 +48,7 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 <label>자차 출근 (보통 최소)<select id="f_drvlo"><option value="">전체</option><option value="15">15분 이내</option><option value="20">20분 이내</option><option value="25">25분 이내</option></select></label>
 <label>건축 연도 (이후)<select id="f_built"><option value="">전체</option><option value="2020">2020년 이후</option><option value="2015">2015년 이후</option><option value="2000">2000년 이후</option><option value="1980">1980년 이후</option></select></label>
 <label>면적 (최소, sq ft)<input type="number" id="f_sq" step="50" placeholder="예: 650"></label>
+<label>구글 평점 (최소)<select id="f_gr"><option value="">전체</option><option value="4.5">4.5 이상</option><option value="4.0">4.0 이상</option><option value="3.5">3.5 이상</option></select></label>
 <label>지하철역 도보 (최대)<select id="f_walk"><option value="">전체</option><option value="10">10분 이내</option><option value="15">15분 이내</option><option value="20">20분 이내</option></select></label>
 </div>
 <div class="chk" style="margin-top:10px">
@@ -69,13 +70,13 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 <p><small>예상 월 총액 = 월세(+필수 수수료) + 주차 + 공과금 약 $100~150 (추정). 지하철 도보 시간은 직선거리 × 1.3 기준 추정.</small></p>
 </div>
 <script>
-const UPDATED="2026-11-03 (9차)";
+const UPDATED="2026-11-03 (10차)";
 const CRITERIA=[["예산","월세·주차·공과금 합쳐 월 약 $3,000 이하"],["구조","1베드 또는 2베드"],["세탁","집 안 세탁기·건조기 필수"],["건물","관리형 아파트 선호, 반지하 제외"],["헬스장","있으면 가산점"],["주차","주차 가능 여부·주차비 반영"],["입주","11월 말~12월 초 입주 가능"],["기준점","Landmark Center (401 Park Dr, Fenway)"],["거리","기준점에서 차로 편도 30분 이내"],["대중교통","지하철·버스·하버드/LMA 셔틀 접근성 반영"]];
 /*DATA*/
 const ST={1:["1순위 그룹","s1","#16a34a"],2:["후보","s2","#2563eb"],3:["보류·조건부","s3","#d97706"],4:["예산 초과","s4","#dc2626"],5:["제외","s5","#9ca3af"]};
 const YN=v=>v==="y"?'<span class="ok">O</span>':v==="n"?'<span class="no">X</span>':v==="?"?'<span class="q">?</span>':'-';
-L.forEach(r=>{const t=TR[r.n];if(t){r.dist=t.distWork;r.subTxt=`${t.sub.name} (${t.sub.lines}) 도보 ${t.sub.walk}분`;r.subWalk=t.sub.walk;r.crTxt=t.cr?`${t.cr.name} (${t.cr.lines}) 도보 ${t.cr.walk}분`:"";r.bus=t.buses.length?t.buses.join(", "):"-";}const e=EX[r.n];if(e){r.shuttle=e[0];r.tcom=e[1];r.tcomLo=parseInt(e[1]);}r.geo=GEO[r.n];r.beds=/2베드/.test(r.unit)?(/1베드/.test(r.unit)?[1,2]:[2]):[1];const dv=DRIVE[r.n];if(dv){r.drvHi=dv.hi;r.drv=dv.lo===dv.hi?`${dv.lo}분`:`${dv.lo}~${dv.hi}분`;r.drvLo=dv.lo;r.drvMi=dv.mi;}});
-const COLS=[["s","상태"],["n","매물"],["link","링크"],["area","지역"],["built","건축 연도"],["unit","집 (sq ft)"],["rent","월세"],["park","주차"],["estLo","예상 월 총액"],["wd","세탁기"],["gym","헬스장"],["mgd","관리형"],["dist","기준점 거리(mi)"],["drvLo","자차 (평일 8:30 출발)"],["subWalk","가까운 지하철"],["bus","LMA 직행 버스"],["tcomLo","대중교통 출근(추정)"],["move","입주"],["sp","혜택"],["memo","메모"]];
+L.forEach(r=>{const t=TR[r.n];if(t){r.dist=t.distWork;r.subTxt=`${t.sub.name} (${t.sub.lines}) 도보 ${t.sub.walk}분`;r.subWalk=t.sub.walk;r.crTxt=t.cr?`${t.cr.name} (${t.cr.lines}) 도보 ${t.cr.walk}분`:"";r.bus=t.buses.length?t.buses.join(", "):"-";}const e=EX[r.n];if(e){r.shuttle=e[0];r.tcom=e[1];r.tcomLo=parseInt(e[1]);}r.geo=GEO[r.n];const gg=GG[r.n]||{};r.gR=gg.r||null;r.gC=gg.c||null;r.gUrl=gg.url;r.gS=gg.s||"";r.beds=/2베드/.test(r.unit)?(/1베드/.test(r.unit)?[1,2]:[2]):[1];const dv=DRIVE[r.n];if(dv){r.drvHi=dv.hi;r.drv=dv.lo===dv.hi?`${dv.lo}분`:`${dv.lo}~${dv.hi}분`;r.drvLo=dv.lo;r.drvMi=dv.mi;}});
+const COLS=[["s","상태"],["n","매물"],["link","링크"],["area","지역"],["built","건축 연도"],["unit","집 (sq ft)"],["rent","월세"],["park","주차"],["estLo","예상 월 총액"],["wd","세탁기"],["gym","헬스장"],["mgd","관리형"],["gR","구글 평점"],["dist","기준점 거리(mi)"],["drvLo","자차 (평일 8:30 출발)"],["subWalk","가까운 지하철"],["bus","LMA 직행 버스"],["tcomLo","대중교통 출근(추정)"],["move","입주"],["sp","혜택"],["memo","메모"]];
 let sortK="s",asc=true,fs=new Set([1,2,3,4]);
 document.getElementById("upd").textContent=UPDATED;
 document.getElementById("crit").innerHTML=CRITERIA.map(([k,v])=>`<div><b>${k}</b>${v}</div>`).join("");
@@ -90,16 +91,17 @@ let pinned=null,overPopup=false,T=null;const MK={};
 M.on("popupopen",e=>{const el=e.popup.getElement();el.onmouseenter=()=>{overPopup=true;clearTimeout(T)};el.onmouseleave=()=>{overPopup=false;if(!pinned)M.closePopup()};});
 M.on("popupclose",e=>{overPopup=false;if(pinned&&e.popup._source===pinned)pinned=null;});
 L.forEach(r=>{if(!r.geo)return;const m=window.L.circleMarker(r.geo,{radius:r.s<=2?9:7,color:"#fff",weight:2,fillColor:ST[r.s][2],fillOpacity:.95});
-m.bindPopup(`<div class="pop"><b>${r.n}</b> <span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span><br>${r.area} · ${r.unit}<br>🏗 건축 ${r.built?r.built+"년":"미확인"}${r.reno?` (${r.reno}년 리모델링)`:""}<br>월세 ${r.rent?"$"+r.rent.toLocaleString():"-"} <small>${r.rentT}</small> · 주차 ${r.park}<br>예상 월 총액 <b>${r.est}</b><br>세탁기 ${YN(r.wd)} 헬스장 ${YN(r.gym)} 관리형 ${YN(r.mgd)} · 기준점까지 ${r.dist??"-"}mi<br>🚗 자차 ${r.drv||"-"} <small>(Google 지도, 평일 오전 8:30 출발 기준)</small><br>🚇 ${r.subTxt||"-"}${r.crTxt?"<br>🚆 "+r.crTxt:""}<br>🚌 LMA 직행 버스: ${r.bus||"-"}<br>🚐 ${r.shuttle||"-"} (${r.tcom||"-"})<br><small>${r.memo}</small><br>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 페이지 열기 →</a>`:""}</div>`);
+m.bindPopup(`<div class="pop"><b>${r.n}</b> <span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span><br>${r.area} · ${r.unit}<br>🏗 건축 ${r.built?r.built+"년":"미확인"}${r.reno?` (${r.reno}년 리모델링)`:""}<br>월세 ${r.rent?"$"+r.rent.toLocaleString():"-"} <small>${r.rentT}</small> · 주차 ${r.park}<br>예상 월 총액 <b>${r.est}</b><br>세탁기 ${YN(r.wd)} 헬스장 ${YN(r.gym)} 관리형 ${YN(r.mgd)}<br>⭐ 구글 ${r.gR?r.gR+" ("+r.gC+"개)":"리뷰 없음"} ${r.gUrl?`<a href="${r.gUrl}" target="_blank">리뷰 보기</a>`:""}${r.gS?`<br><small>${r.gS}</small>`:""} · 기준점까지 ${r.dist??"-"}mi<br>🚗 자차 ${r.drv||"-"} <small>(Google 지도, 평일 오전 8:30 출발 기준)</small><br>🚇 ${r.subTxt||"-"}${r.crTxt?"<br>🚆 "+r.crTxt:""}<br>🚌 LMA 직행 버스: ${r.bus||"-"}<br>🚐 ${r.shuttle||"-"} (${r.tcom||"-"})<br><small>${r.memo}</small><br>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 페이지 열기 →</a>`:""}</div>`);
 m.bindTooltip(r.n,{direction:"top",offset:[0,-10]});m.off("click");m.on("mouseover",()=>{clearTimeout(T);if(pinned){if(pinned!==m)m.openTooltip();return;}m.closeTooltip();m.openPopup();});m.on("mouseout",()=>{if(pinned){if(pinned!==m)m.closeTooltip();return;}T=setTimeout(()=>{if(!overPopup&&!pinned)m.closePopup()},200);});m.on("click",e=>{window.L.DomEvent.stop(e);pinned=null;m.closeTooltip();m.openPopup();pinned=m;});m.addTo(M);MK[r.n]=m;});
 const fb=document.getElementById("filters");
 Object.entries(ST).forEach(([k,[t]])=>{const b=document.createElement("button");b.textContent=t;b.className=fs.has(+k)?"on":"";b.onclick=()=>{fs.has(+k)?fs.delete(+k):fs.add(+k);b.className=fs.has(+k)?"on":"";render()};fb.appendChild(b)});
 document.getElementById("head").innerHTML=COLS.map(([k,t])=>`<th data-k="${k}">${t}</th>`).join("");
 document.querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;asc=sortK===k?!asc:true;sortK=k;render()});
 document.getElementById("q").oninput=render;
-const FIDS=["f_beds","f_est","f_rent","f_drv","f_drvlo","f_built","f_sq","f_walk","f_wd","f_gym","f_mgd","f_lma"];
-function getF(){const g=id=>document.getElementById(id);return{beds:g("f_beds").value,est:g("f_est").value,rent:+g("f_rent").value||0,drv:+g("f_drv").value||0,drvlo:+g("f_drvlo").value||0,built:+g("f_built").value||0,sq:+g("f_sq").value||0,walk:+g("f_walk").value||0,wd:g("f_wd").checked,gym:g("f_gym").checked,mgd:g("f_mgd").checked,lma:g("f_lma").checked}}
+const FIDS=["f_gr","f_beds","f_est","f_rent","f_drv","f_drvlo","f_built","f_sq","f_walk","f_wd","f_gym","f_mgd","f_lma"];
+function getF(){const g=id=>document.getElementById(id);return{gr:+g("f_gr").value||0,beds:g("f_beds").value,est:g("f_est").value,rent:+g("f_rent").value||0,drv:+g("f_drv").value||0,drvlo:+g("f_drvlo").value||0,built:+g("f_built").value||0,sq:+g("f_sq").value||0,walk:+g("f_walk").value||0,wd:g("f_wd").checked,gym:g("f_gym").checked,mgd:g("f_mgd").checked,lma:g("f_lma").checked}}
 function passF(r,F){
+ if(F.gr&&(r.gR==null||r.gR<F.gr))return false;
  if(F.beds&&!r.beds.includes(+F.beds))return false;
  if(F.est){if(r.estLo==null)return false;if(F.est!=="known"&&r.estLo>+F.est)return false;}
  if(F.rent&&(!r.rent||r.rent>F.rent))return false;
@@ -122,7 +124,7 @@ function render(){const q=document.getElementById("q").value.toLowerCase();
  <td>${r.url?`<a class="go" href="${r.url}" target="_blank" onclick="event.stopPropagation()">매물 보기</a>`:"-"}</td>
  <td>${r.area}</td><td class="n ${r.built==null?"":r.built>=2015?"in":r.built<1980?"over":""}"><b>${r.built??"미확인"}</b>${r.reno?`<br><small>${r.reno} 리모델링</small>`:""}</td><td>${r.unit}</td><td class="n">${r.rent?"$"+r.rent.toLocaleString():"-"}<br><small>${r.rentT}</small></td><td>${r.park}</td>
  <td class="${r.estLo==null?"":r.estLo<=3000?"in":"over"}">${r.est}</td><td>${YN(r.wd)}</td><td>${YN(r.gym)}</td><td>${YN(r.mgd)}</td>
- <td class="n">${r.dist??"-"}</td><td class="${r.drvLo==null?"":r.drvLo<=20?"in":r.drvLo<=28?"":"over"}"><b>${r.drv||"-"}</b><br><small>${r.drvMi?r.drvMi+" mi 경로":""}</small></td><td class="note">${r.subTxt||"-"}${r.crTxt?"<br>"+r.crTxt:""}</td><td>${r.bus||"-"}</td>
+ <td style="min-width:150px;max-width:220px" class="${r.gR==null?"":r.gR>=4.3?"in":r.gR<3.8?"over":""}">${r.gR?`<b>${r.gR}</b> <small>(${r.gC})</small>`:"<small>없음</small>"}${r.gUrl?`<br><a href="${r.gUrl}" target="_blank" onclick="event.stopPropagation()" style="font-size:12px">구글 리뷰</a>`:""}${r.gS?`<br><small>${r.gS}</small>`:""}</td><td class="n">${r.dist??"-"}</td><td class="${r.drvLo==null?"":r.drvLo<=20?"in":r.drvLo<=28?"":"over"}"><b>${r.drv||"-"}</b><br><small>${r.drvMi?r.drvMi+" mi 경로":""}</small></td><td class="note">${r.subTxt||"-"}${r.crTxt?"<br>"+r.crTxt:""}</td><td>${r.bus||"-"}</td>
  <td class="note"><b>${r.tcom||"-"}</b><br>${r.shuttle||""}</td><td>${r.move}</td><td class="note">${r.sp}</td><td class="note">${r.memo}</td></tr>`).join("");
  document.querySelectorAll("tr.row").forEach(tr=>{const m=MK[tr.dataset.n];if(!m)return;
  tr.onmouseenter=()=>hl(m,true);tr.onmouseleave=()=>hl(m,false);
