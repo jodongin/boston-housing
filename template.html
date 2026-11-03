@@ -34,6 +34,7 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
 .unilbl{font-size:11px;padding:1px 5px;background:rgba(255,255,255,.85);border:1px solid #c4b5fd;color:#4c1d95;box-shadow:none}.unilbl:before{display:none}
 .delb{font-size:12px;padding:2px 8px;border:1px solid #fca5a5;background:#fff;color:#b91c1c;border-radius:6px;cursor:pointer;white-space:nowrap}.delb:hover{background:#fef2f2}.delb.rs{border-color:#86efac;color:#15803d}
+.sbar{height:5px;background:#e5e7eb;border-radius:3px;margin:3px 0}.sbar i{display:block;height:5px;background:#16a34a;border-radius:3px}
 .zb{display:inline-block;font-size:11px;font-weight:600;color:#fff;background:#006aff;border-radius:4px;padding:0 5px;margin-left:4px;vertical-align:1px}
 .st{cursor:pointer;font-size:17px;color:#d1d5db;user-select:none;letter-spacing:-1px}.st.on{color:#f59e0b}.st:hover{color:#fbbf24}
 .pop{font-size:13px;line-height:1.5;min-width:230px}.pop b{font-size:14px}
@@ -58,16 +59,18 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 <label>지하철역 도보 (최대)<select id="f_walk"><option value="">전체</option><option value="10">10분 이내</option><option value="15">15분 이내</option><option value="20">20분 이내</option></select></label>
 </div>
 <div class="chk" style="margin-top:10px">
+<label><input type="checkbox" id="f_pass">새 기준 통과만</label>
 <label><input type="checkbox" id="f_wd">집 안 세탁기 확인됨</label>
 <label><input type="checkbox" id="f_gym">헬스장 있음</label>
 <label><input type="checkbox" id="f_mgd">관리형 건물</label>
 <label><input type="checkbox" id="f_lma">LMA 직행 버스 있음</label>
 <button class="rst" id="f_reset">필터 초기화</button>
 </div></details>
-<div class="leg"><span><i class="dot" style="background:#16a34a"></i>1순위 그룹</span><span><i class="dot" style="background:#2563eb"></i>후보</span><span><i class="dot" style="background:#d97706"></i>보류·조건부</span><span><i class="dot" style="background:#dc2626"></i>예산 초과</span><span><i class="dot" style="background:#9ca3af"></i>제외</span><span>★ 기준점 (Landmark Center)</span><span>선: 지하철 노선</span><span>🎓 주요 대학</span><label style="font-size:12px;margin-right:12px"><input type="checkbox" id="f_uni" checked> 대학 표시</label><span>점에 마우스를 올리면 정보가 잠깐 뜨고, 클릭하면 고정돼요</span></div>
+<div class="leg"><span><i class="dot" style="background:#16a34a"></i>1순위 그룹</span><span><i class="dot" style="background:#2563eb"></i>후보</span><span><i class="dot" style="background:#d97706"></i>보류·조건부</span><span><i class="dot" style="background:#dc2626"></i>예산 초과</span><span><i class="dot" style="background:#9ca3af"></i>제외</span><span>★ 기준점 (Landmark Center)</span><span>선: 지하철 노선</span><span>🎓 주요 대학</span><label style="font-size:12px;margin-right:12px"><input type="checkbox" id="f_uni" checked> 대학 표시</label><span><b style="color:#b91c1c">✖</b> 2026 살인 지점 (빨간 원: 반경 1마일)</span><label style="font-size:12px;margin-right:12px"><input type="checkbox" id="f_mur" checked> 살인 지점 표시</label><span>점에 마우스를 올리면 정보가 잠깐 뜨고, 클릭하면 고정돼요</span></div>
 <div id="map"></div>
 <div class="bar"><input id="q" placeholder="이름·지역·메모 검색"><small id="cnt"></small></div>
 <div class="tw"><table><thead><tr id="head"></tr></thead><tbody id="body"></tbody></table></div>
+<div class="card"><b>점수 계산 방법 (새 기준을 모두 통과한 매물만 순위)</b><br><small>· 출근 시간 25점: 8:30 출발 후 도착까지 10분 이하 만점, 45분 0점<br>· 치안 25점: 가장 가까운 2026 살인 지점까지 1마일 0점, 3마일 이상 만점<br>· 월세 15점: $2,200 이하 만점, $3,000 0점<br>· 예상 월 총액 10점: $2,500 이하 만점, $3,300 0점 (월세 + 공과금 추정, 주차 제외)<br>· 면적 10점: 500 sq ft 0점, 1,100 sq ft 이상 만점 (면적 미표기는 4점)<br>· 생활 인프라 10점: 반경 800m 식당·카페 수 + 슈퍼마켓×10 + 약국·도서관·영화관×3 (OpenStreetMap), 150 이상 만점<br>· 출근 중 도보 5점: 0분 만점, 25분 0점<br>· 세탁기가 글로만 확인되거나 미확인인 곳은 순위는 매기되 상태를 "보류·조건부"로 둠</small></div>
 <div class="card"><b>셔틀 이용 조건</b><br>
 <small>· M2 (Harvard Square ↔ Central ↔ Kenmore ↔ LMA): Harvard ID 있으면 무료, 없으면 1회권 구매. 가족은 티켓 구매 필요.<br>
 · LMA 셔틀 (Ruggles, JFK/UMass, Lansdowne 등 ↔ LMA): Longwood Collective 회원기관 ID 필요. 평일만 운행.<br>
@@ -76,7 +79,7 @@ small{color:var(--m)}.leg span{display:inline-flex;align-items:center;gap:4px;ma
 <p><small>예상 월 총액 = 월세(+필수 수수료) + 주차 + 공과금 약 $100~150 (추정). 지하철 도보 시간은 직선거리 × 1.3 기준 추정.</small></p>
 </div>
 <script>
-const UPDATED="2026-11-04 (23차, 진행 컬럼 추가)";
+const UPDATED="2026-11-04 (24차)";
 const SK="bh_settings_v1",STK="bh_stars_v1";let SV={};try{SV=JSON.parse(localStorage.getItem(SK)||"{}")}catch(e){}
 let MY={};try{MY=JSON.parse(localStorage.getItem(STK)||"{}")}catch(e){}
 const XK="bh_ex_v1";let XU={};try{XU=JSON.parse(localStorage.getItem(XK)||"{}")}catch(e){}
@@ -85,17 +88,18 @@ function esc(n){return n.replace(/'/g,"\\'")}
 function setEx(n,on){const r=L.find(x=>x.n===n);if(!r)return;if(on)XU[n]=1;else delete XU[n];localStorage.setItem(XK,JSON.stringify(XU));r.s=XU[n]?5:r.s0;r.ux=!!XU[n];const m=MK[n];if(m){m.setStyle({fillColor:ST[r.s][2]});m.setRadius(r.s<=2?9:7);m._orig=null;}M.closePopup();pinned=null;render();}
 function exBtn(r){if(r.ux)return `<button class="delb rs" onclick="event.stopPropagation();setEx('${esc(r.n)}',false)">제외 취소</button>`;if(r.s0===5)return `<small style="color:#9ca3af">기본 제외</small>`;return `<button class="delb" onclick="event.stopPropagation();setEx('${esc(r.n)}',true)">제외</button>`}
 
-const CRITERIA=[["예산","월세·주차·공과금 합쳐 월 약 $3,000 이하"],["구조","1베드 또는 2베드"],["세탁","집 안 세탁기·건조기 필수"],["건물","관리형 아파트 단지 위주, 반지하 제외. Zillow 즐겨찾기에서 직접 고른 개별 매물은 Zillow 표시로 구분"],["헬스장","있으면 가산점"],["주차","주차 가능 여부·주차비 반영"],["입주","11월 말~12월 초 입주 가능"],["기준점","Landmark Center (401 Park Dr, Fenway)"],["거리","기준점에서 차로 편도 30분 이내"],["대중교통","지하철·버스·하버드/LMA 셔틀 접근성 반영"]];
+const CRITERIA=[["월세","기본 월세 $3,000 이하 (공과금·주차·수수료 등 부대비용은 따로 조사해 표기, 총액은 초과 가능)"],["출근","Google 지도 평일 오전 8:30 출발 대중교통으로 9:15까지 도착(45분 이내), 환승 없음 (환승 있으면 탈락)"],["치안","2026년 보스턴 살인 사건 지점(Universal Hub 목록) 반경 1마일 밖"],["세탁","집 안 세탁기·건조기 필수"],["구조","1베드 또는 2베드, 집 전체, 반지하·전대 제외"],["입주","11월 말~12월 초"],["건물","관리 회사 여부 상관없음"],["기준점","Landmark Center (401 Park Dr)"]];
 /*DATA*/
 const PG=["미연락","문의함","답장 받음","투어 예정","투어 완료","신청함","계약","불가"],PGC=["#9ca3af","#2563eb","#7c3aed","#d97706","#d97706","#16a34a","#15803d","#b91c1c"];
 function pgCell(r){const p=r.pg;if(!p)return '<small style="color:#9ca3af">미연락</small>';const i=PG.indexOf(p.st);return `<b style="color:${PGC[i]||"#374151"}">${p.st}</b>${p.d?`<br><small>${p.d.slice(5).replace("-","/")}${p.via?" · "+p.via:""}</small>`:""}${p.next?`<br><small>${p.next}</small>`:""}`}
 const ST={1:["1순위 그룹","s1","#16a34a"],2:["후보","s2","#2563eb"],3:["보류·조건부","s3","#d97706"],4:["예산 초과","s4","#dc2626"],5:["제외","s5","#9ca3af"]};
 const YN=v=>v==="y"?'<span class="ok">O</span>':v==="n"?'<span class="no">X</span>':v==="?"?'<span class="q">?</span>':'-';
 L.forEach(r=>{const t=TR[r.n];if(t){r.dist=t.distWork;r.subTxt=`${t.sub.name} (${t.sub.lines}) 도보 ${t.sub.walk}분`;r.subWalk=t.sub.walk;r.crTxt=t.cr?`${t.cr.name} (${t.cr.lines}) 도보 ${t.cr.walk}분`:"";r.bus=t.buses.length?t.buses.join(", "):"-";}const e=EX[r.n];if(e){r.shuttle=e[0];r.tcom=e[1];r.tcomLo=parseInt(e[1]);}r.geo=GEO[r.n];r.my=(r.n in MY)?MY[r.n]:(r.star||0);const gg=GG[r.n]||{};r.gR=gg.r||null;r.gC=gg.c||null;r.gUrl=gg.url;r.gS=gg.s||"";r.beds=/2베드/.test(r.unit)?(/1베드/.test(r.unit)?[1,2]:[2]):[1];const dv=DRIVE[r.n];if(dv){r.drvHi=dv.hi;r.drv=dv.lo===dv.hi?`${dv.lo}분`:`${dv.lo}~${dv.hi}분`;r.drvLo=dv.lo;r.drvMi=dv.mi;}});
+L.forEach(r=>{const ev=EV[r.n]||{};r.tq=ev.tq||null;r.md=ev.md||null;r.score=ev.score??null;r.parts=ev.parts||null;r.rank=ev.rank??null;r.fail=ev.fail||null;r.fees=r.fees||"";r.tqArr=r.tq?(r.tq.pass?r.tq.arrAfter??5:900+(r.tq.direct?r.tq.direct.arrAfter:99)):null;r.mdD=r.md?r.md.d:null;});
 L.forEach(r=>{r.pgK=r.pg?Math.max(0,PG.indexOf(r.pg.st)):0;});
 L.forEach(r=>{r.s0=r.s;r.ux=!!XU[r.n]&&r.s0!==5;if(r.ux)r.s=5;});
-const COLS=[["s","상태"],["pgK","진행"],["my","내 별점"],["n","매물"],["link","링크"],["area","지역"],["built","건축 연도"],["unit","집 (sq ft)"],["rent","월세"],["park","주차"],["estLo","예상 월 총액"],["wd","세탁기"],["gym","헬스장"],["mgd","관리형"],["gR","구글 평점"],["dist","기준점 거리(mi)"],["drvLo","자차 (평일 8:30 출발)"],["subWalk","가까운 지하철"],["bus","LMA 직행 버스"],["tcomLo","대중교통 출근(추정)"],["move","입주"],["sp","혜택"],["memo","메모"],["ux","제외"]];
-let sortK=SV.sortK||"s",asc=SV.asc!==undefined?SV.asc:true,fs=new Set(SV.fs||[1,2,3,4]);
+const COLS=[["rank","순위"],["score","점수"],["s","상태"],["pgK","진행"],["my","내 별점"],["n","매물"],["link","링크"],["area","지역"],["rent","월세"],["estLo","예상 월 총액 · 부대비용"],["tqArr","대중교통 (평일 8:30 출발, 환승 없음)"],["mdD","치안: 가장 가까운 2026 살인 지점"],["wd","세탁기"],["unit","집 (sq ft)"],["park","주차"],["move","입주"],["built","건축 연도"],["gR","구글 평점"],["memo","메모"],["ux","제외"]];
+let sortK=SV.sortK||"rank",asc=SV.asc!==undefined?SV.asc:true,fs=new Set(SV.fs||[1,2,3,4]);
 document.getElementById("upd").textContent=UPDATED;
 document.getElementById("crit").innerHTML=CRITERIA.map(([k,v])=>`<div><b>${k}</b>${v}</div>`).join("");
 
@@ -108,7 +112,7 @@ window.L.marker(GEO.WORK,{icon:window.L.divIcon({html:'<div style="font-size:26p
 let pinned=null,overPopup=false,T=null;const MK={};
 M.on("popupopen",e=>{const el=e.popup.getElement();el.querySelectorAll(".popstars").forEach(ps=>{const r=L.find(x=>x.n===ps.dataset.n);if(r)ps.innerHTML=stars(r)});el.onmouseenter=()=>{overPopup=true;clearTimeout(T)};el.onmouseleave=()=>{overPopup=false;if(!pinned)M.closePopup()};});
 M.on("popupclose",e=>{overPopup=false;if(pinned&&e.popup._source===pinned)pinned=null;});
-const popHTML=r=>`<div class="pop"><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""} <span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span><br>내 별점 <span class="popstars" data-n="${r.n}">${stars(r)}</span> ${exBtn(r)}<br>📨 진행: ${pgCell(r)}<br>${r.area} · ${r.unit}<br>🏗 건축 ${r.built?r.built+"년":"미확인"}${r.reno?` (${r.reno}년 리모델링)`:""}<br>월세 ${r.rent?"$"+r.rent.toLocaleString():"-"} <small>${r.rentT}</small> · 주차 ${r.park}<br>예상 월 총액 <b>${r.est}</b><br>세탁기 ${YN(r.wd)} 헬스장 ${YN(r.gym)} 관리형 ${YN(r.mgd)}<br>⭐ 구글 ${r.gR?r.gR+" ("+r.gC+"개)":"리뷰 없음"} ${r.gUrl?`<a href="${r.gUrl}" target="_blank">리뷰 보기</a>`:""}${r.gS?`<br><small>${r.gS}</small>`:""} · 기준점까지 ${r.dist??"-"}mi<br>🚗 자차 ${r.drv||"-"} <small>(Google 지도, 평일 오전 8:30 출발 기준)</small><br>🚇 ${r.subTxt||"-"}${r.crTxt?"<br>🚆 "+r.crTxt:""}<br>🚌 LMA 직행 버스: ${r.bus||"-"}<br>🚐 ${r.shuttle||"-"} (${r.tcom||"-"})<br><small>${r.memo}</small><br>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 페이지 열기 →</a>`:""}</div>`;
+const popHTML=r=>`<div class="pop"><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""} <span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span><br>${r.rank?`<b>${r.rank}위 · ${r.score.toFixed(1)}점</b><br>`:""}🚇 ${r.tq?(r.tq.pass?`${r.tq.line} ${r.tq.min}분 (도보 ${r.tq.walk??"?"}분, 환승 없음)`:"대중교통 기준 탈락"):"-"}<br>🛡 살인 지점까지 ${r.md?r.md.d.toFixed(2)+" mi":"-"}<br>내 별점 <span class="popstars" data-n="${r.n}">${stars(r)}</span> ${exBtn(r)}<br>📨 진행: ${pgCell(r)}<br>${r.area} · ${r.unit}<br>🏗 건축 ${r.built?r.built+"년":"미확인"}${r.reno?` (${r.reno}년 리모델링)`:""}<br>월세 ${r.rent?"$"+r.rent.toLocaleString():"-"} <small>${r.rentT}</small> · 주차 ${r.park}<br>예상 월 총액 <b>${r.est}</b><br>세탁기 ${YN(r.wd)} 헬스장 ${YN(r.gym)} 관리형 ${YN(r.mgd)}<br>⭐ 구글 ${r.gR?r.gR+" ("+r.gC+"개)":"리뷰 없음"} ${r.gUrl?`<a href="${r.gUrl}" target="_blank">리뷰 보기</a>`:""}${r.gS?`<br><small>${r.gS}</small>`:""} · 기준점까지 ${r.dist??"-"}mi<br>🚗 자차 ${r.drv||"-"} <small>(Google 지도, 평일 오전 8:30 출발 기준)</small><br>🚇 ${r.subTxt||"-"}${r.crTxt?"<br>🚆 "+r.crTxt:""}<br>🚌 LMA 직행 버스: ${r.bus||"-"}<br>🚐 ${r.shuttle||"-"} (${r.tcom||"-"})<br><small>${r.memo}</small><br>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 페이지 열기 →</a>`:""}</div>`;
 L.forEach(r=>{if(!r.geo)return;const m=window.L.circleMarker(r.geo,{radius:r.s<=2?9:7,color:"#fff",weight:2,fillColor:ST[r.s][2],fillOpacity:.95});
 m.bindPopup(()=>popHTML(r));
 m.bindTooltip(r.n,{direction:"top",offset:[0,-10]});m.off("click");m.on("mouseover",()=>{clearTimeout(T);if(pinned){if(pinned!==m)m.openTooltip();return;}m.closeTooltip();m.openPopup();});m.on("mouseout",()=>{if(pinned){if(pinned!==m)m.closeTooltip();return;}T=setTimeout(()=>{if(!overPopup&&!pinned)m.closePopup()},200);});m.on("click",e=>{window.L.DomEvent.stop(e);pinned=null;m.closeTooltip();m.openPopup();pinned=m;});m.addTo(M);MK[r.n]=m;});
@@ -117,9 +121,10 @@ Object.entries(ST).forEach(([k,[t]])=>{const b=document.createElement("button");
 document.getElementById("head").innerHTML=COLS.map(([k,t])=>`<th data-k="${k}">${t}</th>`).join("");
 document.querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;asc=sortK===k?!asc:true;sortK=k;render()});
 document.getElementById("q").oninput=render;
-const FIDS=["f_src","f_my","f_gr","f_beds","f_est","f_rent","f_drv","f_drvlo","f_built","f_sq","f_walk","f_wd","f_gym","f_mgd","f_lma"];
-function getF(){const g=id=>document.getElementById(id);return{src:g("f_src").value,my:+g("f_my").value||0,gr:+g("f_gr").value||0,beds:g("f_beds").value,est:g("f_est").value,rent:+g("f_rent").value||0,drv:+g("f_drv").value||0,drvlo:+g("f_drvlo").value||0,built:+g("f_built").value||0,sq:+g("f_sq").value||0,walk:+g("f_walk").value||0,wd:g("f_wd").checked,gym:g("f_gym").checked,mgd:g("f_mgd").checked,lma:g("f_lma").checked}}
+const FIDS=["f_pass","f_src","f_my","f_gr","f_beds","f_est","f_rent","f_drv","f_drvlo","f_built","f_sq","f_walk","f_wd","f_gym","f_mgd","f_lma"];
+function getF(){const g=id=>document.getElementById(id);return{pass:g("f_pass").checked,src:g("f_src").value,my:+g("f_my").value||0,gr:+g("f_gr").value||0,beds:g("f_beds").value,est:g("f_est").value,rent:+g("f_rent").value||0,drv:+g("f_drv").value||0,drvlo:+g("f_drvlo").value||0,built:+g("f_built").value||0,sq:+g("f_sq").value||0,walk:+g("f_walk").value||0,wd:g("f_wd").checked,gym:g("f_gym").checked,mgd:g("f_mgd").checked,lma:g("f_lma").checked}}
 function passF(r,F){
+ if(F.pass&&!(r.tq&&r.tq.pass&&r.md&&r.md.d>1))return false;
  if(F.src==="zillow"&&r.src!=="zillow")return false;if(F.src==="mgd"&&r.src==="zillow")return false;
  if(F.my&&(r.my||0)<F.my)return false;
  if(F.gr&&(r.gR==null||r.gR<F.gr))return false;
@@ -135,18 +140,38 @@ function passF(r,F){
  if(F.lma&&(!r.bus||r.bus==="-"))return false;return true}
 FIDS.forEach(id=>{const el=document.getElementById(id);el.addEventListener(el.type==="number"?"input":"change",render)});
 document.getElementById("f_reset").onclick=()=>{FIDS.forEach(id=>{const el=document.getElementById(id);if(el.type==="checkbox")el.checked=false;else el.value=""});document.getElementById("q").value="";render()};
+
+const fmt$=v=>v?"$"+v.toLocaleString():"-";
+function tqHTML(q){if(!q)return "<small>미측정</small>";if(q.pass)return `<b>${q.line}</b> ${q.min}분<br><small>${q.dep} 출발 → <b>${q.arr}</b> 도착 (8:30부터 ${q.arrAfter??q.min}분)<br>도보 ${q.walk??"?"}분 포함 · 환승 없음${q.from&&q.from!=="-"?"<br>승차: "+q.from:""}</small>`;return `<span class="no"><b>탈락</b></span><br><small>${q.direct?`환승 없는 ${q.direct.line}: 8:30부터 ${q.direct.arrAfter}분`:"환승 없는 경로 없음"}${q.fastest?`<br>가장 빠른 경로: ${q.fastest.lines} (${q.fastest.arrAfter}분)`:""}</small>`}
+function mdHTML(m){if(!m)return "-";return `<b class="${m.d>1?"in":"over"}">${m.d<1.05?m.d.toFixed(3):m.d.toFixed(2)} mi</b>${m.d>1?"":" <span class=no>1마일 이내</span>"}<br><small>${m.a} (${m.nb}, ${m.date}, ${m.k})</small>`}
+function scoreHTML(r){if(r.score==null)return "<small>-</small>";const p=r.parts||{};return `<b>${r.score.toFixed(1)}</b><div class="sbar"><i style="width:${r.score}%"></i></div><small title="${Object.entries(p).map(([k,v])=>k+" "+v.toFixed(0)).join(", ")}">${Object.entries(p).map(([k,v])=>k+" "+v.toFixed(0)).join(" · ")}</small>`}
+const CELL={
+rank:r=>`<td class="n">${r.rank?`<b style="font-size:16px">${r.rank}위</b>`:"-"}</td>`,
+score:r=>`<td style="min-width:120px">${scoreHTML(r)}</td>`,
+pgK:r=>`<td style="white-space:nowrap">${pgCell(r)}</td>`,
+s:r=>`<td><span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span>${r.ux?'<br><small style="color:#6b7280">직접 제외</small>':""}${r.fail&&r.s===5?`<br><small style="color:#b91c1c">${r.fail}</small>`:""}</td>`,
+my:r=>`<td style="white-space:nowrap" onclick="event.stopPropagation()">${stars(r)}</td>`,
+n:r=>`<td><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""}${r.src==="search"?' <span class="zb" style="background:#7c3aed">신규</span>':""}</td>`,
+link:r=>`<td>${r.url?`<a class="go" href="${r.url}" target="_blank" onclick="event.stopPropagation()">매물 보기</a>`:"-"}</td>`,
+area:r=>`<td>${r.area}</td>`,
+rent:r=>`<td class="n ${r.rent==null?"":r.rent<=3000?"in":"over"}">${fmt$(r.rent)}<br><small>${r.rentT}</small></td>`,
+estLo:r=>`<td class="note" style="min-width:200px"><b class="${r.estLo==null?"":r.estLo<=3000?"in":"over"}">${r.est}</b>${r.fees?`<br><small>${r.fees}</small>`:""}</td>`,
+tqArr:r=>`<td class="note" style="min-width:210px">${tqHTML(r.tq)}</td>`,
+mdD:r=>`<td class="note" style="min-width:180px">${mdHTML(r.md)}</td>`,
+wd:r=>`<td>${YN(r.wd)}</td>`,
+unit:r=>`<td>${r.unit}</td>`,
+park:r=>`<td class="note">${r.park}</td>`,
+move:r=>`<td class="note">${r.move}</td>`,
+built:r=>`<td class="n">${r.built??"미확인"}${r.reno?`<br><small>${r.reno} 리모델링</small>`:""}</td>`,
+gR:r=>`<td class="note">${r.gR?`<b>${r.gR}</b> <small>(${r.gC})</small>`:"<small>없음</small>"}${r.gS?`<br><small>${r.gS}</small>`:""}</td>`,
+memo:r=>`<td class="note" style="min-width:260px">${r.memo}</td>`,
+ux:r=>`<td onclick="event.stopPropagation()">${exBtn(r)}</td>`};
 function render(){const q=document.getElementById("q").value.toLowerCase();
  const F=getF();let rows=L.filter(r=>fs.has(r.s)&&(!q||JSON.stringify(r).toLowerCase().includes(q))&&passF(r,F));
  L.forEach(r=>{const m=MK[r.n];if(!m)return;rows.includes(r)?m.addTo(M):m.remove()});
  rows.sort((a,b)=>{let x=a[sortK],y=b[sortK];if(x==null)return 1;if(y==null)return -1;if(typeof x==="number")return asc?x-y:y-x;return asc?String(x).localeCompare(String(y)):String(y).localeCompare(String(x))});
  document.getElementById("cnt").textContent=`${rows.length}곳 표시 / 전체 ${L.length}곳 (직접 제외 ${L.filter(r=>r.ux).length}곳, 위쪽 "제외" 버튼을 켜면 보여요) · 행에 마우스를 올리면 지도에서 강조, 누르면 정보창이 열려요`;
- document.getElementById("body").innerHTML=rows.map(r=>`<tr class="row" data-n="${r.n}">
- <td><span class="pill ${ST[r.s][1]}">${ST[r.s][0]}</span>${r.ux?'<br><small style="color:#6b7280">직접 제외</small>':""}</td><td style="white-space:nowrap">${pgCell(r)}</td><td style="white-space:nowrap" onclick="event.stopPropagation()">${stars(r)}</td><td><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""}</td>
- <td>${r.url?`<a class="go" href="${r.url}" target="_blank" onclick="event.stopPropagation()">매물 보기</a>`:"-"}</td>
- <td>${r.area}</td><td class="n ${r.built==null?"":r.built>=2015?"in":r.built<1980?"over":""}"><b>${r.built??"미확인"}</b>${r.reno?`<br><small>${r.reno} 리모델링</small>`:""}</td><td>${r.unit}</td><td class="n">${r.rent?"$"+r.rent.toLocaleString():"-"}<br><small>${r.rentT}</small></td><td>${r.park}</td>
- <td class="${r.estLo==null?"":r.estLo<=3000?"in":"over"}">${r.est}</td><td>${YN(r.wd)}</td><td>${YN(r.gym)}</td><td>${YN(r.mgd)}</td>
- <td style="min-width:150px;max-width:220px" class="${r.gR==null?"":r.gR>=4.3?"in":r.gR<3.8?"over":""}">${r.gR?`<b>${r.gR}</b> <small>(${r.gC})</small>`:"<small>없음</small>"}${r.gUrl?`<br><a href="${r.gUrl}" target="_blank" onclick="event.stopPropagation()" style="font-size:12px">구글 리뷰</a>`:""}${r.gS?`<br><small>${r.gS}</small>`:""}</td><td class="n">${r.dist??"-"}</td><td class="${r.drvLo==null?"":r.drvLo<=20?"in":r.drvLo<=28?"":"over"}"><b>${r.drv||"-"}</b><br><small>${r.drvMi?r.drvMi+" mi 경로":""}</small></td><td class="note">${r.subTxt||"-"}${r.crTxt?"<br>"+r.crTxt:""}</td><td>${r.bus||"-"}</td>
- <td class="note"><b>${r.tcom||"-"}</b><br>${r.shuttle||""}</td><td>${r.move}</td><td class="note">${r.sp}</td><td class="note">${r.memo}</td><td onclick="event.stopPropagation()">${exBtn(r)}</td></tr>`).join("");
+ document.getElementById("body").innerHTML=rows.map(r=>`<tr class="row" data-n="${r.n}">${COLS.map(([k])=>CELL[k](r)).join("")}</tr>`).join("");
  if(typeof saveS==="function"&&typeof M!=="undefined")try{saveS()}catch(e){}
  document.querySelectorAll("tr.row").forEach(tr=>{const m=MK[tr.dataset.n];if(!m)return;
  tr.onmouseenter=()=>hl(m,true);tr.onmouseleave=()=>hl(m,false);
@@ -158,6 +183,9 @@ document.addEventListener("click",e=>{const s=e.target.closest(".st");if(!s)retu
 const UDIR={"Simmons University":"left","Harvard Medical School":"left","Harvard T.H. Chan School of Public Health":"bottom","Northeastern University":"right"};const UNI_LAYER=window.L.layerGroup();Object.entries(UNIS).forEach(([n,g])=>{if(!g)return;window.L.marker(g,{icon:window.L.divIcon({html:'<div style="font-size:20px;line-height:20px;filter:drop-shadow(0 1px 1px #fff)">🎓</div>',className:"",iconSize:[20,20],iconAnchor:[10,10]})}).bindTooltip(n,{permanent:true,direction:(UDIR[n]||"right"),offset:(UDIR[n]==="left"?[-8,0]:UDIR[n]==="bottom"?[0,8]:[8,0]),className:"unilbl"}).addTo(UNI_LAYER)});
 function saveS(){const v={};FIDS.forEach(id=>{const el=document.getElementById(id);v[id]=el.type==="checkbox"?el.checked:el.value});SV={fs:[...fs],sortK,asc,f:v,q:document.getElementById("q").value,uni:document.getElementById("f_uni").checked,c:[M.getCenter().lat,M.getCenter().lng],z:M.getZoom()};localStorage.setItem(SK,JSON.stringify(SV))}
 (function restore(){if(SV.f)FIDS.forEach(id=>{const el=document.getElementById(id);if(SV.f[id]===undefined)return;if(el.type==="checkbox")el.checked=SV.f[id];else el.value=SV.f[id]});if(SV.q)document.getElementById("q").value=SV.q;if(SV.uni===false)document.getElementById("f_uni").checked=false;if(SV.c&&SV.z)M.setView(SV.c,SV.z);document.querySelectorAll("#filters button").forEach((b,i)=>{b.className=fs.has(i+1)?"on":""});})();
+const MUR_LAYER=window.L.layerGroup();MURDERS.forEach(m=>{window.L.circle(m.g,{radius:1609.34,color:"#dc2626",weight:1,opacity:.5,fillColor:"#dc2626",fillOpacity:.06,interactive:false}).addTo(MUR_LAYER);window.L.marker(m.g,{icon:window.L.divIcon({html:'<div style="color:#b91c1c;font-weight:900;font-size:16px;line-height:16px;text-shadow:0 0 2px #fff">✖</div>',className:"",iconSize:[16,16],iconAnchor:[8,8]})}).bindTooltip(`${m.date} · ${m.a} (${m.nb})<br>${m.k}`).addTo(MUR_LAYER)});
+function murToggle(){document.getElementById("f_mur").checked?MUR_LAYER.addTo(M):MUR_LAYER.remove()}
+document.getElementById("f_mur").onchange=()=>{murToggle()};murToggle();
 function uniToggle(){document.getElementById("f_uni").checked?UNI_LAYER.addTo(M):UNI_LAYER.remove()}
 document.getElementById("f_uni").onchange=()=>{uniToggle();saveS()};uniToggle();
 M.on("moveend",saveS);
