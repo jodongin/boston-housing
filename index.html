@@ -66,6 +66,8 @@ tr.det td{background:#f9fafb;padding:10px 14px}
 .detg{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 18px;font-size:12px;color:#374151}.detg b{display:block;color:#111;font-size:12px;margin-bottom:2px}.detg .wide{grid-column:1/-1}
 tr.opened{background:#f9fafb}
 .mych{display:inline-flex;gap:3px;align-items:center;flex-wrap:wrap}.mc{font-size:12px;padding:2px 7px;border:1px solid var(--b);background:#fff;border-radius:999px;cursor:pointer;color:#b45309;white-space:nowrap}.mc small{color:#6b7280}.mc.on{background:#f59e0b;border-color:#f59e0b;color:#fff}.mc.on small{color:#fff}.mc.clr{color:#374151}
+.sr{white-space:nowrap;line-height:1.25}.sr .who{display:inline-block;width:26px;font-size:11px;color:#2563eb}.sr .who.wa{color:#db2777}.st.sa.on{color:#ec4899}
+.pt2{display:inline-flex;border:1px solid var(--b);border-radius:999px;overflow:hidden;margin-right:4px}.pb{font-size:12px;padding:2px 9px;border:0;background:#fff;cursor:pointer}.pb.on{background:#111;color:#fff}
 .zb{display:inline-block;font-size:11px;font-weight:600;color:#fff;background:#006aff;border-radius:4px;padding:0 5px;margin-left:4px;vertical-align:1px}
 .st{cursor:pointer;font-size:15px;color:#d1d5db;user-select:none;letter-spacing:-1px}.st.on{color:#f59e0b}.st:hover{color:#fbbf24}
 .pop{font-size:13px;line-height:1.45;min-width:270px;max-width:320px}.pop .ph b{font-size:15px}.pop .pr{margin:3px 0 4px}.pop a{font-size:12px}.pt{width:100%;min-width:0;margin:6px 0;border-collapse:collapse}.pt th{width:38px;color:#6b7280;font-weight:500;background:none;padding:2px 6px 2px 0;border:0;cursor:default;font-size:12px}.pt td{padding:2px 0;border:0;font-size:12px}.pf{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid #e5e7eb;padding-top:6px}
@@ -119,9 +121,11 @@ tr.opened{background:#f9fafb}
 <p><small>예상 월 총액 = 월세(+필수 수수료) + 주차 + 공과금 약 $100~150 (추정). 지하철 도보 시간은 직선거리 × 1.3 기준 추정.</small></p>
 </div>
 <script>
-const UPDATED="2026-11-04 (34차)";
+const UPDATED="2026-11-04 (35차)";
 const SK="bh_settings_v1",STK="bh_stars_v1";let SV={};try{SV=JSON.parse(localStorage.getItem(SK)||"{}")}catch(e){}
 let MY={};try{MY=JSON.parse(localStorage.getItem(STK)||"{}")}catch(e){}
+const STKA="bh_stars_ara_v1";let MA={};try{MA=JSON.parse(localStorage.getItem(STKA)||"{}")}catch(e){}
+const PN={d:"동인",a:"아라"};let MYP=(SV.myp==="a")?"a":"d";
 const XK="bh_ex_v1";let XU={};try{XU=JSON.parse(localStorage.getItem(XK)||"{}")}catch(e){}
 try{const old=JSON.parse(localStorage.getItem("bh_del_v1")||"{}");if(Object.keys(old).length){Object.assign(XU,old);localStorage.setItem(XK,JSON.stringify(XU));}localStorage.removeItem("bh_del_v1");}catch(e){}
 function esc(n){return n.replace(/'/g,"\\'")}
@@ -259,12 +263,12 @@ const PG=["미연락","문의함","답장 받음","투어 예정","투어 완료
 function pgCell(r){const p=r.pg;if(!p)return '<small style="color:#9ca3af">미연락</small>';const i=PG.indexOf(p.st);return `<b style="color:${PGC[i]||"#374151"}">${p.st}</b>${p.d?`<br><small>${p.d.slice(5).replace("-","/")}${p.via?" · "+p.via:""}</small>`:""}${p.next?`<br><small>${p.next}</small>`:""}`}
 const ST={1:["1순위 그룹","s1","#16a34a"],2:["후보","s2","#2563eb"],3:["보류·조건부","s3","#d97706"],4:["예산 초과","s4","#dc2626"],5:["제외","s5","#9ca3af"]};
 const YN=v=>v==="y"?'<span class="ok">O</span>':v==="n"?'<span class="no">X</span>':v==="?"?'<span class="q">?</span>':'-';
-L.forEach(r=>{const t=TR[r.n];if(t){r.dist=t.distWork;r.subTxt=`${t.sub.name} (${t.sub.lines}) 도보 ${t.sub.walk}분`;r.subWalk=t.sub.walk;r.crTxt=t.cr?`${t.cr.name} (${t.cr.lines}) 도보 ${t.cr.walk}분`:"";r.bus=t.buses.length?t.buses.join(", "):"-";}const e=EX[r.n];if(e){r.shuttle=e[0];r.tcom=e[1];r.tcomLo=parseInt(e[1]);}r.geo=GEO[r.n];r.my=(r.n in MY)?MY[r.n]:(r.star||0);const gg=GG[r.n]||{};r.gR=gg.r||null;r.gC=gg.c||null;r.gUrl=gg.url;r.gS=gg.s||"";r.beds=/2베드/.test(r.unit)?(/1베드/.test(r.unit)?[1,2]:[2]):[1];const dv=DRIVE[r.n];if(dv){r.drvHi=dv.hi;r.drv=dv.lo===dv.hi?`${dv.lo}분`:`${dv.lo}~${dv.hi}분`;r.drvLo=dv.lo;r.drvMi=dv.mi;}});
+L.forEach(r=>{const t=TR[r.n];if(t){r.dist=t.distWork;r.subTxt=`${t.sub.name} (${t.sub.lines}) 도보 ${t.sub.walk}분`;r.subWalk=t.sub.walk;r.crTxt=t.cr?`${t.cr.name} (${t.cr.lines}) 도보 ${t.cr.walk}분`:"";r.bus=t.buses.length?t.buses.join(", "):"-";}const e=EX[r.n];if(e){r.shuttle=e[0];r.tcom=e[1];r.tcomLo=parseInt(e[1]);}r.geo=GEO[r.n];r.my=(r.n in MY)?MY[r.n]:(r.star||0);r.ma=MA[r.n]||0;const gg=GG[r.n]||{};r.gR=gg.r||null;r.gC=gg.c||null;r.gUrl=gg.url;r.gS=gg.s||"";r.beds=/2베드/.test(r.unit)?(/1베드/.test(r.unit)?[1,2]:[2]):[1];const dv=DRIVE[r.n];if(dv){r.drvHi=dv.hi;r.drv=dv.lo===dv.hi?`${dv.lo}분`:`${dv.lo}~${dv.hi}분`;r.drvLo=dv.lo;r.drvMi=dv.mi;}});
 L.forEach(r=>{const ev=EV[r.n]||{};if(ev.tq){for(const k of ["dep","arr"])if(ev.tq[k])ev.tq[k]=String(ev.tq[k]).replace(/[\s\u202f]*[AP]M/g,"").trim();}r.tq=ev.tq||null;r.md=ev.md||null;r.score=ev.score??null;r.parts=ev.parts||null;r.rank=ev.rank??null;r.fail=ev.fail||null;r.fees=r.fees||"";r.tqArr=r.tq?(r.tq.pass?r.tq.arrAfter??5:900+(r.tq.direct?r.tq.direct.arrAfter:99)):null;r.mdD=r.md?r.md.d:null;r.sf=ev.sf||null;r.sfR=r.sf?r.sf.rate:null;});
 L.forEach(r=>{r.pgK=r.pg?Math.max(0,PG.indexOf(r.pg.st)):0;});
 L.forEach(r=>{r.bedsK=Math.max(...(r.beds||[0]));});
 L.forEach(r=>{r.s0=r.s;r.ux=!!XU[r.n]&&r.s0!==5;if(r.ux)r.s=5;});
-const CW={rank:"5%",my:"8%",n:"20%",rent:"8%",tqArr:"14%",sq:"6%",bedsK:"7%",wd:"4.5%",gym:"4.5%",mgd:"4.5%",s:"9%",sfR:"9.5%"};
+const CW={rank:"5%",my:"10%",n:"19%",rent:"8%",tqArr:"14%",sq:"6%",bedsK:"7%",wd:"4.5%",gym:"4.5%",mgd:"4.5%",s:"9%",sfR:"9.5%"};
 const COLS=[["rank","순위"],["my","별점"],["n","매물 · 주소"],["rent","월세 · 총액"],["tqArr","출근 (8:30, 환승 없음)"],["sq","면적"],["bedsK","구조"],["wd","세탁기"],["gym","헬스장"],["mgd","관리형"],["s","상태 · 진행"],["sfR","치안"]];
 let sortK=SV.sortK||"rank",asc=SV.asc!==undefined?SV.asc:true,fs=new Set(SV.fs||[1,2,3,4]);
 document.getElementById("upd").textContent=UPDATED;
@@ -302,7 +306,7 @@ document.getElementById("head").innerHTML=COLS.map(([k,t])=>`<th data-k="${k}"${
 document.querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;asc=sortK===k?!asc:true;sortK=k;render()});
 document.getElementById("q").oninput=render;
 const MYF=new Set(SV.myf||[]);
-function drawMych(){const el=document.getElementById("mych");const cnt=v=>L.filter(r=>(r.my||0)===v).length;el.innerHTML='<small style="margin-right:4px">별점:</small>'+[0,1,2,3,4,5].map(v=>`<button class="mc${MYF.has(v)?" on":""}" data-v="${v}" title="${v?"★"+v+"개":"별점 안 준 곳"}">${v?"★".repeat(v):"미평가"} <small>${cnt(v)}</small></button>`).join("")+(MYF.size?'<button class="mc clr" data-v="x">전체</button>':"");el.querySelectorAll(".mc").forEach(b=>b.onclick=()=>{const v=b.dataset.v;if(v==="x")MYF.clear();else{const n=+v;MYF.has(n)?MYF.delete(n):MYF.add(n);}render();});}
+function drawMych(){const el=document.getElementById("mych");const cnt=v=>L.filter(r=>((MYP==="a"?r.ma:r.my)||0)===v).length;el.innerHTML='<small style="margin-right:2px">별점:</small><span class="pt2">'+["d","a"].map(p=>`<button class="pb${MYP===p?" on":""}" data-p="${p}">${PN[p]}</button>`).join("")+'</span>'+[0,1,2,3,4,5].map(v=>`<button class="mc${MYF.has(v)?" on":""}" data-v="${v}" title="${v?"★"+v+"개":"별점 안 준 곳"}">${v?"★".repeat(v):"미평가"} <small>${cnt(v)}</small></button>`).join("")+(MYF.size?'<button class="mc clr" data-v="x">전체</button>':"");el.querySelectorAll(".pb").forEach(b=>b.onclick=()=>{MYP=b.dataset.p;render()});el.querySelectorAll(".mc").forEach(b=>b.onclick=()=>{const v=b.dataset.v;if(v==="x")MYF.clear();else{const n=+v;MYF.has(n)?MYF.delete(n):MYF.add(n);}render();});}
 document.getElementById("allopen").onclick=()=>{ALLOPEN=!ALLOPEN;OPEN.clear();document.getElementById("allopen").textContent=ALLOPEN?"모두 접기":"모두 펼치기";render()};
 {const a=document.getElementById("f_pass"),b=document.getElementById("f_pass2");b.checked=a.checked;b.onchange=()=>{a.checked=b.checked;render()};a.addEventListener("change",()=>{b.checked=a.checked});}
 const FIDS=["f_pass","f_src","f_gr","f_beds","f_est","f_rent","f_drv","f_drvlo","f_built","f_sq","f_walk","f_wd","f_gym","f_mgd","f_lma"];
@@ -310,7 +314,7 @@ function getF(){const g=id=>document.getElementById(id);return{pass:g("f_pass").
 function passF(r,F){
  if(F.pass&&!(r.tq&&r.tq.pass&&r.s!==5))return false;
  if(F.src==="zillow"&&r.src!=="zillow")return false;if(F.src==="mgd"&&r.src==="zillow")return false;
- if(MYF.size&&!MYF.has(r.my||0))return false;
+ if(MYF.size&&!MYF.has((MYP==="a"?r.ma:r.my)||0))return false;
  if(F.gr&&(r.gR==null||r.gR<F.gr))return false;
  if(F.beds&&!r.beds.includes(+F.beds))return false;
  if(F.est){if(r.estLo==null)return false;if(F.est!=="known"&&r.estLo>+F.est)return false;}
@@ -360,7 +364,7 @@ function togDet(n){OPEN.has(n)?OPEN.delete(n):OPEN.add(n);render()}
 function render(){if(typeof drawMych==="function")drawMych();const q=document.getElementById("q").value.toLowerCase();
  const F=getF();let rows=L.filter(r=>fs.has(r.s)&&(!q||JSON.stringify(r).toLowerCase().includes(q))&&passF(r,F));
  L.forEach(r=>{const m=MK[r.n];if(!m)return;rows.includes(r)?m.addTo(M):m.remove()});
- rows.sort((a,b)=>{let x=a[sortK],y=b[sortK];if(x==null)return 1;if(y==null)return -1;if(typeof x==="number")return asc?x-y:y-x;return asc?String(x).localeCompare(String(y)):String(y).localeCompare(String(x))});
+ rows.sort((a,b)=>{let x=sortK==="my"?(MYP==="a"?a.ma:a.my):a[sortK],y=sortK==="my"?(MYP==="a"?b.ma:b.my):b[sortK];if(x==null)return 1;if(y==null)return -1;if(typeof x==="number")return asc?x-y:y-x;return asc?String(x).localeCompare(String(y)):String(y).localeCompare(String(x))});
  document.getElementById("cnt").textContent=`${rows.length}곳 표시 / 전체 ${L.length}곳 (직접 제외 ${L.filter(r=>r.ux).length}곳, 위쪽 "제외" 버튼을 켜면 보여요) · 행에 마우스를 올리면 지도에서 강조, 누르면 정보창이 열려요`;
  document.getElementById("body").innerHTML=rows.map(r=>`<tr class="row${OPEN.has(r.n)?" opened":""}" data-n="${r.n}">${COLS.map(([k])=>CELL[k](r).replace("<td",`<td data-c="${k}"`)).join("")}</tr><tr class="det" data-d="${r.n}" style="${OPEN.has(r.n)||ALLOPEN?"":"display:none"}"><td colspan="${COLS.length}">${DET(r)}</td></tr>`).join("");
  if(typeof saveS==="function"&&typeof M!=="undefined")try{saveS()}catch(e){}
@@ -369,10 +373,11 @@ function render(){if(typeof drawMych==="function")drawMych();const q=document.ge
  tr.onclick=()=>{if(!M.getBounds().contains(m.getLatLng()))M.panTo(m.getLatLng());pinned=null;m.openPopup();pinned=m;if(innerWidth<=900)document.getElementById("map").scrollIntoView({behavior:"smooth",block:"start"})};});}
 function hl(m,on){if(on){m._orig=m._orig||{radius:m.getRadius(),color:m.options.color,weight:m.options.weight};m.setRadius(15);m.setStyle({color:"#111",weight:4});m.bringToFront();m.openTooltip();}else if(m._orig){m.setRadius(m._orig.radius);m.setStyle({color:m._orig.color,weight:m._orig.weight});m.closeTooltip();}}
 
-function stars(r){let h="";for(let i=1;i<=5;i++)h+=`<span class="st ${i<=(r.my||0)?"on":""}" data-n="${r.n.replace(/"/g,'&quot;')}" data-v="${i}">★</span>`;return h}
-document.addEventListener("click",e=>{const s=e.target.closest(".st");if(!s)return;e.stopPropagation();const n=s.dataset.n,v=+s.dataset.v;const r=L.find(x=>x.n===n);if(!r)return;r.my=(r.my===v)?0:v;MY[n]=r.my;localStorage.setItem(STK,JSON.stringify(MY));document.querySelectorAll(`.st[data-n="${CSS.escape(n)}"]`).forEach(el=>{el.classList.toggle("on",+el.dataset.v<=r.my)});if(sortK==="my"||MYF.size)setTimeout(render,250);else drawMych();},true);
+function stars1(r,p){const v=p==="a"?(r.ma||0):(r.my||0);let h="";for(let i=1;i<=5;i++)h+=`<span class="st ${i<=v?"on":""}${p==="a"?" sa":""}" data-p="${p}" data-n="${r.n.replace(/"/g,'&quot;')}" data-v="${i}">★</span>`;return h}
+function stars(r){return `<div class="sr"><small class="who">동인</small>${stars1(r,"d")}</div><div class="sr"><small class="who wa">아라</small>${stars1(r,"a")}</div>`}
+document.addEventListener("click",e=>{const s=e.target.closest(".st");if(!s)return;e.stopPropagation();const n=s.dataset.n,v=+s.dataset.v,p=s.dataset.p||"d";const r=L.find(x=>x.n===n);if(!r)return;if(p==="a"){r.ma=(r.ma===v)?0:v;MA[n]=r.ma;localStorage.setItem(STKA,JSON.stringify(MA));}else{r.my=(r.my===v)?0:v;MY[n]=r.my;localStorage.setItem(STK,JSON.stringify(MY));}const cur=p==="a"?r.ma:r.my;document.querySelectorAll(`.st[data-p="${p}"][data-n="${CSS.escape(n)}"]`).forEach(el=>{el.classList.toggle("on",+el.dataset.v<=cur)});if(sortK==="my"||MYF.size)setTimeout(render,250);else drawMych();},true);
 const UDIR={"Simmons University":"left","Harvard Medical School":"left","Harvard T.H. Chan School of Public Health":"bottom","Northeastern University":"right"};const UNI_LAYER=window.L.layerGroup();Object.entries(UNIS).forEach(([n,g])=>{if(!g)return;window.L.marker(g,{icon:window.L.divIcon({html:'<div style="font-size:20px;line-height:20px;filter:drop-shadow(0 1px 1px #fff)">🎓</div>',className:"",iconSize:[20,20],iconAnchor:[10,10]})}).bindTooltip(n,{direction:"top",offset:[0,-8],className:"unilbl"}).addTo(UNI_LAYER)});
-function saveS(){const v={};FIDS.forEach(id=>{const el=document.getElementById(id);v[id]=el.type==="checkbox"?el.checked:el.value});SV={myf:[...MYF],fs:[...fs],sortK,asc,f:v,q:document.getElementById("q").value,uni:document.getElementById("f_uni").checked,c:[M.getCenter().lat,M.getCenter().lng],z:M.getZoom()};localStorage.setItem(SK,JSON.stringify(SV))}
+function saveS(){const v={};FIDS.forEach(id=>{const el=document.getElementById(id);v[id]=el.type==="checkbox"?el.checked:el.value});SV={myp:MYP,myf:[...MYF],fs:[...fs],sortK,asc,f:v,q:document.getElementById("q").value,uni:document.getElementById("f_uni").checked,c:[M.getCenter().lat,M.getCenter().lng],z:M.getZoom()};localStorage.setItem(SK,JSON.stringify(SV))}
 (function restore(){if(!SV.f){document.getElementById("f_pass").checked=true;document.getElementById("f_pass2").checked=true;}if(SV.f)FIDS.forEach(id=>{const el=document.getElementById(id);if(SV.f[id]===undefined)return;if(el.type==="checkbox")el.checked=SV.f[id];else el.value=SV.f[id]});if(SV.q)document.getElementById("q").value=SV.q;if(SV.uni===false)document.getElementById("f_uni").checked=false;if(SV.c&&SV.z)M.setView(SV.c,SV.z);document.querySelectorAll("#filters button").forEach((b,i)=>{b.className=fs.has(i+1)?"on":""});})();
 document.getElementById("f_pass2").checked=document.getElementById("f_pass").checked;
 const MUR_LAYER=window.L.layerGroup();MURDERS.forEach(m=>{window.L.circle(m.g,{radius:804.67,color:"#dc2626",weight:1,opacity:.5,fillColor:"#dc2626",fillOpacity:.06,interactive:false}).addTo(MUR_LAYER);window.L.marker(m.g,{icon:window.L.divIcon({html:'<div style="color:#b91c1c;font-weight:900;font-size:16px;line-height:16px;text-shadow:0 0 2px #fff">✖</div>',className:"",iconSize:[16,16],iconAnchor:[8,8]})}).bindTooltip(`${m.date} · ${m.a} (${m.nb})<br>${m.k}`).addTo(MUR_LAYER)});
