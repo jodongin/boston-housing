@@ -65,6 +65,7 @@ td.c{text-align:center;width:40px;min-width:36px;padding-left:2px;padding-right:
 tr.det td{background:#f9fafb;padding:10px 14px}
 .detg{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 18px;font-size:12px;color:#374151}.detg b{display:block;color:#111;font-size:12px;margin-bottom:2px}.detg .wide{grid-column:1/-1}
 tr.opened{background:#f9fafb}
+.mych{display:inline-flex;gap:3px;align-items:center;flex-wrap:wrap}.mc{font-size:12px;padding:2px 7px;border:1px solid var(--b);background:#fff;border-radius:999px;cursor:pointer;color:#b45309;white-space:nowrap}.mc small{color:#6b7280}.mc.on{background:#f59e0b;border-color:#f59e0b;color:#fff}.mc.on small{color:#fff}.mc.clr{color:#374151}
 .zb{display:inline-block;font-size:11px;font-weight:600;color:#fff;background:#006aff;border-radius:4px;padding:0 5px;margin-left:4px;vertical-align:1px}
 .st{cursor:pointer;font-size:15px;color:#d1d5db;user-select:none;letter-spacing:-1px}.st.on{color:#f59e0b}.st:hover{color:#fbbf24}
 .pop{font-size:13px;line-height:1.45;min-width:270px;max-width:320px}.pop .ph b{font-size:15px}.pop .pr{margin:3px 0 4px}.pop a{font-size:12px}.pt{width:100%;min-width:0;margin:6px 0;border-collapse:collapse}.pt th{width:38px;color:#6b7280;font-weight:500;background:none;padding:2px 6px 2px 0;border:0;cursor:default;font-size:12px}.pt td{padding:2px 0;border:0;font-size:12px}.pf{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid #e5e7eb;padding-top:6px}
@@ -106,7 +107,7 @@ tr.opened{background:#f9fafb}
 <button class="rst" id="f_reset">필터 초기화</button>
 </div></details>
 <div class="leg"><span><i class="dot" style="background:#16a34a"></i>1순위 그룹</span><span><i class="dot" style="background:#2563eb"></i>후보</span><span><i class="dot" style="background:#d97706"></i>보류·조건부</span><span><i class="dot" style="background:#dc2626"></i>예산 초과</span><span><i class="dot" style="background:#9ca3af"></i>제외</span><span>★ Harvard Pilgrim Health Care Institute (Landmark Center)</span><span>선: 지하철 노선</span><span>🎓 주요 대학 (마우스를 올리면 이름)</span><label style="font-size:12px;margin-right:12px"><input type="checkbox" id="f_uni" checked> 대학 표시</label><span><b style="color:#b91c1c">✖</b> 2026 살인 지점 (빨간 원: 반경 0.5마일)</span><label style="font-size:12px;margin-right:12px"><input type="checkbox" id="f_mur" checked> 살인 지점 표시</label><span>점에 마우스를 올리면 정보가 잠깐 뜨고, 클릭하면 고정돼요</span></div>
-<div class="split" id="split"><div class="lp"><div class="bar"><input id="q" placeholder="이름·지역·메모 검색"><small id="cnt"></small><label style="font-size:13px"><input type="checkbox" id="f_pass2"> 새 기준 통과만</label><label style="font-size:13px"><input type="checkbox" id="f_unrated"> 별점 안 준 곳만</label><button class="xb" id="allopen" style="margin:0">모두 펼치기</button><span class="lay"><button id="lay_side" title="목록 왼쪽, 지도 오른쪽">◧ 나란히</button><button id="lay_top" title="지도 위, 목록 아래">⬒ 위아래</button></span></div>
+<div class="split" id="split"><div class="lp"><div class="bar"><input id="q" placeholder="이름·지역·메모 검색"><small id="cnt"></small><label style="font-size:13px"><input type="checkbox" id="f_pass2"> 새 기준 통과만</label><span class="mych" id="mych"></span><button class="xb" id="allopen" style="margin:0">모두 펼치기</button><span class="lay"><button id="lay_side" title="목록 왼쪽, 지도 오른쪽">◧ 나란히</button><button id="lay_top" title="지도 위, 목록 아래">⬒ 위아래</button></span></div>
 <div class="tw"><table id="tbl"><colgroup id="cg"></colgroup><thead><tr id="head"></tr></thead><tbody id="body"></tbody></table></div></div>
 <div class="gut" id="gut" title="끌어서 크기 조절"></div><div class="rp"><div id="map"></div></div></div>
 
@@ -175,7 +176,8 @@ document.getElementById("cg").innerHTML=COLS.map(([k])=>`<col style="width:${CW[
 document.getElementById("head").innerHTML=COLS.map(([k,t])=>`<th data-k="${k}"${["wd","gym","mgd"].includes(k)?' class="cx"':""}>${t}</th>`).join("");
 document.querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;asc=sortK===k?!asc:true;sortK=k;render()});
 document.getElementById("q").oninput=render;
-{const s=document.getElementById("f_my"),u=document.getElementById("f_unrated");const sync=()=>{u.checked=s.value==="none"};u.onchange=()=>{s.value=u.checked?"none":"";render()};s.addEventListener("change",sync);setTimeout(sync,0);}
+const MYF=new Set(SV.myf||[]);
+function drawMych(){const el=document.getElementById("mych");const cnt=v=>L.filter(r=>(r.my||0)===v).length;el.innerHTML='<small style="margin-right:4px">별점:</small>'+[0,1,2,3,4,5].map(v=>`<button class="mc${MYF.has(v)?" on":""}" data-v="${v}" title="${v?"★"+v+"개":"별점 안 준 곳"}">${v?"★".repeat(v):"미평가"} <small>${cnt(v)}</small></button>`).join("")+(MYF.size?'<button class="mc clr" data-v="x">전체</button>':"");el.querySelectorAll(".mc").forEach(b=>b.onclick=()=>{const v=b.dataset.v;if(v==="x")MYF.clear();else{const n=+v;MYF.has(n)?MYF.delete(n):MYF.add(n);}render();});}
 document.getElementById("allopen").onclick=()=>{ALLOPEN=!ALLOPEN;OPEN.clear();document.getElementById("allopen").textContent=ALLOPEN?"모두 접기":"모두 펼치기";render()};
 {const a=document.getElementById("f_pass"),b=document.getElementById("f_pass2");b.checked=a.checked;b.onchange=()=>{a.checked=b.checked;render()};a.addEventListener("change",()=>{b.checked=a.checked});}
 const FIDS=["f_pass","f_src","f_my","f_gr","f_beds","f_est","f_rent","f_drv","f_drvlo","f_built","f_sq","f_walk","f_wd","f_gym","f_mgd","f_lma"];
@@ -183,6 +185,7 @@ function getF(){const g=id=>document.getElementById(id);return{pass:g("f_pass").
 function passF(r,F){
  if(F.pass&&!(r.tq&&r.tq.pass&&r.s!==5))return false;
  if(F.src==="zillow"&&r.src!=="zillow")return false;if(F.src==="mgd"&&r.src==="zillow")return false;
+ if(MYF.size&&!MYF.has(r.my||0))return false;
  if(F.my==="none"){if((r.my||0)>0)return false;}else if(F.my&&(r.my||0)<F.my)return false;
  if(F.gr&&(r.gR==null||r.gR<F.gr))return false;
  if(F.beds&&!r.beds.includes(+F.beds))return false;
@@ -230,7 +233,7 @@ function DET(r){return `<div class="detg">
 <div class="wide"><b>메모</b>${r.memo}${r.fail?`<br><span class="no">${r.fail}</span>`:""}${r.parts?`<br><small>점수 내역: ${Object.entries(r.parts).map(([k,v])=>k+" "+v.toFixed(1)).join(" · ")}</small>`:""}</div></div>`}
 function togDet(n){OPEN.has(n)?OPEN.delete(n):OPEN.add(n);render()}
 
-function render(){const q=document.getElementById("q").value.toLowerCase();
+function render(){if(typeof drawMych==="function")drawMych();const q=document.getElementById("q").value.toLowerCase();
  const F=getF();let rows=L.filter(r=>fs.has(r.s)&&(!q||JSON.stringify(r).toLowerCase().includes(q))&&passF(r,F));
  L.forEach(r=>{const m=MK[r.n];if(!m)return;rows.includes(r)?m.addTo(M):m.remove()});
  rows.sort((a,b)=>{let x=a[sortK],y=b[sortK];if(x==null)return 1;if(y==null)return -1;if(typeof x==="number")return asc?x-y:y-x;return asc?String(x).localeCompare(String(y)):String(y).localeCompare(String(x))});
@@ -243,9 +246,9 @@ function render(){const q=document.getElementById("q").value.toLowerCase();
 function hl(m,on){if(on){m._orig=m._orig||{radius:m.getRadius(),color:m.options.color,weight:m.options.weight};m.setRadius(15);m.setStyle({color:"#111",weight:4});m.bringToFront();m.openTooltip();}else if(m._orig){m.setRadius(m._orig.radius);m.setStyle({color:m._orig.color,weight:m._orig.weight});m.closeTooltip();}}
 
 function stars(r){let h="";for(let i=1;i<=5;i++)h+=`<span class="st ${i<=(r.my||0)?"on":""}" data-n="${r.n.replace(/"/g,'&quot;')}" data-v="${i}">★</span>`;return h}
-document.addEventListener("click",e=>{const s=e.target.closest(".st");if(!s)return;e.stopPropagation();const n=s.dataset.n,v=+s.dataset.v;const r=L.find(x=>x.n===n);if(!r)return;r.my=(r.my===v)?0:v;MY[n]=r.my;localStorage.setItem(STK,JSON.stringify(MY));document.querySelectorAll(`.st[data-n="${CSS.escape(n)}"]`).forEach(el=>{el.classList.toggle("on",+el.dataset.v<=r.my)});if(sortK==="my"||getF().my)setTimeout(render,250);},true);
+document.addEventListener("click",e=>{const s=e.target.closest(".st");if(!s)return;e.stopPropagation();const n=s.dataset.n,v=+s.dataset.v;const r=L.find(x=>x.n===n);if(!r)return;r.my=(r.my===v)?0:v;MY[n]=r.my;localStorage.setItem(STK,JSON.stringify(MY));document.querySelectorAll(`.st[data-n="${CSS.escape(n)}"]`).forEach(el=>{el.classList.toggle("on",+el.dataset.v<=r.my)});if(sortK==="my"||getF().my||MYF.size)setTimeout(render,250);else drawMych();},true);
 const UDIR={"Simmons University":"left","Harvard Medical School":"left","Harvard T.H. Chan School of Public Health":"bottom","Northeastern University":"right"};const UNI_LAYER=window.L.layerGroup();Object.entries(UNIS).forEach(([n,g])=>{if(!g)return;window.L.marker(g,{icon:window.L.divIcon({html:'<div style="font-size:20px;line-height:20px;filter:drop-shadow(0 1px 1px #fff)">🎓</div>',className:"",iconSize:[20,20],iconAnchor:[10,10]})}).bindTooltip(n,{direction:"top",offset:[0,-8],className:"unilbl"}).addTo(UNI_LAYER)});
-function saveS(){const v={};FIDS.forEach(id=>{const el=document.getElementById(id);v[id]=el.type==="checkbox"?el.checked:el.value});SV={fs:[...fs],sortK,asc,f:v,q:document.getElementById("q").value,uni:document.getElementById("f_uni").checked,c:[M.getCenter().lat,M.getCenter().lng],z:M.getZoom()};localStorage.setItem(SK,JSON.stringify(SV))}
+function saveS(){const v={};FIDS.forEach(id=>{const el=document.getElementById(id);v[id]=el.type==="checkbox"?el.checked:el.value});SV={myf:[...MYF],fs:[...fs],sortK,asc,f:v,q:document.getElementById("q").value,uni:document.getElementById("f_uni").checked,c:[M.getCenter().lat,M.getCenter().lng],z:M.getZoom()};localStorage.setItem(SK,JSON.stringify(SV))}
 (function restore(){if(!SV.f){document.getElementById("f_pass").checked=true;document.getElementById("f_pass2").checked=true;}if(SV.f)FIDS.forEach(id=>{const el=document.getElementById(id);if(SV.f[id]===undefined)return;if(el.type==="checkbox")el.checked=SV.f[id];else el.value=SV.f[id]});if(SV.q)document.getElementById("q").value=SV.q;if(SV.uni===false)document.getElementById("f_uni").checked=false;if(SV.c&&SV.z)M.setView(SV.c,SV.z);document.querySelectorAll("#filters button").forEach((b,i)=>{b.className=fs.has(i+1)?"on":""});})();
 document.getElementById("f_pass2").checked=document.getElementById("f_pass").checked;
 const MUR_LAYER=window.L.layerGroup();MURDERS.forEach(m=>{window.L.circle(m.g,{radius:804.67,color:"#dc2626",weight:1,opacity:.5,fillColor:"#dc2626",fillOpacity:.06,interactive:false}).addTo(MUR_LAYER);window.L.marker(m.g,{icon:window.L.divIcon({html:'<div style="color:#b91c1c;font-weight:900;font-size:16px;line-height:16px;text-shadow:0 0 2px #fff">✖</div>',className:"",iconSize:[16,16],iconAnchor:[8,8]})}).bindTooltip(`${m.date} · ${m.a} (${m.nb})<br>${m.k}`).addTo(MUR_LAYER)});
