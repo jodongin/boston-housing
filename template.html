@@ -62,6 +62,8 @@ td.c{text-align:center;width:40px;min-width:36px;padding-left:2px;padding-right:
 #tbl tr.det td{text-align:left}
 .addr{font-size:12px;color:#374151}.addr:hover{color:var(--a)}
 .nt{margin-top:5px;padding:4px 7px;background:#fefce8;border:1px solid #fde68a;border-radius:6px;font-size:12px;white-space:pre-wrap;line-height:1.45;max-width:320px}.nt b{color:#92400e;margin-right:4px}.ntb{border-color:#fcd34d!important;color:#92400e}.ntb:hover{background:#fefce8}textarea.nte{display:block;width:100%;max-width:320px;min-height:64px;margin-top:5px;font:13px/1.4 inherit;padding:5px 7px;border:1px solid #f59e0b;border-radius:6px;box-sizing:border-box}
+.popnote{margin-top:8px;border-top:1px dashed #e5e7eb;padding-top:6px}.popnote .nt{max-width:none}.popnote textarea.nte{max-width:none}
+@keyframes rowflash{0%{background:#fde68a}100%{background:transparent}}tr.row.flash>td{animation:rowflash 1.8s ease-out}
 .xb{font-size:12px;padding:2px 8px;border:1px solid var(--b);background:#fff;border-radius:6px;cursor:pointer;white-space:nowrap;margin:2px 0}
 tr.det td{background:#f9fafb;padding:10px 14px}
 .detg{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 18px;font-size:12px;color:#374151}.detg b{display:block;color:#111;font-size:12px;margin-bottom:2px}.detg .wide{grid-column:1/-1}
@@ -122,7 +124,7 @@ tr.opened{background:#f9fafb}
 <p><small>예상 월 총액 = 월세(+필수 수수료) + 주차 + 공과금 약 $100~150 (추정). 지하철 도보 시간은 직선거리 × 1.3 기준 추정.</small></p>
 </div>
 <script>
-const UPDATED="2026-11-04 (37차)";
+const UPDATED="2026-11-04 (38차)";
 const SK="bh_settings_v1",STK="bh_stars_v1";let SV={};try{SV=JSON.parse(localStorage.getItem(SK)||"{}")}catch(e){}
 let MY={};try{MY=JSON.parse(localStorage.getItem(STK)||"{}")}catch(e){}
 const ARA0=__ARA__;
@@ -137,7 +139,17 @@ function noteBtn(r){const has=(NT[r.n]||{})[MYP];return `<button class="xb ntb" 
 function noteHTML(r){const o=NT[r.n]||{};let h="";for(const p of ["d","a"]){if(o[p]&&!(NEDIT===r.n&&p===MYP))h+=`<div class="nt"><b>${PN[p]}</b>${escH(o[p])}</div>`}
  if(NEDIT===r.n)h+=`<div onclick="event.stopPropagation()"><textarea class="nte" id="nte" placeholder="${PN[MYP]} 메모 (⌘+Enter 저장, Esc 취소)" onkeydown="if((event.metaKey||event.ctrlKey)&&event.key==='Enter')saveNote('${esc(r.n)}');if(event.key==='Escape'){NEDIT=null;render()}">${escH(o[MYP]||"")}</textarea><button class="xb" onclick="saveNote('${esc(r.n)}')">저장</button> <button class="xb" onclick="NEDIT=null;render()">취소</button> <small style="color:#9ca3af">${PN[MYP]} 이름으로 저장</small></div>`;return h}
 function editNote(n){NEDIT=n;render();const t=document.getElementById("nte");if(t){t.focus();t.setSelectionRange(t.value.length,t.value.length)}}
-function saveNote(n){const t=document.getElementById("nte");if(!t)return;const v=t.value.trim();const o=NT[n]||{};if(v)o[MYP]=v;else delete o[MYP];if(Object.keys(o).length)NT[n]=o;else delete NT[n];localStorage.setItem(NK,JSON.stringify(NT));const r=L.find(x=>x.n===n);if(r)r.note=NT[n]||null;NEDIT=null;render()}
+function setNote(n,v){v=v.trim();const o=NT[n]||{};if(v)o[MYP]=v;else delete o[MYP];if(Object.keys(o).length)NT[n]=o;else delete NT[n];localStorage.setItem(NK,JSON.stringify(NT));const r=L.find(x=>x.n===n);if(r)r.note=NT[n]||null;}
+function saveNote(n){const t=document.getElementById("nte");if(!t)return;setNote(n,t.value);NEDIT=null;render();document.querySelectorAll(".popnote").forEach(el=>popNote(el,false))}
+function popNote(el,edit){const n=el.dataset.n,o=NT[n]||{};let h="";for(const p of ["d","a"]){if(o[p]&&!(edit&&p===MYP))h+=`<div class="nt"><b>${PN[p]}</b>${escH(o[p])}</div>`}
+ if(edit){h+=`<textarea class="nte" placeholder="${PN[MYP]} 메모 (⌘+Enter 저장, Esc 취소)">${escH(o[MYP]||"")}</textarea><button class="xb" data-a="save">저장</button> <button class="xb" data-a="cancel">취소</button> <small style="color:#9ca3af">${PN[MYP]} 이름으로 저장</small>`}
+ else h+=`<button class="xb ntb" data-a="edit">${o[MYP]?"메모 수정":"메모 달기"}</button>`;
+ el.innerHTML=h;
+ el.querySelectorAll("button").forEach(b=>b.onclick=ev=>{ev.stopPropagation();const a=b.dataset.a;
+  if(a==="edit"){const m=MK[n];if(m){pinned=m;}popNote(el,true);}
+  else if(a==="save"){setNote(n,el.querySelector("textarea").value);popNote(el,false);render();}
+  else popNote(el,false);});
+ const ta=el.querySelector("textarea");if(ta){ta.onkeydown=ev=>{ev.stopPropagation();if((ev.metaKey||ev.ctrlKey)&&ev.key==="Enter"){setNote(n,ta.value);popNote(el,false);render();}else if(ev.key==="Escape")popNote(el,false);};ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);}}
 function esc(n){return n.replace(/'/g,"\\'")}
 function setEx(n,on){const r=L.find(x=>x.n===n);if(!r)return;if(on)XU[n]=1;else delete XU[n];localStorage.setItem(XK,JSON.stringify(XU));r.s=XU[n]?5:r.s0;r.ux=!!XU[n];const m=MK[n];if(m){m.setStyle({fillColor:ST[r.s][2]});m.setRadius(r.s<=2?9:7);m._orig=null;}M.closePopup();pinned=null;render();}
 function exBtn(r){if(r.ux)return `<button class="delb rs" onclick="event.stopPropagation();setEx('${esc(r.n)}',false)">제외 취소</button>`;if(r.s0===5)return `<small style="color:#9ca3af">기본 제외</small>`;return `<button class="delb" onclick="event.stopPropagation();setEx('${esc(r.n)}',true)">제외</button>`}
@@ -166,7 +178,7 @@ const LC={Red:"#DA291C",Orange:"#ED8B00",Blue:"#003DA5","Green-B,Green-C,Green-D
 Object.entries(SHAPES).forEach(([k,arr])=>arr.forEach(p=>window.L.polyline(dec(p),{color:LC[k],weight:3,opacity:.55}).addTo(M)));
 window.L.marker(GEO.WORK,{icon:window.L.divIcon({html:'<div style="font-size:26px;line-height:26px;color:#7c3aed">★</div>',className:"",iconSize:[26,26],iconAnchor:[13,13]})}).addTo(M).bindTooltip("Harvard Pilgrim Health Care Institute",{permanent:true,direction:"right",offset:[12,0],className:"worklbl"}).bindPopup("<b>Harvard Pilgrim Health Care Institute</b><br>Landmark Center (401 Park Drive)<br>Green D Fenway역 도보 1분 · 버스 8, 19, 47, 60");
 let pinned=null,overPopup=false,T=null;const MK={};
-M.on("popupopen",e=>{const el=e.popup.getElement();el.querySelectorAll(".popstars").forEach(ps=>{const r=L.find(x=>x.n===ps.dataset.n);if(r)ps.innerHTML=stars(r)});el.onmouseenter=()=>{overPopup=true;clearTimeout(T)};el.onmouseleave=()=>{overPopup=false;if(!pinned)M.closePopup()};});
+M.on("popupopen",e=>{const el=e.popup.getElement();el.querySelectorAll(".popnote").forEach(pn=>popNote(pn,false));el.querySelectorAll(".popstars").forEach(ps=>{const r=L.find(x=>x.n===ps.dataset.n);if(r)ps.innerHTML=stars(r)});el.onmouseenter=()=>{overPopup=true;clearTimeout(T)};el.onmouseleave=()=>{overPopup=false;if(!pinned)M.closePopup()};});
 M.on("popupclose",e=>{overPopup=false;if(pinned&&e.popup._source===pinned)pinned=null;});
 const popHTML=r=>`<div class="pop">
 <div class="ph"><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""}${(r.src==="search"||r.src==="sweep")?' <span class="zb" style="background:#7c3aed">신규</span>':""}</div>
@@ -180,10 +192,10 @@ ${r.addr?`<div><a href="${gmap(r.addr)}" target="_blank">📍 ${r.addr}</a></div
 <tr><th>치안</th><td>${r.sf?`10만 명당 <b>${r.sf.rate.toLocaleString()}</b> (${r.sf.city}) · `:""}${r.md?`살인 지점 <span class="${r.md.d>0.5?"":"no"}">${r.md.d.toFixed(2)} mi</span>`:"-"}</td></tr>
 <tr><th>진행</th><td>${pgCell(r).replace(/<br>/g," ")}</td></tr>
 </table>
-<div class="pf"><span class="popstars" data-n="${r.n}">${stars(r)}</span>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 보기</a>`:""}${exBtn(r)}</div></div>`;
+<div class="pf"><span class="popstars" data-n="${r.n}">${stars(r)}</span>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 보기</a>`:""}${exBtn(r)}</div><div class="popnote" data-n="${r.n}"></div></div>`;
 L.forEach(r=>{if(!r.geo)return;const m=window.L.circleMarker(r.geo,{radius:r.s<=2?9:7,color:"#fff",weight:2,fillColor:ST[r.s][2],fillOpacity:.95});
 m.bindPopup(()=>popHTML(r));
-m.bindTooltip(r.n,{direction:"top",offset:[0,-10]});m.off("click");m.on("mouseover",()=>{clearTimeout(T);if(pinned){if(pinned!==m)m.openTooltip();return;}m.closeTooltip();m.openPopup();});m.on("mouseout",()=>{if(pinned){if(pinned!==m)m.closeTooltip();return;}T=setTimeout(()=>{if(!overPopup&&!pinned)m.closePopup()},200);});m.on("click",e=>{window.L.DomEvent.stop(e);pinned=null;m.closeTooltip();m.openPopup();pinned=m;});m.addTo(M);MK[r.n]=m;});
+m.bindTooltip(r.n,{direction:"top",offset:[0,-10]});m.off("click");m.on("mouseover",()=>{clearTimeout(T);if(pinned){if(pinned!==m)m.openTooltip();return;}m.closeTooltip();m.openPopup();});m.on("mouseout",()=>{if(pinned){if(pinned!==m)m.closeTooltip();return;}T=setTimeout(()=>{if(!overPopup&&!pinned)m.closePopup()},200);});m.on("click",e=>{window.L.DomEvent.stop(e);pinned=null;m.closeTooltip();m.openPopup();pinned=m;goRow(r.n);});m.addTo(M);MK[r.n]=m;});
 const fb=document.getElementById("filters");
 Object.entries(ST).forEach(([k,[t]])=>{const b=document.createElement("button");b.textContent=t;b.className=fs.has(+k)?"on":"";b.onclick=()=>{fs.has(+k)?fs.delete(+k):fs.add(+k);b.className=fs.has(+k)?"on":"";render()};fb.appendChild(b)});
 document.getElementById("cg").innerHTML=COLS.map(([k])=>`<col style="width:${CW[k]||"auto"}">`).join("");
@@ -257,6 +269,10 @@ function render(){if(typeof drawMych==="function")drawMych();const q=document.ge
  document.querySelectorAll("tr.row").forEach(tr=>{const m=MK[tr.dataset.n];if(!m)return;
  tr.onmouseenter=()=>hl(m,true);tr.onmouseleave=()=>hl(m,false);
  tr.onclick=()=>{if(!M.getBounds().contains(m.getLatLng()))M.panTo(m.getLatLng());pinned=null;m.openPopup();pinned=m;if(innerWidth<=900)document.getElementById("map").scrollIntoView({behavior:"smooth",block:"start"})};});}
+function goRow(n){const tr=document.querySelector(`tr.row[data-n="${CSS.escape(n)}"]`);if(!tr)return;const tw=tr.closest(".tw");
+ if(tw&&tw.scrollHeight>tw.clientHeight&&getComputedStyle(tw).overflowY!=="visible"&&innerWidth>900){const head=tw.querySelector("thead");const off=tr.getBoundingClientRect().top-tw.getBoundingClientRect().top+tw.scrollTop-(head?head.offsetHeight:0)-8;tw.scrollTo({top:off,behavior:"smooth"});}
+ else tr.scrollIntoView({behavior:"smooth",block:"center"});
+ tr.classList.remove("flash");void tr.offsetWidth;tr.classList.add("flash");}
 function hl(m,on){if(on){m._orig=m._orig||{radius:m.getRadius(),color:m.options.color,weight:m.options.weight};m.setRadius(15);m.setStyle({color:"#111",weight:4});m.bringToFront();m.openTooltip();}else if(m._orig){m.setRadius(m._orig.radius);m.setStyle({color:m._orig.color,weight:m._orig.weight});m.closeTooltip();}}
 
 function stars1(r,p){const v=p==="a"?(r.ma||0):(r.my||0);let h="";for(let i=1;i<=5;i++)h+=`<span class="st ${i<=v?"on":""}${p==="a"?" sa":""}" data-p="${p}" data-n="${r.n.replace(/"/g,'&quot;')}" data-v="${i}">★</span>`;return h}
