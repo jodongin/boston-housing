@@ -92,7 +92,7 @@ tr.opened{background:#f9fafb}
 <label>자차 출근 (보통 최소)<select id="f_drvlo"><option value="">전체</option><option value="15">15분 이내</option><option value="20">20분 이내</option><option value="25">25분 이내</option></select></label>
 <label>건축 연도 (이후)<select id="f_built"><option value="">전체</option><option value="2020">2020년 이후</option><option value="2015">2015년 이후</option><option value="2000">2000년 이후</option><option value="1980">1980년 이후</option></select></label>
 <label>면적 (최소, sq ft)<input type="number" id="f_sq" step="50" placeholder="예: 650"></label>
-<label>내 별점 (최소)<select id="f_my"><option value="">전체</option><option value="1">★ 1개 이상 (평가한 곳)</option><option value="3">★ 3개 이상</option><option value="4">★ 4개 이상</option><option value="5">★ 5개만</option></select></label>
+<label>내 별점 (최소)<select id="f_my"><option value="">전체</option><option value="none">☆ 별점 안 준 곳만</option><option value="1">★ 1개 이상 (평가한 곳)</option><option value="3">★ 3개 이상</option><option value="4">★ 4개 이상</option><option value="5">★ 5개만</option></select></label>
 <label>구글 평점 (최소)<select id="f_gr"><option value="">전체</option><option value="4.5">4.5 이상</option><option value="4.0">4.0 이상</option><option value="3.5">3.5 이상</option></select></label>
 <label>출처<select id="f_src"><option value="">전체</option><option value="mgd">관리형 단지 조사</option><option value="zillow">Zillow 즐겨찾기</option></select></label>
 <label>지하철역 도보 (최대)<select id="f_walk"><option value="">전체</option><option value="10">10분 이내</option><option value="15">15분 이내</option><option value="20">20분 이내</option></select></label>
@@ -106,7 +106,7 @@ tr.opened{background:#f9fafb}
 <button class="rst" id="f_reset">필터 초기화</button>
 </div></details>
 <div class="leg"><span><i class="dot" style="background:#16a34a"></i>1순위 그룹</span><span><i class="dot" style="background:#2563eb"></i>후보</span><span><i class="dot" style="background:#d97706"></i>보류·조건부</span><span><i class="dot" style="background:#dc2626"></i>예산 초과</span><span><i class="dot" style="background:#9ca3af"></i>제외</span><span>★ Harvard Pilgrim Health Care Institute (Landmark Center)</span><span>선: 지하철 노선</span><span>🎓 주요 대학 (마우스를 올리면 이름)</span><label style="font-size:12px;margin-right:12px"><input type="checkbox" id="f_uni" checked> 대학 표시</label><span><b style="color:#b91c1c">✖</b> 2026 살인 지점 (빨간 원: 반경 0.5마일)</span><label style="font-size:12px;margin-right:12px"><input type="checkbox" id="f_mur" checked> 살인 지점 표시</label><span>점에 마우스를 올리면 정보가 잠깐 뜨고, 클릭하면 고정돼요</span></div>
-<div class="split" id="split"><div class="lp"><div class="bar"><input id="q" placeholder="이름·지역·메모 검색"><small id="cnt"></small><label style="font-size:13px"><input type="checkbox" id="f_pass2"> 새 기준 통과만</label><button class="xb" id="allopen" style="margin:0">모두 펼치기</button><span class="lay"><button id="lay_side" title="목록 왼쪽, 지도 오른쪽">◧ 나란히</button><button id="lay_top" title="지도 위, 목록 아래">⬒ 위아래</button></span></div>
+<div class="split" id="split"><div class="lp"><div class="bar"><input id="q" placeholder="이름·지역·메모 검색"><small id="cnt"></small><label style="font-size:13px"><input type="checkbox" id="f_pass2"> 새 기준 통과만</label><label style="font-size:13px"><input type="checkbox" id="f_unrated"> 별점 안 준 곳만</label><button class="xb" id="allopen" style="margin:0">모두 펼치기</button><span class="lay"><button id="lay_side" title="목록 왼쪽, 지도 오른쪽">◧ 나란히</button><button id="lay_top" title="지도 위, 목록 아래">⬒ 위아래</button></span></div>
 <div class="tw"><table id="tbl"><colgroup id="cg"></colgroup><thead><tr id="head"></tr></thead><tbody id="body"></tbody></table></div></div>
 <div class="gut" id="gut" title="끌어서 크기 조절"></div><div class="rp"><div id="map"></div></div></div>
 
@@ -118,7 +118,7 @@ tr.opened{background:#f9fafb}
 <p><small>예상 월 총액 = 월세(+필수 수수료) + 주차 + 공과금 약 $100~150 (추정). 지하철 도보 시간은 직선거리 × 1.3 기준 추정.</small></p>
 </div>
 <script>
-const UPDATED="2026-11-04 (31차, 전수조사)";
+const UPDATED="2026-11-04 (32차)";
 const SK="bh_settings_v1",STK="bh_stars_v1";let SV={};try{SV=JSON.parse(localStorage.getItem(SK)||"{}")}catch(e){}
 let MY={};try{MY=JSON.parse(localStorage.getItem(STK)||"{}")}catch(e){}
 const XK="bh_ex_v1";let XU={};try{XU=JSON.parse(localStorage.getItem(XK)||"{}")}catch(e){}
@@ -175,14 +175,15 @@ document.getElementById("cg").innerHTML=COLS.map(([k])=>`<col style="width:${CW[
 document.getElementById("head").innerHTML=COLS.map(([k,t])=>`<th data-k="${k}"${["wd","gym","mgd"].includes(k)?' class="cx"':""}>${t}</th>`).join("");
 document.querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;asc=sortK===k?!asc:true;sortK=k;render()});
 document.getElementById("q").oninput=render;
+{const s=document.getElementById("f_my"),u=document.getElementById("f_unrated");const sync=()=>{u.checked=s.value==="none"};u.onchange=()=>{s.value=u.checked?"none":"";render()};s.addEventListener("change",sync);setTimeout(sync,0);}
 document.getElementById("allopen").onclick=()=>{ALLOPEN=!ALLOPEN;OPEN.clear();document.getElementById("allopen").textContent=ALLOPEN?"모두 접기":"모두 펼치기";render()};
 {const a=document.getElementById("f_pass"),b=document.getElementById("f_pass2");b.checked=a.checked;b.onchange=()=>{a.checked=b.checked;render()};a.addEventListener("change",()=>{b.checked=a.checked});}
 const FIDS=["f_pass","f_src","f_my","f_gr","f_beds","f_est","f_rent","f_drv","f_drvlo","f_built","f_sq","f_walk","f_wd","f_gym","f_mgd","f_lma"];
-function getF(){const g=id=>document.getElementById(id);return{pass:g("f_pass").checked,src:g("f_src").value,my:+g("f_my").value||0,gr:+g("f_gr").value||0,beds:g("f_beds").value,est:g("f_est").value,rent:+g("f_rent").value||0,drv:+g("f_drv").value||0,drvlo:+g("f_drvlo").value||0,built:+g("f_built").value||0,sq:+g("f_sq").value||0,walk:+g("f_walk").value||0,wd:g("f_wd").checked,gym:g("f_gym").checked,mgd:g("f_mgd").checked,lma:g("f_lma").checked}}
+function getF(){const g=id=>document.getElementById(id);return{pass:g("f_pass").checked,src:g("f_src").value,my:g("f_my").value==="none"?"none":(+g("f_my").value||0),gr:+g("f_gr").value||0,beds:g("f_beds").value,est:g("f_est").value,rent:+g("f_rent").value||0,drv:+g("f_drv").value||0,drvlo:+g("f_drvlo").value||0,built:+g("f_built").value||0,sq:+g("f_sq").value||0,walk:+g("f_walk").value||0,wd:g("f_wd").checked,gym:g("f_gym").checked,mgd:g("f_mgd").checked,lma:g("f_lma").checked}}
 function passF(r,F){
  if(F.pass&&!(r.tq&&r.tq.pass&&r.s!==5))return false;
  if(F.src==="zillow"&&r.src!=="zillow")return false;if(F.src==="mgd"&&r.src==="zillow")return false;
- if(F.my&&(r.my||0)<F.my)return false;
+ if(F.my==="none"){if((r.my||0)>0)return false;}else if(F.my&&(r.my||0)<F.my)return false;
  if(F.gr&&(r.gR==null||r.gR<F.gr))return false;
  if(F.beds&&!r.beds.includes(+F.beds))return false;
  if(F.est){if(r.estLo==null)return false;if(F.est!=="known"&&r.estLo>+F.est)return false;}
@@ -242,7 +243,7 @@ function render(){const q=document.getElementById("q").value.toLowerCase();
 function hl(m,on){if(on){m._orig=m._orig||{radius:m.getRadius(),color:m.options.color,weight:m.options.weight};m.setRadius(15);m.setStyle({color:"#111",weight:4});m.bringToFront();m.openTooltip();}else if(m._orig){m.setRadius(m._orig.radius);m.setStyle({color:m._orig.color,weight:m._orig.weight});m.closeTooltip();}}
 
 function stars(r){let h="";for(let i=1;i<=5;i++)h+=`<span class="st ${i<=(r.my||0)?"on":""}" data-n="${r.n.replace(/"/g,'&quot;')}" data-v="${i}">★</span>`;return h}
-document.addEventListener("click",e=>{const s=e.target.closest(".st");if(!s)return;e.stopPropagation();const n=s.dataset.n,v=+s.dataset.v;const r=L.find(x=>x.n===n);if(!r)return;r.my=(r.my===v)?0:v;MY[n]=r.my;localStorage.setItem(STK,JSON.stringify(MY));document.querySelectorAll(`.st[data-n="${CSS.escape(n)}"]`).forEach(el=>{el.classList.toggle("on",+el.dataset.v<=r.my)});if(sortK==="my"||getF().my)render();},true);
+document.addEventListener("click",e=>{const s=e.target.closest(".st");if(!s)return;e.stopPropagation();const n=s.dataset.n,v=+s.dataset.v;const r=L.find(x=>x.n===n);if(!r)return;r.my=(r.my===v)?0:v;MY[n]=r.my;localStorage.setItem(STK,JSON.stringify(MY));document.querySelectorAll(`.st[data-n="${CSS.escape(n)}"]`).forEach(el=>{el.classList.toggle("on",+el.dataset.v<=r.my)});if(sortK==="my"||getF().my)setTimeout(render,250);},true);
 const UDIR={"Simmons University":"left","Harvard Medical School":"left","Harvard T.H. Chan School of Public Health":"bottom","Northeastern University":"right"};const UNI_LAYER=window.L.layerGroup();Object.entries(UNIS).forEach(([n,g])=>{if(!g)return;window.L.marker(g,{icon:window.L.divIcon({html:'<div style="font-size:20px;line-height:20px;filter:drop-shadow(0 1px 1px #fff)">🎓</div>',className:"",iconSize:[20,20],iconAnchor:[10,10]})}).bindTooltip(n,{direction:"top",offset:[0,-8],className:"unilbl"}).addTo(UNI_LAYER)});
 function saveS(){const v={};FIDS.forEach(id=>{const el=document.getElementById(id);v[id]=el.type==="checkbox"?el.checked:el.value});SV={fs:[...fs],sortK,asc,f:v,q:document.getElementById("q").value,uni:document.getElementById("f_uni").checked,c:[M.getCenter().lat,M.getCenter().lng],z:M.getZoom()};localStorage.setItem(SK,JSON.stringify(SV))}
 (function restore(){if(!SV.f){document.getElementById("f_pass").checked=true;document.getElementById("f_pass2").checked=true;}if(SV.f)FIDS.forEach(id=>{const el=document.getElementById(id);if(SV.f[id]===undefined)return;if(el.type==="checkbox")el.checked=SV.f[id];else el.value=SV.f[id]});if(SV.q)document.getElementById("q").value=SV.q;if(SV.uni===false)document.getElementById("f_uni").checked=false;if(SV.c&&SV.z)M.setView(SV.c,SV.z);document.querySelectorAll("#filters button").forEach((b,i)=>{b.className=fs.has(i+1)?"on":""});})();
