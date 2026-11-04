@@ -121,9 +121,10 @@ tr.opened{background:#f9fafb}
 <p><small>예상 월 총액 = 월세(+필수 수수료) + 주차 + 공과금 약 $100~150 (추정). 지하철 도보 시간은 직선거리 × 1.3 기준 추정.</small></p>
 </div>
 <script>
-const UPDATED="2026-11-04 (35차)";
+const UPDATED="2026-11-04 (36차)";
 const SK="bh_settings_v1",STK="bh_stars_v1";let SV={};try{SV=JSON.parse(localStorage.getItem(SK)||"{}")}catch(e){}
 let MY={};try{MY=JSON.parse(localStorage.getItem(STK)||"{}")}catch(e){}
+const ARA0=__ARA__;
 const STKA="bh_stars_ara_v1";let MA={};try{MA=JSON.parse(localStorage.getItem(STKA)||"{}")}catch(e){}
 const PN={d:"동인",a:"아라"};let MYP=(SV.myp==="a")?"a":"d";
 const XK="bh_ex_v1";let XU={};try{XU=JSON.parse(localStorage.getItem(XK)||"{}")}catch(e){}
@@ -138,7 +139,7 @@ const PG=["미연락","문의함","답장 받음","투어 예정","투어 완료
 function pgCell(r){const p=r.pg;if(!p)return '<small style="color:#9ca3af">미연락</small>';const i=PG.indexOf(p.st);return `<b style="color:${PGC[i]||"#374151"}">${p.st}</b>${p.d?`<br><small>${p.d.slice(5).replace("-","/")}${p.via?" · "+p.via:""}</small>`:""}${p.next?`<br><small>${p.next}</small>`:""}`}
 const ST={1:["1순위 그룹","s1","#16a34a"],2:["후보","s2","#2563eb"],3:["보류·조건부","s3","#d97706"],4:["예산 초과","s4","#dc2626"],5:["제외","s5","#9ca3af"]};
 const YN=v=>v==="y"?'<span class="ok">O</span>':v==="n"?'<span class="no">X</span>':v==="?"?'<span class="q">?</span>':'-';
-L.forEach(r=>{const t=TR[r.n];if(t){r.dist=t.distWork;r.subTxt=`${t.sub.name} (${t.sub.lines}) 도보 ${t.sub.walk}분`;r.subWalk=t.sub.walk;r.crTxt=t.cr?`${t.cr.name} (${t.cr.lines}) 도보 ${t.cr.walk}분`:"";r.bus=t.buses.length?t.buses.join(", "):"-";}const e=EX[r.n];if(e){r.shuttle=e[0];r.tcom=e[1];r.tcomLo=parseInt(e[1]);}r.geo=GEO[r.n];r.my=(r.n in MY)?MY[r.n]:(r.star||0);r.ma=MA[r.n]||0;const gg=GG[r.n]||{};r.gR=gg.r||null;r.gC=gg.c||null;r.gUrl=gg.url;r.gS=gg.s||"";r.beds=/2베드/.test(r.unit)?(/1베드/.test(r.unit)?[1,2]:[2]):[1];const dv=DRIVE[r.n];if(dv){r.drvHi=dv.hi;r.drv=dv.lo===dv.hi?`${dv.lo}분`:`${dv.lo}~${dv.hi}분`;r.drvLo=dv.lo;r.drvMi=dv.mi;}});
+L.forEach(r=>{const t=TR[r.n];if(t){r.dist=t.distWork;r.subTxt=`${t.sub.name} (${t.sub.lines}) 도보 ${t.sub.walk}분`;r.subWalk=t.sub.walk;r.crTxt=t.cr?`${t.cr.name} (${t.cr.lines}) 도보 ${t.cr.walk}분`:"";r.bus=t.buses.length?t.buses.join(", "):"-";}const e=EX[r.n];if(e){r.shuttle=e[0];r.tcom=e[1];r.tcomLo=parseInt(e[1]);}r.geo=GEO[r.n];r.my=(r.n in MY)?MY[r.n]:(r.star||0);r.ma=(r.n in MA)?MA[r.n]:(ARA0[r.n]||0);const gg=GG[r.n]||{};r.gR=gg.r||null;r.gC=gg.c||null;r.gUrl=gg.url;r.gS=gg.s||"";r.beds=/2베드/.test(r.unit)?(/1베드/.test(r.unit)?[1,2]:[2]):[1];const dv=DRIVE[r.n];if(dv){r.drvHi=dv.hi;r.drv=dv.lo===dv.hi?`${dv.lo}분`:`${dv.lo}~${dv.hi}분`;r.drvLo=dv.lo;r.drvMi=dv.mi;}});
 L.forEach(r=>{const ev=EV[r.n]||{};if(ev.tq){for(const k of ["dep","arr"])if(ev.tq[k])ev.tq[k]=String(ev.tq[k]).replace(/[\s\u202f]*[AP]M/g,"").trim();}r.tq=ev.tq||null;r.md=ev.md||null;r.score=ev.score??null;r.parts=ev.parts||null;r.rank=ev.rank??null;r.fail=ev.fail||null;r.fees=r.fees||"";r.tqArr=r.tq?(r.tq.pass?r.tq.arrAfter??5:900+(r.tq.direct?r.tq.direct.arrAfter:99)):null;r.mdD=r.md?r.md.d:null;r.sf=ev.sf||null;r.sfR=r.sf?r.sf.rate:null;});
 L.forEach(r=>{r.pgK=r.pg?Math.max(0,PG.indexOf(r.pg.st)):0;});
 L.forEach(r=>{r.bedsK=Math.max(...(r.beds||[0]));});
