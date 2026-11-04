@@ -46,7 +46,20 @@ data = "const EV=%s;\nconst MURDERS=%s;\n" % (open("data/eval.json",encoding="ut
 tpl = open('template.html', encoding='utf-8').read()
 out = tpl.replace('/*DATA*/', L + '\n' + data)
 out = out.replace('__ARA__', open('data/ara.json',encoding='utf-8').read().strip() or '{}')
-open('index.html','w',encoding='utf-8').write(out)
+import os, subprocess
+# 문의 대화 기록(records/messages.json, 비공개)을 매물별로 붙인다
+MS={}
+if os.path.exists('records/messages.json'):
+    for t in json.load(open('records/messages.json',encoding='utf-8'))['threads']:
+        MS[t['listing']]={k:t.get(k) for k in ('status','contact','summary','next','msgs')}
+out = out.replace('__MSGS__', json.dumps(MS,ensure_ascii=False))
+# 사이트 전체를 비밀번호로 암호화해서 공개한다. 비밀번호 파일이 없으면 평문으로 내보내지 않고 멈춘다.
+if not os.path.exists('records/.messages_password'):
+    raise SystemExit('records/.messages_password 없음: 암호화할 수 없어서 index.html을 만들지 않음')
+os.makedirs('records',exist_ok=True)
+open('records/site_plain.html','w',encoding='utf-8').write(out)
+node = '/Users/jo/.aside/runtime/bin/node' if os.path.exists('/Users/jo/.aside/runtime/bin/node') else 'node'
+subprocess.run([node,'records/encrypt_site.mjs','records/site_plain.html','index.html'],check=True)
 names = re.findall(r'[{,]\s*"?n"?:\s*"([^"]+)"', L)
 missing = [n for n in names if n not in T['GEO'] or not T['GEO'][n]]
 print('listings', len(names), 'missing geo', missing, 'missing EX', [n for n in names if n not in EX], 'missing drive', [n for n in names if n not in T.get('DRIVE',{})])

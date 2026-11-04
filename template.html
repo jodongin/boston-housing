@@ -64,6 +64,15 @@ td.c{text-align:center;width:40px;min-width:36px;padding-left:2px;padding-right:
 .nt{margin-top:5px;padding:4px 7px;background:#fefce8;border:1px solid #fde68a;border-radius:6px;font-size:12px;white-space:pre-wrap;line-height:1.45;max-width:320px}.nt b{color:#92400e;margin-right:4px}.ntb{border-color:#fcd34d!important;color:#92400e}.ntb:hover{background:#fefce8}textarea.nte{display:block;width:100%;max-width:320px;min-height:64px;margin-top:5px;font:13px/1.4 inherit;padding:5px 7px;border:1px solid #f59e0b;border-radius:6px;box-sizing:border-box}
 .popnote{margin-top:8px;border-top:1px dashed #e5e7eb;padding-top:6px}.popnote .nt{max-width:none}.popnote textarea.nte{max-width:none}
 @keyframes rowflash{0%{background:#fde68a}100%{background:transparent}}tr.row.flash>td{animation:rowflash 1.8s ease-out}
+.cvb{border-color:#c4b5fd!important;color:#6d28d9}.cvb.on{background:#f5f3ff}
+tr.conv>td{background:#faf9ff;border-top:1px dashed #ddd6fe;padding:12px 16px}
+.cvh{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}.cvh b{font-size:14px}
+.cvs{display:inline-flex;border:1px solid #e5e7eb;border-radius:7px;overflow:hidden;margin-left:auto}.cvs button{border:0;background:#fff;padding:3px 9px;font-size:12px;cursor:pointer}.cvs button.on{background:#1f2328;color:#fff}
+.cvi{font-size:13px;color:#374151;line-height:1.5;margin-bottom:10px}.cvi div{margin:2px 0}.cvi .k{color:#6b7280;display:inline-block;min-width:58px}
+.cvm{display:flex;flex-direction:column;gap:8px;max-width:820px}
+.mg{border:1px solid #e5e7eb;border-radius:10px;padding:8px 11px;background:#fff;font-size:13px;line-height:1.5;white-space:pre-wrap;max-width:88%}
+.mg.out{align-self:flex-end;background:#eef2ff;border-color:#c7d2fe}.mg .mt{font-size:11px;color:#6b7280;margin-bottom:3px;white-space:normal}
+.mg .en{color:#4b5563}.mg .ko+.en{margin-top:6px;padding-top:6px;border-top:1px dashed #d1d5db}
 .xb{font-size:12px;padding:2px 8px;border:1px solid var(--b);background:#fff;border-radius:6px;cursor:pointer;white-space:nowrap;margin:2px 0}
 tr.det td{background:#f9fafb;padding:10px 14px}
 .detg{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 18px;font-size:12px;color:#374151}.detg b{display:block;color:#111;font-size:12px;margin-bottom:2px}.detg .wide{grid-column:1/-1}
@@ -76,7 +85,7 @@ tr.opened{background:#f9fafb}
 .pop{font-size:13px;line-height:1.45;min-width:270px;max-width:320px}.pop .ph b{font-size:15px}.pop .pr{margin:3px 0 4px}.pop a{font-size:12px}.pt{width:100%;min-width:0;margin:6px 0;border-collapse:collapse}.pt th{width:38px;color:#6b7280;font-weight:500;background:none;padding:2px 6px 2px 0;border:0;cursor:default;font-size:12px}.pt td{padding:2px 0;border:0;font-size:12px}.pf{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid #e5e7eb;padding-top:6px}
 </style></head><body>
 <header><h1>보스턴 집 찾기</h1>
-<div class="sub">마지막 업데이트 <span id="upd"></span> · 가격은 확인한 날 기준 · 출근은 Google 지도 평일 8:30 출발 대중교통 · 치안은 2026 살인 사건 지점까지 직선거리 · <a href="messages.html" style="color:#2563eb;font-weight:600">문의 대화 기록 보기 (비밀번호)</a></div></header>
+<div class="sub">마지막 업데이트 <span id="upd"></span> · 가격은 확인한 날 기준 · 출근은 Google 지도 평일 8:30 출발 대중교통 · 치안은 2026 살인 사건 지점까지 직선거리 · <a href="#" onclick="localStorage.removeItem('bh_msgs_pw_v1');location.reload();return false" style="color:#6b7280">이 기기에서 잠그기</a></div></header>
 <div class="wrap">
 <details class="card"><summary>기준과 점수 계산 방법 보기</summary><div class="crit" id="crit" style="margin-top:8px"></div><div id="scorehelp" style="margin-top:8px"><div><b>점수 계산 방법 (100점, 기준을 모두 통과하고 세탁기가 확인된 곳만 순위)</b><br><small>
 · 면적 20: 450 sq ft 0점 → 1,100 sq ft 이상 만점 (면적 미표기는 8점)<br>
@@ -124,10 +133,11 @@ tr.opened{background:#f9fafb}
 <p><small>예상 월 총액 = 월세(+필수 수수료) + 주차 + 공과금 약 $100~150 (추정). 지하철 도보 시간은 직선거리 × 1.3 기준 추정.</small></p>
 </div>
 <script>
-const UPDATED="2026-11-05 (48차)";
+const UPDATED="2026-11-05 (49차)";
 const SK="bh_settings_v1",STK="bh_stars_v1";let SV={};try{SV=JSON.parse(localStorage.getItem(SK)||"{}")}catch(e){}
 let MY={};try{MY=JSON.parse(localStorage.getItem(STK)||"{}")}catch(e){}
 const ARA0=__ARA__;
+const MSGS=__MSGS__;const CONV=new Set();let CLANG=localStorage.getItem("bh_clang")||"both";
 const STKA="bh_stars_ara_v1";let MA={};try{MA=JSON.parse(localStorage.getItem(STKA)||"{}")}catch(e){}
 const PN={d:"동인",a:"아라"};let MYP=(SV.myp==="a")?"a":"d";
 const XK="bh_ex_v1";let XU={};try{XU=JSON.parse(localStorage.getItem(XK)||"{}")}catch(e){}
@@ -150,6 +160,15 @@ function popNote(el,edit){const n=el.dataset.n,o=NT[n]||{};let h="";for(const p 
   else if(a==="save"){setNote(n,el.querySelector("textarea").value);popNote(el,false);render();}
   else popNote(el,false);});
  const ta=el.querySelector("textarea");if(ta){ta.onkeydown=ev=>{ev.stopPropagation();if((ev.metaKey||ev.ctrlKey)&&ev.key==="Enter"){setNote(n,ta.value);popNote(el,false);render();}else if(ev.key==="Escape")popNote(el,false);};ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);}}
+function convBtn(r){const t=MSGS[r.n];if(!t)return "";const nin=t.msgs.filter(m=>m.dir==="in").length;return `<button class="xb cvb${CONV.has(r.n)?" on":""}" onclick="event.stopPropagation();togConv('${esc(r.n)}')">대화 ${t.msgs.length}${nin?` (답 ${nin})`:""}</button>`}
+function togConv(n){CONV.has(n)?CONV.delete(n):CONV.add(n);render()}
+function openConv(n){CONV.add(n);render();goRow(n);const c=document.querySelector(`tr.conv[data-c="${CSS.escape(n)}"]`);if(c)setTimeout(()=>c.scrollIntoView({behavior:"smooth",block:"nearest"}),350)}
+function setCL(v){CLANG=v;localStorage.setItem("bh_clang",v);render()}
+function convHTML(r){const t=MSGS[r.n];if(!t)return "";const L2=[["ko","번역만"],["both","원문+번역"],["en","원문만"]];
+ const row=(k,v)=>v?`<div><span class="k">${k}</span>${escH(v)}</div>`:"";
+ return `<div class="cvh"><b>대화 기록</b><span class="pill">${escH(t.status||"")}</span><span class="cvs">${L2.map(([v,l])=>`<button class="${CLANG===v?"on":""}" onclick="setCL('${v}')">${l}</button>`).join("")}</span><button class="xb" onclick="togConv('${esc(r.n)}')">닫기</button></div>
+ <div class="cvi">${row("담당",t.contact)}${row("요약",t.summary)}${row("다음",t.next)}</div>
+ <div class="cvm">${t.msgs.map(m=>{const ko=m.ko?`<div class="ko">${escH(m.ko)}</div>`:"",en=m.en?`<div class="en">${escH(m.en)}</div>`:"";return `<div class="mg ${m.dir}"><div class="mt">${escH(m.t||"")} · ${escH(m.who||"")} · ${escH(m.via||"")}</div>${CLANG==="ko"?(ko||en):CLANG==="en"?(en||ko):ko+en}</div>`}).join("")}</div>`}
 function esc(n){return n.replace(/'/g,"\\'")}
 function setEx(n,on){const r=L.find(x=>x.n===n);if(!r)return;if(on)XU[n]=1;else delete XU[n];localStorage.setItem(XK,JSON.stringify(XU));r.s=XU[n]?5:r.s0;r.ux=!!XU[n];const m=MK[n];if(m){m.setStyle({fillColor:ST[r.s][2]});m.setRadius(r.s<=2?9:7);m._orig=null;}M.closePopup();pinned=null;render();}
 function exBtn(r){if(r.ux)return `<button class="delb rs" onclick="event.stopPropagation();setEx('${esc(r.n)}',false)">제외 취소</button>`;if(r.s0===5)return `<small style="color:#9ca3af">기본 제외</small>`;return `<button class="delb" onclick="event.stopPropagation();setEx('${esc(r.n)}',true)">제외</button>`}
@@ -192,7 +211,7 @@ ${r.addr?`<div><a href="${gmap(r.addr)}" target="_blank">📍 ${r.addr}</a></div
 <tr><th>치안</th><td>${r.sf?`10만 명당 <b>${r.sf.rate.toLocaleString()}</b> (${r.sf.city}) · `:""}${r.md?`살인 지점 <span class="${r.md.d>0.5?"":"no"}">${r.md.d.toFixed(2)} mi</span>`:"-"}</td></tr>
 <tr><th>진행</th><td>${pgCell(r).replace(/<br>/g," ")}</td></tr>
 </table>
-<div class="pf"><span class="popstars" data-n="${r.n}">${stars(r)}</span>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 보기</a>`:""}${exBtn(r)}</div><div class="popnote" data-n="${r.n}"></div></div>`;
+<div class="pf"><span class="popstars" data-n="${r.n}">${stars(r)}</span>${r.url?`<a class="go" href="${r.url}" target="_blank">매물 보기</a>`:""}${exBtn(r)}</div>${MSGS[r.n]?`<div style="margin-top:6px"><button class="xb cvb" onclick="event.stopPropagation();openConv('${esc(r.n)}')">대화 기록 ${MSGS[r.n].msgs.length}건 보기</button></div>`:""}<div class="popnote" data-n="${r.n}"></div></div>`;
 L.forEach(r=>{if(!r.geo)return;const m=window.L.circleMarker(r.geo,{radius:r.s<=2?9:7,color:"#fff",weight:2,fillColor:ST[r.s][2],fillOpacity:.95});
 m.bindPopup(()=>popHTML(r));
 m.bindTooltip(r.n,{direction:"top",offset:[0,-10]});m.off("click");m.on("mouseover",()=>{clearTimeout(T);if(pinned){if(pinned!==m)m.openTooltip();return;}m.closeTooltip();m.openPopup();});m.on("mouseout",()=>{if(pinned){if(pinned!==m)m.closeTooltip();return;}T=setTimeout(()=>{if(!overPopup&&!pinned)m.closePopup()},200);});m.on("click",e=>{window.L.DomEvent.stop(e);pinned=null;m.closeTooltip();m.openPopup();pinned=m;goRow(r.n);});m.addTo(M);MK[r.n]=m;});
@@ -237,7 +256,7 @@ function bedTxt(r){const u=r.unit||"";const b=[...new Set((u.match(/(스튜디�
 const shortLine=s=>(s||"").replace("통근열차 Framingham/Worcester Line","통근열차 Worcester").replace("Framingham/Worcester Line","Worcester선");
 const CELL={
 rank:r=>`<td class="n" style="width:56px">${r.rank?`<b style="font-size:17px">${r.rank}</b><small>위</small><br><small>${r.score.toFixed(1)}점</small><div class="sbar"><i style="width:${r.score}%"></i></div>`:"<small>-</small>"}</td>`,
-n:r=>`<td style="min-width:220px"><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""}${(r.src==="search"||r.src==="sweep")?' <span class="zb" style="background:#7c3aed">신규</span>':""}<br>${r.addr?`<a class="addr" href="${gmap(r.addr)}" target="_blank" onclick="event.stopPropagation()" title="Google 지도에서 열기">📍 ${r.addr}</a>`:`<small>${r.area}</small>`}<br>${r.url?`<a class="go" href="${r.url}" target="_blank" onclick="event.stopPropagation()">매물 보기</a>`:""} <span onclick="event.stopPropagation()"><button class="xb" onclick="togDet('${esc(r.n)}')">${OPEN.has(r.n)||ALLOPEN?"접기 ▴":"자세히 ▾"}</button> ${exBtn(r)} ${noteBtn(r)}</span>${r.addr?"":` <small>${r.area}</small>`}${noteHTML(r)}</td>`,
+n:r=>`<td style="min-width:220px"><b>${r.n}</b>${r.src==="zillow"?' <span class="zb">Zillow</span>':""}${(r.src==="search"||r.src==="sweep")?' <span class="zb" style="background:#7c3aed">신규</span>':""}<br>${r.addr?`<a class="addr" href="${gmap(r.addr)}" target="_blank" onclick="event.stopPropagation()" title="Google 지도에서 열기">📍 ${r.addr}</a>`:`<small>${r.area}</small>`}<br>${r.url?`<a class="go" href="${r.url}" target="_blank" onclick="event.stopPropagation()">매물 보기</a>`:""} <span onclick="event.stopPropagation()"><button class="xb" onclick="togDet('${esc(r.n)}')">${OPEN.has(r.n)||ALLOPEN?"접기 ▴":"자세히 ▾"}</button> ${exBtn(r)} ${noteBtn(r)} ${convBtn(r)}</span>${r.addr?"":` <small>${r.area}</small>`}${noteHTML(r)}</td>`,
 rent:r=>`<td class="n"><b class="${r.rent==null?"":r.rent<=3000?"":"over"}">${fmt$(r.rent)}</b><br><small class="${r.estLo==null?"":r.estLo<=3000?"in":"over"}">총 ${r.estLo?"$"+r.estLo.toLocaleString():"?"}</small></td>`,
 tqArr:r=>`<td style="min-width:140px">${tqShort(r.tq)}</td>`,
 sfR:r=>`<td style="white-space:nowrap;font-size:13px">${r.sf?`<b class="${r.sf.rate<=150?"in":r.sf.rate>=800?"over":""}">${r.sf.rate.toLocaleString()}</b><small>/10만</small><br><small>${r.sf.city}</small><br>`:""}<small class="${r.md&&r.md.d<=0.5?"no":""}" title="가장 가까운 2026 살인 지점">✖ ${r.md?r.md.d.toFixed(2)+"mi":"-"}</small></td>`,
@@ -264,7 +283,7 @@ function render(){if(typeof drawMych==="function")drawMych();const q=document.ge
  L.forEach(r=>{const m=MK[r.n];if(!m)return;rows.includes(r)?m.addTo(M):m.remove()});
  rows.sort((a,b)=>{let x=sortK==="my"?(MYP==="a"?a.ma:a.my):a[sortK],y=sortK==="my"?(MYP==="a"?b.ma:b.my):b[sortK];if(x==null)return 1;if(y==null)return -1;if(typeof x==="number")return asc?x-y:y-x;return asc?String(x).localeCompare(String(y)):String(y).localeCompare(String(x))});
  document.getElementById("cnt").textContent=`${rows.length}곳 표시 / 전체 ${L.length}곳 (직접 제외 ${L.filter(r=>r.ux).length}곳, 위쪽 "제외" 버튼을 켜면 보여요) · 행에 마우스를 올리면 지도에서 강조, 누르면 정보창이 열려요`;
- document.getElementById("body").innerHTML=rows.map(r=>`<tr class="row${OPEN.has(r.n)?" opened":""}" data-n="${r.n}">${COLS.map(([k])=>CELL[k](r).replace("<td",`<td data-c="${k}"`)).join("")}</tr><tr class="det" data-d="${r.n}" style="${OPEN.has(r.n)||ALLOPEN?"":"display:none"}"><td colspan="${COLS.length}">${DET(r)}</td></tr>`).join("");
+ document.getElementById("body").innerHTML=rows.map(r=>`<tr class="row${OPEN.has(r.n)?" opened":""}" data-n="${r.n}">${COLS.map(([k])=>CELL[k](r).replace("<td",`<td data-c="${k}"`)).join("")}</tr><tr class="det" data-d="${r.n}" style="${OPEN.has(r.n)||ALLOPEN?"":"display:none"}"><td colspan="${COLS.length}">${DET(r)}</td></tr>${CONV.has(r.n)?`<tr class="conv" data-c="${r.n}"><td colspan="${COLS.length}" onclick="event.stopPropagation()">${convHTML(r)}</td></tr>`:""}`).join("");
  if(typeof saveS==="function"&&typeof M!=="undefined")try{saveS()}catch(e){}
  document.querySelectorAll("tr.row").forEach(tr=>{const m=MK[tr.dataset.n];if(!m)return;
  tr.onmouseenter=()=>hl(m,true);tr.onmouseleave=()=>hl(m,false);
