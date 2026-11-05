@@ -144,7 +144,7 @@ textarea.nte{width:100%;min-height:70px;border:1px solid #f59e0b;border-radius:8
 </section>
 </div>
 <script>
-const UPDATED="2026-11-06 (116차)";
+const UPDATED="2026-11-06 (117차)";
 const CRITERIA=[["구조","1베드 또는 2베드, 욕실 1개 이상, 집 전체 (스튜디오·쉐어 제외)"],["월세","$3,000 이하 (두 사람 다 높게 준 곳은 조금 넘어도 먼저 상의)"],["주차","필수. 방식(차고/야외/거주자 노상 허가)과 월 비용 확인"],["세탁","집 안 세탁기·건조기"],["반지하","제외 (시 자산 기록 0층 포함)"],["입주","11/25가 가장 좋고, 늦어도 그다음 주"],["계약","12개월, 연장은 나중에"],["투어","실시간 화상 투어 대신 녹화 영상. 계약금은 직접 보고 납부"],["직장","Harvard Pilgrim Health Care Institute, Landmark Center (401 Park Dr)"]];
 const SCOREHELP="100점: 면적 20 · 가격 20(월세 10 + 예상 월 총액 10) · 출근 15 · 건물·시설 15 · 치안 10 · 생활 인프라 10 · 출근 중 도보 5 · 주차 5. 살인 지점 거리는 점수에 넣지 않음.";
 const SHUTTLE="M2 셔틀(Harvard Sq ↔ LMA)은 Harvard ID가 있으면 무료, 가족은 티켓 구매. LMA 셔틀은 Longwood 회원기관 ID 필요(평일만).";
@@ -196,7 +196,7 @@ L.forEach(r=>{const ev=EV[r.n]||{};r.tq=ev.tq||null;r.md=ev.md||null;r.sf=ev.sf|
  r.beds=/2베드/.test(r.unit)?(/1베드/.test(r.unit)?[1,2]:[2]):[1];r.k=kind(r);});
 const OA=n=>(ASKS[n]||[]).filter(a=>a.status==="open");
 const DUE=n=>OA(n).length>0;
-const TAGRULES=[[r=>r.gym==="y","헬스장"],[r=>r.elev==="y","엘리베이터"],[r=>r.elev==="n"||/계단만|엘리베이터 없/.test(r.memo||""),"-엘리베이터 없음"],[r=>r.mgd==="y","전문 관리"],
+const TAGRULES=[[r=>r.gym==="y","헬스장"],[r=>r.mgd==="y","전문 관리"],
  [r=>{const x=(r.fees||"")+" "+(r.rentT||"");return /난방[^·]{0,12}포함|heat[^·]{0,20}included/i.test(x)&&!/난방은 전기|전기 난방|electric heat|난방[^·]{0,4}(별도|세입자)/i.test(x)},"난방 포함"],
  [r=>/공과금[^·]{0,6}(모두|전부) 포함|all utilities included/i.test((r.fees||"")+" "+(r.memo||"")),"공과금 포함"],
  [r=>/에어컨|중앙 냉방|central air|\bAC\b|냉방 포함/i.test((r.fees||"")+" "+(r.memo||"")),"에어컨"],
@@ -211,7 +211,11 @@ function passF(r){if(UI.f3000&&r.rent>3000&&r.k!=="r"&&r.k!=="c")return false;if
 function sortRows(a){const K={r:0,c:1,n:2,x:3};const st=r=>(r.my||0)+(r.ma||0);
  const f={rec:(x,y)=>K[x.k]-K[y.k]||st(y)-st(x)||(y.score||0)-(x.score||0),recent:(x,y)=>lastT(y).localeCompare(lastT(x)),rent:(x,y)=>((mo(x)||{}).lo||x.rent||9e9)-((mo(y)||{}).lo||y.rent||9e9),com:(x,y)=>((x.tq&&x.tq.pass)?x.tq.min:999)-((y.tq&&y.tq.pass)?y.tq.min:999),score:(x,y)=>(y.score||0)-(x.score||0)}[UI.sort]||(()=>0);return a.sort(f)}
 function stars1(r,p){const v=p==="a"?r.ma:r.my;let h=`<span class="sr" title="${PN[p]} 별점"><span class="w">${PN[p]}</span>`;for(let i=1;i<=5;i++)h+=`<span class="st${p==="a"?" a":""}${i<=v?" on":""}" data-n="${escH(r.n)}" data-p="${p}" data-v="${i}">★</span>`;return h+"</span>"}
-function chips(r){const out=[];const b=r.beds.length>1?"1~2베드":r.beds[0]+"베드";out.push([b+(r.sq?` · ${r.sq.toLocaleString()} sq ft`:""),""]);const c=com(r);if(c)out.push(c);out.push(park(r).slice(0,2));out.push(wdc(r));if(r.move&&r.move!=="-"&&r.move!=="?")out.push(["입주 "+String(r.move).replace(/^Available /i,"").slice(0,22),""]);
+function chips(r){const out=[];const b=r.beds.length>1?"1~2베드":r.beds[0]+"베드";out.push([b+(r.sq?` · ${r.sq.toLocaleString()} sq ft`:""),""]);
+ out.push([(r.bt||"건물 형태 ?")+" · "+(r.built?r.built+"년 준공":"준공 ?")+(r.stories?` · ${r.stories}층 건물`:""),(r.bt&&r.built)?"":"w"]);
+ const el=r.elev==="y"?"엘리베이터 있음":r.elev==="n"?"엘리베이터 없음":"";const fl=r.fl?("내 집 "+r.fl):"";
+ if(fl||el)out.push([[fl,el].filter(Boolean).join(" · "),r.elev==="n"?"b":(fl&&el?"g":"")]);else out.push(["층 ?","w"]);
+ const c=com(r);if(c)out.push(c);out.push(park(r).slice(0,2));out.push(wdc(r));if(r.move&&r.move!=="-"&&r.move!=="?")out.push(["입주 "+String(r.move).replace(/^Available /i,"").slice(0,22),""]);
  const tg=tagsOf(r).map(x=>x[0]==="-"?[x.slice(1),"b"]:[x,"t"]);
  return `<div class="chips">${out.map(([t,c])=>`<span class="ch ${c}">${escH(t)}</span>`).join("")}</div>${tg.length?`<div class="chips">${tg.map(([t,c])=>`<span class="ch ${c}">${escH(t)}</span>`).join("")}</div>`:""}`}
 function mediaHTML(r){const m=r.media||[];if(!m.length)return"";return `<div class="med">${m.map(x=>`<a href="${escH(x.u)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="${escH((x.src||"")+(x.d?" · "+x.d:""))}">${/영상|투어|tour|video/i.test(x.t)?"▶ ":"📎 "}${escH(x.t)}</a>`).join("")}</div>`}
@@ -235,7 +239,7 @@ function convHTML(r){const t=MSGS[r.n];const L2=[["ko","번역"],["both","원문
 function detHTML(r){const row=(k,v)=>v?`<span class="k">${k}</span><span>${v}</span>`:"";const t=r.tq;
  const comTxt=t?(t.pass?`${escH(t.line)} ${t.min}분 (도보 ${t.walk??"?"}분 포함, ${escH(t.dep)}→${escH(t.arr)}${t.from&&t.from!=="-"?", "+escH(t.from)+" 승차":""})`:"환승 없이 45분 안에 못 감"):"";
  const parts=r.parts?Object.entries(r.parts).map(([k,v])=>k+" "+v.toFixed(1)).join(" · "):"";
- return `<div class="kv">${row("집",escH(r.unit||"")+(r.built?` · ${r.built}년${r.reno?` (${r.reno} 리모델링)`:""}`:"")+(r.elev?` · 엘리베이터 ${r.elev==="y"?"있음":r.elev==="n"?"없음":"?"}`:""))}${row("주소",escH(r.addr||r.area||""))}${row("영상·자료",(r.media||[]).map(x=>`<a href="${escH(x.u)}" target="_blank" rel="noopener">${escH(x.t)}</a>${x.src?` <small style="color:var(--mute)">(${escH(x.src)}${x.d?", "+escH(x.d):""})</small>`:""}`).join("<br>"))}${row("생활비",costLine(r))}${row("비용",escH([r.rentT&&r.rentT!=="월세"?r.rentT:"",r.fees].filter(Boolean).join(" · ")))}${row("주차",escH(r.park||"?"))}${row("입주",escH([r.move,r.lease].filter(x=>x&&x!=="-").join(" · ")))}${row("출근",comTxt)}${row("셔틀",escH(r.shuttle||""))}${row("치안",r.sf?`10만 명당 강력범죄 약 ${r.sf.rate.toLocaleString()}건${r.md?` · 가장 가까운 2026 살인 지점 ${r.md.d.toFixed(2)}마일`:""}`:r.md?`가장 가까운 2026 살인 지점 ${r.md.d.toFixed(2)}마일`:"")}${row("구글",r.gR?`${r.gR} (${r.gC}개)${r.gS?" · "+escH(r.gS):""}`:"")}${row("점수",r.score!=null?`${r.score.toFixed(1)}점${parts?` <small style="color:var(--mute)">(${parts})</small>`:""}`:"")}${row("메모",escH(r.memo||""))}</div>`}
+ return `<div class="kv">${row("집",escH(r.unit||"")+(r.fl?` · ${r.fl}`:""))}${row("건물",escH([r.bt||"형태 ?",r.built?r.built+"년 준공"+(r.reno?` (${r.reno} 리모델링)`:""):"준공 ?",r.stories?r.stories+"층 건물":"",r.elev==="y"?"엘리베이터 있음":r.elev==="n"?"엘리베이터 없음":""].filter(Boolean).join(" · ")))}${row("주소",escH(r.addr||r.area||""))}${row("영상·자료",(r.media||[]).map(x=>`<a href="${escH(x.u)}" target="_blank" rel="noopener">${escH(x.t)}</a>${x.src?` <small style="color:var(--mute)">(${escH(x.src)}${x.d?", "+escH(x.d):""})</small>`:""}`).join("<br>"))}${row("생활비",costLine(r))}${row("비용",escH([r.rentT&&r.rentT!=="월세"?r.rentT:"",r.fees].filter(Boolean).join(" · ")))}${row("주차",escH(r.park||"?"))}${row("입주",escH([r.move,r.lease].filter(x=>x&&x!=="-").join(" · ")))}${row("출근",comTxt)}${row("셔틀",escH(r.shuttle||""))}${row("치안",r.sf?`10만 명당 강력범죄 약 ${r.sf.rate.toLocaleString()}건${r.md?` · 가장 가까운 2026 살인 지점 ${r.md.d.toFixed(2)}마일`:""}`:r.md?`가장 가까운 2026 살인 지점 ${r.md.d.toFixed(2)}마일`:"")}${row("구글",r.gR?`${r.gR} (${r.gC}개)${r.gS?" · "+escH(r.gS):""}`:"")}${row("점수",r.score!=null?`${r.score.toFixed(1)}점${parts?` <small style="color:var(--mute)">(${parts})</small>`:""}`:"")}${row("메모",escH(r.memo||""))}</div>`}
 function memoHTML(r){const o=NT[r.n]||{};let h="";for(const p of["d","a"])if(o[p])h+=`<div class="nt"><b>${PN[p]}</b>${escH(o[p])}</div>`;
  return h+`<textarea class="nte" placeholder="${PN[UI.who]} 메모 (⌘+Enter 저장)">${escH(o[UI.who]||"")}</textarea><div style="display:flex;gap:6px;margin-top:6px;align-items:center"><button class="act" data-a="savememo">저장</button><small style="color:var(--mute)">${PN[UI.who]} 이름으로 저장 (위 작성자 선택)</small></div>`}
 function setNote(n,v){v=v.trim();const o=NT[n]||{};if(v)o[UI.who]=v;else delete o[UI.who];if(Object.keys(o).length)NT[n]=o;else delete NT[n];localStorage.setItem("bh_notes_v1",JSON.stringify(NT))}
