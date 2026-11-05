@@ -53,6 +53,11 @@ if os.path.exists('records/messages.json'):
     for t in json.load(open('records/messages.json',encoding='utf-8'))['threads']:
         MS[t['listing']]={k:t.get(k) for k in ('status','contact','summary','next','msgs')}
 out = out.replace('__MSGS__', json.dumps(MS,ensure_ascii=False))
+# 사용자가 답해야 할 질문(records/asks.json, 비공개)
+AS={}
+if os.path.exists('records/asks.json'):
+    AS=json.load(open('records/asks.json',encoding='utf-8')).get('asks',{})
+out = out.replace('__ASKS__', json.dumps(AS,ensure_ascii=False))
 # 사이트 전체를 비밀번호로 암호화해서 공개한다. 비밀번호 파일이 없으면 평문으로 내보내지 않고 멈춘다.
 if not os.path.exists('records/.messages_password'):
     raise SystemExit('records/.messages_password 없음: 암호화할 수 없어서 index.html을 만들지 않음')

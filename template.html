@@ -61,7 +61,14 @@ button{font:inherit;cursor:pointer}
 .sr .w{font-size:11px;margin-right:2px}
 .st{color:#d6d6d0;font-size:14px;letter-spacing:-1px;user-select:none;cursor:pointer}.st.on{color:#f59e0b}.st.a.on{color:#ec4899}.st:hover{color:#fbbf24}
 .tag{font-size:11px;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:#374151;background:#fff;white-space:nowrap}
-.tag.m{border-color:#c4b5fd;color:var(--r)}.tag.y{border-color:#fcd34d;color:#92400e}
+.tag.m{border-color:#c4b5fd;color:var(--r)}
+.need{font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;background:#dc2626;color:#fff;white-space:nowrap}
+.asks{margin-top:8px;border:1px solid #fca5a5;background:#fef2f2;border-radius:8px;padding:7px 10px;font-size:13px}
+.asks .ah{font-size:11px;font-weight:700;color:#b91c1c;margin-bottom:3px}
+.asks .aq{margin:3px 0}.asks .ar{color:#374151;font-size:12px}.asks .ar b{color:#15803d}
+.ch.t{background:#eef2ff;color:#3730a3}
+.aqd{border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:8px}.aqd.done{opacity:.6}.aqd .k{font-size:11px;font-weight:700;color:var(--mute)}
+.aqd .op{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:1px 8px;margin:3px 4px 0 0}.tag.y{border-color:#fcd34d;color:#92400e}
 .panel{margin-top:10px;border-top:1px solid var(--line);padding-top:10px;cursor:default}
 .ptabs{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
 .ptab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:2px 11px;font-size:12px;color:var(--mute)}
@@ -134,12 +141,13 @@ textarea.nte{width:100%;min-height:70px;border:1px solid #f59e0b;border-radius:8
 </section>
 </div>
 <script>
-const UPDATED="2026-11-05 (83차)";
+const UPDATED="2026-11-05 (84차)";
 const CRITERIA=[["구조","1베드 또는 2베드, 욕실 1개 이상, 집 전체 (스튜디오·쉐어 제외)"],["월세","$3,000 이하 (두 사람 다 높게 준 곳은 조금 넘어도 먼저 상의)"],["주차","필수. 방식(차고/야외/거주자 노상 허가)과 월 비용 확인"],["세탁","집 안 세탁기·건조기"],["반지하","제외 (시 자산 기록 0층 포함)"],["입주","11/25가 가장 좋고, 늦어도 그다음 주"],["계약","12개월, 연장은 나중에"],["투어","실시간 화상 투어 대신 녹화 영상. 계약금은 직접 보고 납부"],["직장","Harvard Pilgrim Health Care Institute, Landmark Center (401 Park Dr)"]];
 const SCOREHELP="100점: 면적 20 · 가격 20(월세 10 + 예상 월 총액 10) · 출근 15 · 건물·시설 15 · 치안 10 · 생활 인프라 10 · 출근 중 도보 5 · 주차 5. 살인 지점 거리는 점수에 넣지 않음.";
 const SHUTTLE="M2 셔틀(Harvard Sq ↔ LMA)은 Harvard ID가 있으면 무료, 가족은 티켓 구매. LMA 셔틀은 Longwood 회원기관 ID 필요(평일만).";
 const ARA0=__ARA__;
 const MSGS=__MSGS__;
+const ASKS=__ASKS__;
 /*DATA*/
 const LS=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||"null")??d}catch(e){return d}};
 let MY=LS("bh_stars_v1",{}),MA=LS("bh_stars_ara_v1",{}),XU=LS("bh_ex_v1",{}),NT=LS("bh_notes_v1",{});
@@ -163,27 +171,39 @@ L.forEach(r=>{const ev=EV[r.n]||{};r.tq=ev.tq||null;r.md=ev.md||null;r.sf=ev.sf|
  r.geo=GEO[r.n];r.s0=r.s;if(XU[r.n]&&r.s0!==5)r.s=5;r.ux=!!XU[r.n];
  r.my=(r.n in MY)?MY[r.n]:(r.star||0);r.ma=(r.n in MA)?MA[r.n]:(ARA0[r.n]||0);
  r.beds=/2베드/.test(r.unit)?(/1베드/.test(r.unit)?[1,2]:[2]):[1];r.k=kind(r);});
-const DUE=n=>{const t=MSGS[n];return t&&/결정|답해|여쭤|묻|사용자/.test(t.next||"")};
+const OA=n=>(ASKS[n]||[]).filter(a=>a.status==="open");
+const DUE=n=>OA(n).length>0;
+const TAGRULES=[[r=>r.gym==="y","헬스장"],[r=>r.elev==="y","엘리베이터"],[r=>r.elev==="n"||/계단만|엘리베이터 없/.test(r.memo||""),"-엘리베이터 없음"],[r=>r.mgd==="y","전문 관리"],
+ [r=>{const x=(r.fees||"")+" "+(r.rentT||"");return /난방[^·]{0,12}포함|heat[^·]{0,20}included/i.test(x)&&!/난방은 전기|전기 난방|electric heat|난방[^·]{0,4}(별도|세입자)/i.test(x)},"난방 포함"],
+ [r=>/공과금[^·]{0,6}(모두|전부) 포함|all utilities included/i.test((r.fees||"")+" "+(r.memo||"")),"공과금 포함"],
+ [r=>/에어컨|중앙 냉방|central air|\bAC\b|냉방 포함/i.test((r.fees||"")+" "+(r.memo||"")),"에어컨"],
+ [r=>/발코니|balcon|데크|deck|patio|테라스/i.test(r.memo||""),"발코니/데크"],[r=>/루프|roof/i.test(r.memo||""),"루프탑"],
+ [r=>r.built&&r.built>=2010,r=>"신축 "+r.built],[r=>/첫 달 무료|month free|weeks? free/i.test((r.sp||"")+" "+(r.rentT||"")),"입주 혜택"],
+ [r=>/중개수수료[^·]{0,4}(없음|\$0)|no broker fee|no fee/i.test((r.fees||"")+" "+(r.memo||"")),"중개수수료 없음"]];
+function tagsOf(r){const out=[];for(const [f,l] of TAGRULES){try{if(f(r))out.push(typeof l==="function"?l(r):l)}catch(e){}}for(const x of (r.tags||[]))if(!out.includes(x))out.push(x);return out}
 let SEL=null,PT={};// selected card, panel tab per card
-const TABS=[["go","진행 중",r=>r.k==="r"||r.k==="c"],["n","후보",r=>r.k==="n"],["x","제외·불가",r=>r.k==="x"],["all","전체",()=>true]];
+const TABS=[["ask","답장 필요",r=>DUE(r.n)],["go","진행 중",r=>r.k==="r"||r.k==="c"],["n","후보",r=>r.k==="n"],["x","제외·불가",r=>r.k==="x"],["all","전체",()=>true]];
 function txt(r){const t=MSGS[r.n];return (r.n+" "+(r.area||"")+" "+(r.addr||"")+" "+(r.memo||"")+" "+JSON.stringify(NT[r.n]||"")+" "+(t?JSON.stringify(t):"")).toLowerCase()}
 function passF(r){if(UI.f3000&&r.rent>3000&&r.k!=="r"&&r.k!=="c")return false;if(UI.fbeds&&!r.beds.includes(+UI.fbeds))return false;if(UI.fpark&&park(r)[1]!=="g")return false;if(UI.fwd&&r.wd!=="y")return false;if(UI.frated&&!(r.my||r.ma))return false;if(UI.q&&!txt(r).includes(UI.q.toLowerCase()))return false;return true}
 function sortRows(a){const K={r:0,c:1,n:2,x:3};const st=r=>(r.my||0)+(r.ma||0);
  const f={rec:(x,y)=>K[x.k]-K[y.k]||st(y)-st(x)||(y.score||0)-(x.score||0),recent:(x,y)=>lastT(y).localeCompare(lastT(x)),rent:(x,y)=>(x.rent||9e9)-(y.rent||9e9),com:(x,y)=>((x.tq&&x.tq.pass)?x.tq.min:999)-((y.tq&&y.tq.pass)?y.tq.min:999),score:(x,y)=>(y.score||0)-(x.score||0)}[UI.sort]||(()=>0);return a.sort(f)}
 function stars1(r,p){const v=p==="a"?r.ma:r.my;let h=`<span class="sr" title="${PN[p]} 별점"><span class="w">${PN[p]}</span>`;for(let i=1;i<=5;i++)h+=`<span class="st${p==="a"?" a":""}${i<=v?" on":""}" data-n="${escH(r.n)}" data-p="${p}" data-v="${i}">★</span>`;return h+"</span>"}
 function chips(r){const out=[];const b=r.beds.length>1?"1~2베드":r.beds[0]+"베드";out.push([b+(r.sq?` · ${r.sq.toLocaleString()} sq ft`:""),""]);const c=com(r);if(c)out.push(c);out.push(park(r).slice(0,2));out.push(wdc(r));if(r.move&&r.move!=="-"&&r.move!=="?")out.push(["입주 "+String(r.move).replace(/^Available /i,"").slice(0,22),""]);
- return `<div class="chips">${out.map(([t,c])=>`<span class="ch ${c}">${escH(t)}</span>`).join("")}</div>`}
+ const tg=tagsOf(r).map(x=>x[0]==="-"?[x.slice(1),"b"]:[x,"t"]);
+ return `<div class="chips">${out.map(([t,c])=>`<span class="ch ${c}">${escH(t)}</span>`).join("")}</div>${tg.length?`<div class="chips">${tg.map(([t,c])=>`<span class="ch ${c}">${escH(t)}</span>`).join("")}</div>`:""}`}
+function askBlock(r){const a=OA(r.n);if(!a.length)return"";return `<div class="asks"><div class="ah">답해주실 것</div>${a.map(x=>`<div class="aq">• ${escH(x.q)}<div class="ar"><b>추천</b> ${escH(x.rec||"")}</div></div>`).join("")}</div>`}
+function askHTML(r){const a=ASKS[r.n]||[];if(!a.length)return `<div style="color:var(--mute)">답해주실 질문이 없어요</div>`;return a.map(x=>`<div class="aqd${x.status==="done"?" done":""}"><div class="k">${x.status==="done"?"답함 "+escH(x.ansd||""):"답장 필요"} · ${escH(x.d||"")}</div><div style="margin:3px 0;font-weight:600">${escH(x.q)}</div>${x.rec?`<div><span class="k">추천</span> ${escH(x.rec)}</div>`:""}${x.why?`<div><span class="k">이유</span> ${escH(x.why)}</div>`:""}${(x.opts||[]).length&&x.status!=="done"?`<div>${x.opts.map(o=>`<span class="op">${escH(o)}</span>`).join("")}</div>`:""}${x.ans?`<div><span class="k">답</span> ${escH(x.ans)}</div>`:""}</div>`).join("")+`<div style="font-size:12px;color:var(--mute)">답은 Aside 세션에서 알려주시면 반영하고 표시를 지울게요.</div>`}
 function nextLine(r){const t=MSGS[r.n];const nx=(t&&t.next)||(r.pg&&r.pg.next);if(!nx)return"";return `<div class="nx"><i>다음</i><span>${escH(nx)}</span></div>`}
 function cardHTML(r){const t=MSGS[r.n],nin=t?t.msgs.filter(m=>m.dir==="in").length:0,o=NT[r.n]||{},nn=Object.keys(o).length;const sel=SEL===r.n;
  return `<article class="card k-${r.k}${sel?" sel":""}" data-n="${escH(r.n)}">
- <div class="c1"><span class="stg k-${r.k}">${KL[r.k]}</span><span class="nm">${escH(r.n)}</span><span class="ar">${escH(r.area||"")}</span><span class="pr">${fmt$(r.rent)}<small>/월</small></span></div>
- ${chips(r)}${nextLine(r)}
+ <div class="c1"><span class="stg k-${r.k}">${KL[r.k]}</span><span class="nm">${escH(r.n)}</span>${OA(r.n).length?`<span class="need">답장 필요 ${OA(r.n).length}</span>`:""}<span class="ar">${escH(r.area||"")}</span><span class="pr">${fmt$(r.rent)}<small>/월</small></span></div>
+ ${chips(r)}${askBlock(r)}${nextLine(r)}
  <div class="c4">${stars1(r,"d")}${stars1(r,"a")}<span class="grow"></span>${t?`<span class="tag m">대화 ${t.msgs.length}${nin?` · 답 ${nin}`:""}</span>`:""}${nn?`<span class="tag y">메모 ${nn}</span>`:""}${r.score!=null?`<span title="점수">${r.score.toFixed(0)}점</span>`:""}</div>
  ${sel?panelHTML(r):""}</article>`}
-function panelHTML(r){const t=MSGS[r.n];const tabs=[];if(t)tabs.push(["c","대화"]);tabs.push(["d","상세"],["m","메모"]);let cur=PT[r.n]||(t?"c":"d");if(!tabs.some(x=>x[0]===cur))cur=tabs[0][0];
+function panelHTML(r){const t=MSGS[r.n];const tabs=[];if((ASKS[r.n]||[]).length)tabs.push(["q","질문"+(OA(r.n).length?" "+OA(r.n).length:"")]);if(t)tabs.push(["c","대화"]);tabs.push(["d","상세"],["m","메모"]);let cur=PT[r.n]||(OA(r.n).length?"q":t?"c":"d");if(!tabs.some(x=>x[0]===cur))cur=tabs[0][0];
  const ex=r.ux?`<button class="act rs" data-a="unex">제외 취소</button>`:r.s0===5?"":`<button class="act ex" data-a="ex">제외</button>`;
  return `<div class="panel"><div class="ptabs">${tabs.map(([k,l])=>`<button class="ptab${cur===k?" on":""}" data-pt="${k}">${l}</button>`).join("")}<span class="acts">${r.url?`<a class="act" href="${escH(r.url)}" target="_blank">매물 보기 ↗</a>`:""}${r.addr?`<a class="act" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.addr)}" target="_blank">지도 ↗</a>`:""}${ex}</span></div>
- <div class="pb">${cur==="c"?convHTML(r):cur==="m"?memoHTML(r):detHTML(r)}</div></div>`}
+ <div class="pb">${cur==="q"?askHTML(r):cur==="c"?convHTML(r):cur==="m"?memoHTML(r):detHTML(r)}</div></div>`}
 function convHTML(r){const t=MSGS[r.n];const L2=[["ko","번역"],["both","원문+번역"],["en","원문"]];const row=(k,v)=>v?`<span class="k">${k}</span><span>${escH(v)}</span>`:"";
  return `<div class="cvi kv">${row("상태",t.status)}${row("담당",t.contact)}${row("요약",t.summary)}${row("다음",t.next)}</div>
  <div style="display:flex;justify-content:flex-end;margin-bottom:8px"><span class="seg">${L2.map(([v,l])=>`<button data-cl="${v}" class="${UI.clang===v?"on":""}">${l}</button>`).join("")}</span></div>
@@ -200,10 +220,10 @@ function setEx(n,on){const r=L.find(x=>x.n===n);if(!r)return;if(on)XU[n]=1;else 
 // render
 let VIS=[];
 function render(keepScroll){const tabF=TABS.find(t=>t[0]===UI.tab)[2];
- document.getElementById("tabs").innerHTML=TABS.map(([k,l,f])=>{const n=L.filter(r=>f(r)&&passF(r)).length;const due=k==="go"&&L.some(r=>r.k==="r"&&DUE(r.n));return `<button class="tab${UI.tab===k?" on":""}" data-tab="${k}">${l}<b>${n}</b>${due?'<span class="dot" title="결정할 것 있음"></span>':""}</button>`}).join("");
+ document.getElementById("tabs").innerHTML=TABS.map(([k,l,f])=>{const n=L.filter(r=>f(r)&&passF(r)).length;const due=k==="ask"&&L.some(r=>DUE(r.n));return `<button class="tab${UI.tab===k?" on":""}" data-tab="${k}">${l}<b>${n}</b>${due?'<span class="dot" title="결정할 것 있음"></span>':""}</button>`}).join("");
  VIS=sortRows(L.filter(r=>tabF(r)&&passF(r)));
  const nr=VIS.filter(r=>r.k==="r").length,nc=VIS.filter(r=>r.k==="c").length;
- document.getElementById("cnt").textContent=UI.tab==="go"?`답장 옴 ${nr}곳 · 답장 기다리는 곳 ${nc}곳`:UI.tab==="n"?`아직 연락 안 한 후보 ${VIS.length}곳`+(UI.f3000?" (월세 $3,000 이하)":""):`${VIS.length}곳`;
+ document.getElementById("cnt").textContent=UI.tab==="ask"?`답해주실 질문 ${VIS.reduce((s,r)=>s+OA(r.n).length,0)}개 · ${VIS.length}곳`:UI.tab==="go"?`답장 옴 ${nr}곳 · 답장 기다리는 곳 ${nc}곳`:UI.tab==="n"?`아직 연락 안 한 후보 ${VIS.length}곳`+(UI.f3000?" (월세 $3,000 이하)":""):`${VIS.length}곳`;
  const lst=document.getElementById("list"),y=lst.scrollTop;
  lst.innerHTML=(VIS.map(cardHTML).join("")||`<div class="empty">조건에 맞는 매물이 없어요</div>`)+infoHTML();
  if(keepScroll)lst.scrollTop=y;
