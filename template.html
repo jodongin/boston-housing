@@ -48,6 +48,7 @@ button{font:inherit;cursor:pointer}
 .nm{font-weight:650;font-size:15px;letter-spacing:-.2px}
 .ar{color:var(--mute);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pr{margin-left:auto;font-weight:650;white-space:nowrap;text-align:right;line-height:1.2}.pr small{font-weight:400;color:var(--mute)}.pr .rt{display:block;font-size:11px;font-weight:400;color:var(--mute);margin-top:2px}.pr .rt b{font-weight:600;color:var(--warn)}
+.krw{position:relative;cursor:help;border-bottom:1px dotted #9ca3af}.krw:hover::after,.krw:focus::after{content:attr(data-k);position:absolute;right:0;top:115%;background:#111827;color:#fff;font-size:12px;font-weight:500;padding:4px 8px;border-radius:6px;white-space:nowrap;z-index:20}
 .cp{font-size:11px;border:1px solid #fca5a5;background:#fff;color:#b91c1c;border-radius:6px;padding:0 7px;margin-left:6px;cursor:pointer;vertical-align:1px}.cp.ok{border-color:#86efac;color:#15803d}
 .stg{font-size:11px;font-weight:650;padding:1px 7px;border-radius:999px;white-space:nowrap}
 .stg.k-r{background:var(--rs);color:var(--r)}.stg.k-c{background:var(--cs);color:var(--c)}.stg.k-n{background:var(--ns);color:var(--n)}.stg.k-x{background:var(--xs);color:#5f6368}
@@ -142,7 +143,7 @@ textarea.nte{width:100%;min-height:70px;border:1px solid #f59e0b;border-radius:8
 </section>
 </div>
 <script>
-const UPDATED="2026-11-05 (88차)";
+const UPDATED="2026-11-05 (89차)";
 const CRITERIA=[["구조","1베드 또는 2베드, 욕실 1개 이상, 집 전체 (스튜디오·쉐어 제외)"],["월세","$3,000 이하 (두 사람 다 높게 준 곳은 조금 넘어도 먼저 상의)"],["주차","필수. 방식(차고/야외/거주자 노상 허가)과 월 비용 확인"],["세탁","집 안 세탁기·건조기"],["반지하","제외 (시 자산 기록 0층 포함)"],["입주","11/25가 가장 좋고, 늦어도 그다음 주"],["계약","12개월, 연장은 나중에"],["투어","실시간 화상 투어 대신 녹화 영상. 계약금은 직접 보고 납부"],["직장","Harvard Pilgrim Health Care Institute, Landmark Center (401 Park Dr)"]];
 const SCOREHELP="100점: 면적 20 · 가격 20(월세 10 + 예상 월 총액 10) · 출근 15 · 건물·시설 15 · 치안 10 · 생활 인프라 10 · 출근 중 도보 5 · 주차 5. 살인 지점 거리는 점수에 넣지 않음.";
 const SHUTTLE="M2 셔틀(Harvard Sq ↔ LMA)은 Harvard ID가 있으면 무료, 가족은 티켓 구매. LMA 셔틀은 Longwood 회원기관 ID 필요(평일만).";
@@ -159,6 +160,7 @@ const escH=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const escA=s=>String(s).replace(/\\/g,"\\\\").replace(/'/g,"\\'").replace(/"/g,"&quot;");
 const fmt$=v=>v==null?"?":"$"+Number(v).toLocaleString();
 // 한 달 생활비 = 월세 + 난방 + 전기 + 수도 + 인터넷 + 세입자 보험 + 주차 + 그 집만의 추가 비용. 포함이면 0, 중개인이 알려준 금액이 있으면 그 값, 모르면 추정.
+const KRW=1345;const won=v=>{const m=Math.round(v*KRW/10000);return m.toLocaleString()+"만원"};
 const CD={heat:{gas:[80,180],elec:[100,250],"?":[80,200]},elec:[60,90],water:[40,60],net:60,ins:15};
 function costSpec(r){if(r.cost)return r.cost;const x=((r.fees||"")+" "+(r.rentT||"")+" "+(r.est||"")).toLowerCase();
  if(/all utilities included|공과금[^·]{0,6}(모두|전부)?\s?포함|utilities included/.test(x)&&!/공과금[^·]{0,8}(별도|세입자|미확인)/.test(x))return{heat:"inc",elec:"inc",water:"inc",net:"t",auto:1};
@@ -174,8 +176,8 @@ function mo(r){const c=costSpec(r),it=[];let lo=r.rent,hi=r.rent;if(lo==null)ret
  let pk="ok";const pa=String(r.park||"");
  if(typeof r.parking_cost==="number"){if(r.parking_cost>0)add("주차",r.parking_cost,r.parking_cost,"")}else if(/포함|included/i.test(pa)){}else if(/노상|street|없음|허가/i.test(pa)){pk="st"}else{pk="unk"}
  return{lo,hi,pk,it}}
-function costLine(r){const c=mo(r);if(!c)return"";const f=v=>"$"+Number(v).toLocaleString();return `월세 ${f(r.rent)}`+c.it.map(([k,a,b,tg])=>` + ${k} ${a===b?f(a):f(a)+"~"+Number(b).toLocaleString()}${tg==="추정"?"(추정)":""}`).join("")+(c.pk==="unk"?" + 주차비 ?":c.pk==="st"?" (주차는 길가 허가)":"")+` = <b>${f(c.lo)}${c.hi>c.lo?"~"+Number(c.hi).toLocaleString():""}</b>`}
-function priceHTML(r){const c=mo(r);if(!c)return `<span class="pr">${fmt$(r.rent)}<small>/월</small></span>`;const v=c.hi>c.lo?`${fmt$(c.lo)}~${Number(c.hi).toLocaleString()}`:fmt$(c.lo);
+function costLine(r){const c=mo(r);if(!c)return"";const f=v=>"$"+Number(v).toLocaleString();return `월세 ${f(r.rent)}`+c.it.map(([k,a,b,tg])=>` + ${k} ${a===b?f(a):f(a)+"~"+Number(b).toLocaleString()}${tg==="추정"?"(추정)":""}`).join("")+(c.pk==="unk"?" + 주차비 ?":c.pk==="st"?" (주차는 길가 허가)":"")+` = <b>${f(c.lo)}${c.hi>c.lo?"~"+Number(c.hi).toLocaleString():""}</b> (약 ${won(c.lo)}${c.hi>c.lo?"~"+won(c.hi):""})`}
+function priceHTML(r){const c=mo(r);if(!c)return `<span class="pr">${fmt$(r.rent)}<small>/월</small></span>`;const v0=c.hi>c.lo?`${fmt$(c.lo)}~${Number(c.hi).toLocaleString()}`:fmt$(c.lo);const k=c.hi>c.lo?`약 ${won(c.lo)}~${won(c.hi)} (1달러 ${KRW.toLocaleString()}원)`:`약 ${won(c.lo)} (1달러 ${KRW.toLocaleString()}원)`;const v=`<span class="krw" tabindex="0" data-k="${k}">${v0}</span>`;
  const note=c.pk==="unk"?" · <b>주차비 ?</b>":c.pk==="st"?" · 길가 주차":"";return `<span class="pr" title="한 달 생활비 = 월세 + 난방·전기·수도·인터넷·보험(포함이면 0, 모르면 추정) + 주차 + 그 집 추가 비용. 카드를 열면 상세에 계산이 나와요">${v}<small>/월</small><span class="rt">월세 ${fmt$(r.rent)}${note}</span></span>`}
 const PGDONE=["답장 받음","투어 예정","투어 완료","신청함","계약"];
 const KL={r:"답장 옴",c:"문의함",n:"후보",x:"제외·불가"},KC={r:"#7c3aed",c:"#2563eb",n:"#0f766e",x:"#9aa0a6"};
