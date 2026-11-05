@@ -142,7 +142,7 @@ textarea.nte{width:100%;min-height:70px;border:1px solid #f59e0b;border-radius:8
 </section>
 </div>
 <script>
-const UPDATED="2026-11-05 (87차)";
+const UPDATED="2026-11-05 (88차)";
 const CRITERIA=[["구조","1베드 또는 2베드, 욕실 1개 이상, 집 전체 (스튜디오·쉐어 제외)"],["월세","$3,000 이하 (두 사람 다 높게 준 곳은 조금 넘어도 먼저 상의)"],["주차","필수. 방식(차고/야외/거주자 노상 허가)과 월 비용 확인"],["세탁","집 안 세탁기·건조기"],["반지하","제외 (시 자산 기록 0층 포함)"],["입주","11/25가 가장 좋고, 늦어도 그다음 주"],["계약","12개월, 연장은 나중에"],["투어","실시간 화상 투어 대신 녹화 영상. 계약금은 직접 보고 납부"],["직장","Harvard Pilgrim Health Care Institute, Landmark Center (401 Park Dr)"]];
 const SCOREHELP="100점: 면적 20 · 가격 20(월세 10 + 예상 월 총액 10) · 출근 15 · 건물·시설 15 · 치안 10 · 생활 인프라 10 · 출근 중 도보 5 · 주차 5. 살인 지점 거리는 점수에 넣지 않음.";
 const SHUTTLE="M2 셔틀(Harvard Sq ↔ LMA)은 Harvard ID가 있으면 무료, 가족은 티켓 구매. LMA 셔틀은 Longwood 회원기관 ID 필요(평일만).";
@@ -158,13 +158,25 @@ const PN={d:"동인",a:"아라"};
 const escH=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const escA=s=>String(s).replace(/\\/g,"\\\\").replace(/'/g,"\\'").replace(/"/g,"&quot;");
 const fmt$=v=>v==null?"?":"$"+Number(v).toLocaleString();
-// 한 달 생활비 = 월세 + 필수 수수료 + 공과금 추정(est/estLo) + 주차
-function mo(r){const est=String(r.est||"");let lo=r.estLo??r.rent,hi=lo;const m=est.match(/\$\s?([\d,]{4,6})\s?[~\-–]\s?\$?([\d,]{3,6})/);if(m){const a=+m[1].replace(/,/g,""),b=+m[2].replace(/,/g,"");if(b>a&&Math.abs(a-(lo||a))<400){lo=a;hi=b}}
- if(lo==null)return null;const pin=/주차\s?\$|\+\s?주차/.test(est);let pk="ok",pc=0;const pa=String(r.park||"");
- if(pin){pk="ok"}else if(typeof r.parking_cost==="number"){pc=r.parking_cost}else if(/포함|included/i.test(pa)){pc=0}else if(/노상|street|없음|허가/i.test(pa)){pk="st"}else{pk="unk"}
- return{lo:lo+pc,hi:hi+pc,pk}}
+// 한 달 생활비 = 월세 + 난방 + 전기 + 수도 + 인터넷 + 세입자 보험 + 주차 + 그 집만의 추가 비용. 포함이면 0, 중개인이 알려준 금액이 있으면 그 값, 모르면 추정.
+const CD={heat:{gas:[80,180],elec:[100,250],"?":[80,200]},elec:[60,90],water:[40,60],net:60,ins:15};
+function costSpec(r){if(r.cost)return r.cost;const x=((r.fees||"")+" "+(r.rentT||"")+" "+(r.est||"")).toLowerCase();
+ if(/all utilities included|공과금[^·]{0,6}(모두|전부)?\s?포함|utilities included/.test(x)&&!/공과금[^·]{0,8}(별도|세입자|미확인)/.test(x))return{heat:"inc",elec:"inc",water:"inc",net:"t",auto:1};
+ const s={heat:/heat[^·]{0,15}included|난방[^·]{0,6}포함|gas and hot water included/.test(x)?"inc":/전기 난방|난방은 전기|electric heat/.test(x)?"elec":/가스 난방|gas heat/.test(x)?"gas":"?",elec:"t",water:/water[^·]{0,15}(included|owner)|수도[^·]{0,6}포함/.test(x)?"inc":"?",net:"t",auto:1};return s}
+function mo(r){const c=costSpec(r),it=[];let lo=r.rent,hi=r.rent;if(lo==null)return null;const add=(k,a,b,tag)=>{it.push([k,a,b,tag]);lo+=a;hi+=b};
+ for(const [k,v] of (c.extra||[]))add(k,v,v,"");
+ if(c.util){add("공과금",c.util[0],c.util[1],c.utilSrc||"중개인")}else{
+  const h=c.heat||"?";if(h!=="inc"){const v=c.heatv||CD.heat[h]||CD.heat["?"];add(h==="elec"?"전기 난방":h==="gas"?"가스 난방":"난방(방식 ?)",v[0],v[1],c.heatv?"중개인":"추정")}
+  if(c.elec!=="inc"){const v=c.elecv||CD.elec;add("전기",v[0],v[1],c.elecv?"중개인":"추정")}
+  if(c.water==="t"||c.water==="?"){const v=c.water==="t"?CD.water:[0,CD.water[1]];add(c.water==="t"?"수도":"수도(포함 여부 ?)",v[0],v[1],"추정")}}
+ if(c.net!=="inc")add("인터넷",CD.net,CD.net,"추정");
+ add("세입자 보험",CD.ins,CD.ins,"추정");
+ let pk="ok";const pa=String(r.park||"");
+ if(typeof r.parking_cost==="number"){if(r.parking_cost>0)add("주차",r.parking_cost,r.parking_cost,"")}else if(/포함|included/i.test(pa)){}else if(/노상|street|없음|허가/i.test(pa)){pk="st"}else{pk="unk"}
+ return{lo,hi,pk,it}}
+function costLine(r){const c=mo(r);if(!c)return"";const f=v=>"$"+Number(v).toLocaleString();return `월세 ${f(r.rent)}`+c.it.map(([k,a,b,tg])=>` + ${k} ${a===b?f(a):f(a)+"~"+Number(b).toLocaleString()}${tg==="추정"?"(추정)":""}`).join("")+(c.pk==="unk"?" + 주차비 ?":c.pk==="st"?" (주차는 길가 허가)":"")+` = <b>${f(c.lo)}${c.hi>c.lo?"~"+Number(c.hi).toLocaleString():""}</b>`}
 function priceHTML(r){const c=mo(r);if(!c)return `<span class="pr">${fmt$(r.rent)}<small>/월</small></span>`;const v=c.hi>c.lo?`${fmt$(c.lo)}~${Number(c.hi).toLocaleString()}`:fmt$(c.lo);
- const note=c.pk==="unk"?" · <b>주차비 ?</b>":c.pk==="st"?" · 길가 주차":"";return `<span class="pr" title="한 달 생활비 = 월세 + 공과금 추정 + 주차">${v}<small>/월</small><span class="rt">월세 ${fmt$(r.rent)}${note}</span></span>`}
+ const note=c.pk==="unk"?" · <b>주차비 ?</b>":c.pk==="st"?" · 길가 주차":"";return `<span class="pr" title="한 달 생활비 = 월세 + 난방·전기·수도·인터넷·보험(포함이면 0, 모르면 추정) + 주차 + 그 집 추가 비용. 카드를 열면 상세에 계산이 나와요">${v}<small>/월</small><span class="rt">월세 ${fmt$(r.rent)}${note}</span></span>`}
 const PGDONE=["답장 받음","투어 예정","투어 완료","신청함","계약"];
 const KL={r:"답장 옴",c:"문의함",n:"후보",x:"제외·불가"},KC={r:"#7c3aed",c:"#2563eb",n:"#0f766e",x:"#9aa0a6"};
 function kind(r){if(r.s===5||(r.pg&&r.pg.st==="불가"))return"x";if(r.pg&&PGDONE.includes(r.pg.st))return"r";if(r.pg)return"c";return"n"}
@@ -219,7 +231,7 @@ function convHTML(r){const t=MSGS[r.n];const L2=[["ko","번역"],["both","원문
 function detHTML(r){const row=(k,v)=>v?`<span class="k">${k}</span><span>${v}</span>`:"";const t=r.tq;
  const comTxt=t?(t.pass?`${escH(t.line)} ${t.min}분 (도보 ${t.walk??"?"}분 포함, ${escH(t.dep)}→${escH(t.arr)}${t.from&&t.from!=="-"?", "+escH(t.from)+" 승차":""})`:"환승 없이 45분 안에 못 감"):"";
  const parts=r.parts?Object.entries(r.parts).map(([k,v])=>k+" "+v.toFixed(1)).join(" · "):"";
- return `<div class="kv">${row("집",escH(r.unit||"")+(r.built?` · ${r.built}년${r.reno?` (${r.reno} 리모델링)`:""}`:"")+(r.elev?` · 엘리베이터 ${r.elev==="y"?"있음":r.elev==="n"?"없음":"?"}`:""))}${row("주소",escH(r.addr||r.area||""))}${row("비용",escH([r.rentT&&r.rentT!=="월세"?r.rentT:"",r.est,r.fees].filter(Boolean).join(" · ")))}${row("주차",escH(r.park||"?"))}${row("입주",escH([r.move,r.lease].filter(x=>x&&x!=="-").join(" · ")))}${row("출근",comTxt)}${row("셔틀",escH(r.shuttle||""))}${row("치안",r.sf?`10만 명당 강력범죄 약 ${r.sf.rate.toLocaleString()}건${r.md?` · 가장 가까운 2026 살인 지점 ${r.md.d.toFixed(2)}마일`:""}`:r.md?`가장 가까운 2026 살인 지점 ${r.md.d.toFixed(2)}마일`:"")}${row("구글",r.gR?`${r.gR} (${r.gC}개)${r.gS?" · "+escH(r.gS):""}`:"")}${row("점수",r.score!=null?`${r.score.toFixed(1)}점${parts?` <small style="color:var(--mute)">(${parts})</small>`:""}`:"")}${row("메모",escH(r.memo||""))}</div>`}
+ return `<div class="kv">${row("집",escH(r.unit||"")+(r.built?` · ${r.built}년${r.reno?` (${r.reno} 리모델링)`:""}`:"")+(r.elev?` · 엘리베이터 ${r.elev==="y"?"있음":r.elev==="n"?"없음":"?"}`:""))}${row("주소",escH(r.addr||r.area||""))}${row("생활비",costLine(r))}${row("비용",escH([r.rentT&&r.rentT!=="월세"?r.rentT:"",r.fees].filter(Boolean).join(" · ")))}${row("주차",escH(r.park||"?"))}${row("입주",escH([r.move,r.lease].filter(x=>x&&x!=="-").join(" · ")))}${row("출근",comTxt)}${row("셔틀",escH(r.shuttle||""))}${row("치안",r.sf?`10만 명당 강력범죄 약 ${r.sf.rate.toLocaleString()}건${r.md?` · 가장 가까운 2026 살인 지점 ${r.md.d.toFixed(2)}마일`:""}`:r.md?`가장 가까운 2026 살인 지점 ${r.md.d.toFixed(2)}마일`:"")}${row("구글",r.gR?`${r.gR} (${r.gC}개)${r.gS?" · "+escH(r.gS):""}`:"")}${row("점수",r.score!=null?`${r.score.toFixed(1)}점${parts?` <small style="color:var(--mute)">(${parts})</small>`:""}`:"")}${row("메모",escH(r.memo||""))}</div>`}
 function memoHTML(r){const o=NT[r.n]||{};let h="";for(const p of["d","a"])if(o[p])h+=`<div class="nt"><b>${PN[p]}</b>${escH(o[p])}</div>`;
  return h+`<textarea class="nte" placeholder="${PN[UI.who]} 메모 (⌘+Enter 저장)">${escH(o[UI.who]||"")}</textarea><div style="display:flex;gap:6px;margin-top:6px;align-items:center"><button class="act" data-a="savememo">저장</button><small style="color:var(--mute)">${PN[UI.who]} 이름으로 저장 (위 작성자 선택)</small></div>`}
 function setNote(n,v){v=v.trim();const o=NT[n]||{};if(v)o[UI.who]=v;else delete o[UI.who];if(Object.keys(o).length)NT[n]=o;else delete NT[n];localStorage.setItem("bh_notes_v1",JSON.stringify(NT))}
@@ -236,7 +248,7 @@ function render(keepScroll){const tabF=TABS.find(t=>t[0]===UI.tab)[2];
  lst.innerHTML=(VIS.map(cardHTML).join("")||`<div class="empty">조건에 맞는 매물이 없어요</div>`)+infoHTML();
  if(keepScroll)lst.scrollTop=y;
  L.forEach(r=>{const m=MK[r.n];if(!m)return;VIS.includes(r)?m.addTo(M):m.remove()});saveUI()}
-function infoHTML(){return `<details class="info"><summary>우리 기준 · 점수 · 셔틀</summary><div class="kv">${CRITERIA.map(([k,v])=>`<span class="k">${k}</span><span>${escH(v)}</span>`).join("")}</div><p style="color:var(--mute);font-size:12px">${SCOREHELP}<br>${SHUTTLE}<br>예상 월 총액 = 월세 + 필수 수수료 + 공과금 추정(주차 제외). 별점·메모·제외는 이 브라우저에만 저장돼요.</p></details>`}
+function infoHTML(){return `<details class="info"><summary>우리 기준 · 점수 · 셔틀</summary><div class="kv">${CRITERIA.map(([k,v])=>`<span class="k">${k}</span><span>${escH(v)}</span>`).join("")}</div><p style="color:var(--mute);font-size:12px">${SCOREHELP}<br>${SHUTTLE}<br>카드 오른쪽 위 = 한 달 생활비(월세 + 난방·전기·수도·인터넷·세입자 보험 + 주차 + 그 집만의 추가 비용). 포함된 건 0, 중개인이 알려준 금액은 그 값, 모르면 추정(전기 $60~90, 가스 난방 $80~180, 전기 난방 $100~250, 수도 $40~60, 인터넷 $60, 보험 $15). 범위는 평균~겨울. 별점·메모·제외는 이 브라우저에만 저장돼요.</p></details>`}
 // events
 const list=document.getElementById("list");
 function copyAsk(n,id,btn){const x=(ASKS[n]||[]).find(a=>a.id===id);if(!x)return;const txt=`[${n}] ${x.q}\n추천: ${x.rec||"-"}\n(질문 ID: ${x.id})\n내 답: `;
