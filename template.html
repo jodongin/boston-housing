@@ -144,11 +144,12 @@ textarea.nte{width:100%;min-height:70px;border:1px solid #f59e0b;border-radius:8
 </section>
 </div>
 <script>
-const UPDATED="2026-11-06 (149차)";
+const UPDATED="2026-11-06 (150차)";
 const CRITERIA=[["구조","1베드 또는 2베드, 욕실 1개 이상, 집 전체 (스튜디오·쉐어 제외)"],["월세","$3,000 이하 (두 사람 다 높게 준 곳은 조금 넘어도 먼저 상의)"],["주차","필수. 방식(차고/야외/거주자 노상 허가)과 월 비용 확인"],["세탁","집 안 세탁기·건조기"],["반지하","제외 (시 자산 기록 0층 포함)"],["입주","11/25가 가장 좋고, 늦어도 그다음 주"],["계약","12개월, 연장은 나중에"],["투어","실시간 화상 투어 대신 녹화 영상. 계약금은 직접 보고 납부"],["직장","Harvard Pilgrim Health Care Institute, Landmark Center (401 Park Dr)"]];
 const SCOREHELP="100점: 면적 20 · 가격 20(월세 10 + 예상 월 총액 10) · 출근 15 · 건물·시설 15 · 치안 10 · 생활 인프라 10 · 출근 중 도보 5 · 주차 5. 살인 지점 거리는 점수에 넣지 않음.";
 const SHUTTLE="M2 셔틀(Harvard Sq ↔ LMA)은 Harvard ID가 있으면 무료, 가족은 티켓 구매. LMA 셔틀은 Longwood 회원기관 ID 필요(평일만).";
 const ARA0=__ARA__;
+const DONG0=__DONGIN__;
 const MSGS=__MSGS__;
 const ASKS=__ASKS__;
 /*DATA*/
@@ -192,7 +193,7 @@ L.forEach(r=>{const ev=EV[r.n]||{};r.tq=ev.tq||null;r.md=ev.md||null;r.sf=ev.sf|
  if(r.tq){for(const k of["dep","arr"])if(r.tq[k])r.tq[k]=String(r.tq[k]).replace(/[\s\u202f]*[AP]M/g,"").trim()}
  const e=EX[r.n];if(e){r.shuttle=e[0];r.tcom=e[1]}const g=GG[r.n]||{};r.gR=g.r;r.gC=g.c;r.gUrl=g.url;r.gS=g.s;
  r.geo=GEO[r.n];r.s0=r.s;if(XU[r.n]&&r.s0!==5)r.s=5;r.ux=!!XU[r.n];
- r.my=(r.n in MY)?MY[r.n]:(r.star||0);r.ma=(r.n in MA)?MA[r.n]:(ARA0[r.n]||0);
+ r.my=(r.n in MY)?MY[r.n]:(DONG0[r.n]||r.star||0);r.ma=(r.n in MA)?MA[r.n]:(ARA0[r.n]||0);
  r.beds=/2베드/.test(r.unit)?(/1베드/.test(r.unit)?[1,2]:[2]):[1];r.k=kind(r);});
 const OA=n=>(ASKS[n]||[]).filter(a=>a.status==="open");
 const DUE=n=>OA(n).length>0;

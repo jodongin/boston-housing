@@ -46,6 +46,7 @@ data = "const EV=%s;\nconst MURDERS=%s;\n" % (open("data/eval.json",encoding="ut
 tpl = open('template.html', encoding='utf-8').read()
 out = tpl.replace('/*DATA*/', L + '\n' + data)
 out = out.replace('__ARA__', open('data/ara.json',encoding='utf-8').read().strip() or '{}')
+out = out.replace('__DONGIN__', open('data/dongin.json',encoding='utf-8').read().strip() or '{}')
 import os, subprocess
 # 문의 대화 기록(records/messages.json, 비공개)을 매물별로 붙인다
 MS={}
