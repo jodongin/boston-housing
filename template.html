@@ -145,8 +145,8 @@ table.cmp{border-collapse:separate;border-spacing:0;font-size:13px;line-height:1
 .mtools i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
 .mtools .mlay{display:inline-flex;gap:10px;border-left:1px solid var(--line);padding-left:12px}
 .mtools label{display:inline-flex;align-items:center;gap:3px}
-.smk{color:#6b7280;background:#fff;border:1px solid #9ca3af;font:600 8px/11px sans-serif;text-align:center;border-radius:3px;padding:0 2px;white-space:nowrap;opacity:.7;display:inline-block}
-.lowz .smk{width:6px;height:6px;padding:0;border-radius:50%;background:#d1d5db;border-color:#9ca3af}.lowz .smk span{display:none}
+.smk{color:#444;background:#fff;border:1.5px solid #555;font:700 9px/12px sans-serif;text-align:center;border-radius:4px;padding:0 3px;white-space:nowrap;opacity:1;display:inline-block;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.lowz .smk{width:7px;height:7px;padding:0;border-radius:50%;background:#fff;border:1.5px solid #555}.lowz .smk span{display:none}
 .worklbl{font-size:12px;font-weight:700;padding:2px 7px;background:#fff;border:1px solid var(--r);color:#5b21b6;border-radius:5px}.worklbl:before{display:none}
 .unilbl{font-size:11px;padding:1px 5px}.unilbl:before{display:none}
 .leaflet-container{font-family:inherit}
@@ -217,7 +217,7 @@ table.cmp{border-collapse:separate;border-spacing:0;font-size:13px;line-height:1
 <p class="upd">업데이트 <span id="upd"></span></p>
 
 <script>
-const UPDATED="2026-11-09 (228차)";
+const UPDATED="2026-11-09 (229차)";
 const CRITERIA=[["출근","평일(화) 아침 9:00에 집을 나서 대기 포함 45분 이내 도착, 환승 1번까지, 도보 합계 15분 이하 (Google 지도 대중교통, 조건 맞는 경로 중 환승이 적고 빠른 경로로 판단)"],["구조","1베드 또는 2베드, 욕실 1개 이상, 집 전체 (스튜디오·쉐어 제외)"],["생활비","한 달 생활비(월세+공과금+보험+필수 요금) $3,300 이하"],["에어컨","필수 (중앙식·붙박이 선호)"],["해충","시 기록·리뷰의 해충·쥐·쓰레기는 확인·표시만 하고 제외 여부는 사용자가 판단 (자동 탈락 없음)"],["실내","허름하지 않을 것"],["주차","필수. 방식(차고/야외/거주자 노상 허가)과 월 비용 확인"],["세탁","집 안 세탁기·건조기"],["반지하","제외 (시 자산 기록 0층 포함)"],["입주","11/25가 가장 좋고, 늦어도 그다음 주"],["계약","12개월, 연장은 나중에"],["투어","실시간 화상 투어 대신 녹화 영상. 계약금은 직접 보고 납부"],["직장","Harvard Pilgrim Health Care Institute, Landmark Center (401 Park Dr)"]];
 const SCOREHELP="100점: 면적 20 · 가격 20(월세 10 + 예상 월 총액 10) · 출근 15 · 건물·시설 15 · 치안 10 · 생활 인프라 10 · 출근 중 도보 5 · 주차 5. 살인 지점 거리는 점수에 넣지 않음.";
 const SHUTTLE="M2 셔틀(Harvard Sq ↔ LMA)은 Harvard ID가 있으면 무료, 가족은 티켓 구매. LMA 셔틀은 Longwood 회원기관 ID 필요(평일만).";
@@ -323,7 +323,7 @@ const UNI=window.L.layerGroup();Object.entries(UNIS).forEach(([n,g])=>{if(g)wind
 const MUR=window.L.layerGroup();MURDERS.forEach(m=>{window.L.circle(m.g,{radius:804.67,color:"#dc2626",weight:1,opacity:.35,fillColor:"#dc2626",fillOpacity:.04,interactive:false}).addTo(MUR);window.L.marker(m.g,{icon:window.L.divIcon({html:'<div style="color:#b91c1c;font-weight:900;font-size:13px;line-height:13px;text-shadow:0 0 2px #fff">✖</div>',className:"",iconSize:[13,13],iconAnchor:[6,6]})}).bindTooltip(`${m.d||m.date||""} · ${m.a} (${m.nb})<br>${m.k}`).addTo(MUR)});
 const SCOL={TJ:"#b91c1c",WF:"#15803d",H:"#1d4ed8",SM:"#be123c","S&S":"#7c3aed",WG:"#9a3412",TG:"#dc2626",CO:"#1e3a8a",AL:"#0369a1",K:"#0f766e"};
 M.createPane("storePane");M.getPane("storePane").style.zIndex=350;const lowz=()=>M.getContainer().classList.toggle("lowz",M.getZoom()<14);M.on("zoomend",lowz);lowz();
-const STO=window.L.layerGroup();STORES.forEach(s=>{window.L.marker(s.g,{pane:"storePane",icon:window.L.divIcon({html:`<div class="smk"><span>${s.b}</span></div>`,className:"",iconSize:[20,11],iconAnchor:[10,6]})}).bindPopup(`<b>${escH(s.name)}</b><br>${escH(s.addr||"")}<br><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.name+" "+(s.addr||""))}" target="_blank">지도 보기 ↗</a>`).addTo(STO)});
+const STO=window.L.layerGroup();STORES.forEach(s=>{window.L.marker(s.g,{pane:"storePane",icon:window.L.divIcon({html:`<div class="smk"><span>${s.b}</span></div>`,className:"",iconSize:[22,14],iconAnchor:[11,7]})}).bindPopup(`<b>${escH(s.name)}</b><br>${escH(s.addr||"")}<br><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.name+" "+(s.addr||""))}" target="_blank">지도 보기 ↗</a>`).addTo(STO)});
 // ---- v3 화면 ----
 // ===== v3 화면: 추리기 / 비교·결정 / 진행 상황 =====
 const BASE=L.find(r=>/Queensberry/.test(r.n)&&/12A/.test(r.n))||null;// 기준 매물 98-106 Queensberry #102-12A
