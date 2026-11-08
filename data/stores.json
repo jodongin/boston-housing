@@ -1,0 +1,765 @@
+{
+"src": "OpenStreetMap Overpass 2026-11-08 (shop=supermarket 등, 브랜드 이름으로 필터)",
+"stores": [
+{
+"b": "S&S",
+"brand": "Stop & Shop",
+"name": "Stop & Shop",
+"addr": "1100 Massachusetts Avenue Dorchester",
+"g": [
+42.32646,
+-71.06482
+]
+},
+{
+"b": "SM",
+"brand": "Star Market",
+"name": "Star Market",
+"addr": "699 Mount Auburn Street Cambridge",
+"g": [
+42.37538,
+-71.14908
+]
+},
+{
+"b": "WF",
+"brand": "Whole Foods",
+"name": "Whole Foods Market",
+"addr": "200 Alewife Brook Parkway Cambridge",
+"g": [
+42.38912,
+-71.14175
+]
+},
+{
+"b": "TJ",
+"brand": "Trader Joe's",
+"name": "Trader Joe's",
+"addr": "211 Alewife Brook Parkway Cambridge",
+"g": [
+42.38993,
+-71.14338
+]
+},
+{
+"b": "WF",
+"brand": "Whole Foods",
+"name": "Whole Foods Market",
+"addr": "916 Walnut Street Newton",
+"g": [
+42.33012,
+-71.20637
+]
+},
+{
+"b": "WF",
+"brand": "Whole Foods",
+"name": "Whole Foods Market",
+"addr": "45 Beacon Street Somerville",
+"g": [
+42.37589,
+-71.10302
+]
+},
+{
+"b": "SM",
+"brand": "Star Market",
+"name": "Star Market",
+"addr": "53 Huntington Avenue Boston",
+"g": [
+42.34744,
+-71.07967
+]
+},
+{
+"b": "TJ",
+"brand": "Trader Joe's",
+"name": "Trader Joe's",
+"addr": "899 Boylston Street Boston",
+"g": [
+42.34844,
+-71.0841
+]
+},
+{
+"b": "S&S",
+"brand": "Stop & Shop",
+"name": "Stop & Shop",
+"addr": "760 Fellsway Medford",
+"g": [
+42.40833,
+-71.08618
+]
+},
+{
+"b": "TJ",
+"brand": "Trader Joe's",
+"name": "Trader Joe's",
+"addr": "145 Middlesex Avenue Somerville",
+"g": [
+42.39543,
+-71.08294
+]
+},
+{
+"b": "SM",
+"brand": "Star Market",
+"name": "Star Market",
+"addr": "1 Boylston Street Chestnut Hill",
+"g": [
+42.32373,
+-71.16615
+]
+},
+{
+"b": "S&S",
+"brand": "Stop & Shop",
+"name": "Stop & Shop",
+"addr": "171 Watertown Street Watertown",
+"g": [
+42.36381,
+-71.19376
+]
+},
+{
+"b": "H",
+"brand": "H Mart",
+"name": "H Mart",
+"addr": "1028 Beacon Street Brookline",
+"g": [
+42.34616,
+-71.10821
+]
+},
+{
+"b": "AL",
+"brand": "Aldi",
+"name": "Aldi",
+"addr": "630 Fellsway Medford",
+"g": [
+42.40695,
+-71.08367
+]
+},
+{
+"b": "WF",
+"brand": "Whole Foods",
+"name": "Whole Foods Market",
+"addr": "181 Cambridge Street Boston",
+"g": [
+42.362,
+-71.06534
+]
+},
+{
+"b": "S&S",
+"brand": "Stop & Shop",
+"name": "Stop & Shop",
+"addr": "715 East Broadway South Boston",
+"g": [
+42.33548,
+-71.0366
+]
+},
+{
+"b": "WF",
+"brand": "Whole Foods",
+"name": "Whole Foods Market",
+"addr": "27 Austin Street Charlestown",
+"g": [
+42.37563,
+-71.06627
+]
+},
+{
+"b": "WF",
+"brand": "Whole Foods",
+"name": "Whole Foods Market",
+"addr": "348 Harrison Avenue Boston",
+"g": [
+42.34547,
+-71.06282
+]
+},
+{
+"b": "TG",
+"brand": "Target",
+"name": "Target",
+"addr": "7 Allstate Road Dorchester",
+"g": [
+42.32902,
+-71.06285
+]
+},
+{
+"b": "TG",
+"brand": "Target",
+"name": "Target",
+"addr": "1341 Boylston Street Boston",
+"g": [
+42.34457,
+-71.09963
+]
+},
+{
+"b": "TG",
+"brand": "Target",
+"name": "Target",
+"addr": "564 Massachusetts Avenue Cambridge",
+"g": [
+42.36449,
+-71.10265
+]
+},
+{
+"b": "S&S",
+"brand": "Stop & Shop",
+"name": "Stop & Shop",
+"addr": "1620 Tremont Street Boston",
+"g": [
+42.33337,
+-71.10411
+]
+},
+{
+"b": "SM",
+"brand": "Star Market",
+"name": "Star Market",
+"addr": "14 McGrath Highway Somerville",
+"g": [
+42.374,
+-71.0838
+]
+},
+{
+"b": "WF",
+"brand": "Whole Foods",
+"name": "Whole Foods Market",
+"addr": "15 Westland Avenue Boston",
+"g": [
+42.34389,
+-71.08727
+]
+},
+{
+"b": "TJ",
+"brand": "Trader Joe's",
+"name": "Trader Joe's",
+"addr": "199 North Harvard Street Allston",
+"g": [
+42.36344,
+-71.13003
+]
+},
+{
+"b": "TG",
+"brand": "Target",
+"name": "Target",
+"addr": "822 Somerville Avenue Cambridge",
+"g": [
+42.38862,
+-71.11858
+]
+},
+{
+"b": "SM",
+"brand": "Star Market",
+"name": "Star Market",
+"addr": "90 Causeway Street Boston",
+"g": [
+42.36573,
+-71.06167
+]
+},
+{
+"b": "TG",
+"brand": "Target",
+"name": "Target",
+"addr": "100 Cambridge Street Boston",
+"g": [
+42.36092,
+-71.06218
+]
+},
+{
+"b": "WF",
+"brand": "Whole Foods",
+"name": "Whole Foods Market",
+"addr": "808 Massachusetts Avenue Arlington",
+"g": [
+42.41638,
+-71.15948
+]
+},
+{
+"b": "TG",
+"brand": "Target",
+"name": "Target",
+"addr": "860 Commonwealth Avenue Boston",
+"g": [
+42.35063,
+-71.11408
+]
+},
+{
+"b": "K",
+"brand": "한인마트",
+"name": "Reliable Market",
+"addr": "45 Union Square Somerville",
+"g": [
+42.38009,
+-71.09636
+]
+},
+{
+"b": "TG",
+"brand": "Target",
+"name": "Target",
+"addr": "180 Somerville Avenue Somerville",
+"g": [
+42.37659,
+-71.09057
+]
+},
+{
+"b": "CO",
+"brand": "Costco",
+"name": "Costco",
+"addr": "2 Mystic View Road Everett",
+"g": [
+42.39678,
+-71.07144
+]
+},
+{
+"b": "S&S",
+"brand": "Stop & Shop",
+"name": "Stop & Shop",
+"addr": "305 Guest Street Boston",
+"g": [
+42.3558,
+-71.14006
+]
+},
+{
+"b": "TG",
+"brand": "Target",
+"name": "Target",
+"addr": "500 Geneva Avenue Dorchester",
+"g": [
+42.29924,
+-71.06275
+]
+},
+{
+"b": "TJ",
+"brand": "Trader Joe's",
+"name": "Trader Joe's",
+"addr": "500 Boylston Street Boston",
+"g": [
+42.351,
+-71.07335
+]
+},
+{
+"b": "TJ",
+"brand": "Trader Joe's",
+"name": "Trader Joe's",
+"addr": "748 Memorial Drive Cambridge",
+"g": [
+42.35814,
+-71.11415
+]
+},
+{
+"b": "WG",
+"brand": "Wegmans",
+"name": "Wegmans",
+"addr": "3850 Mystic Valley Parkway Medford",
+"g": [
+42.40669,
+-71.09196
+]
+},
+{
+"b": "H",
+"brand": "H Mart",
+"name": "H Mart",
+"addr": "240 Holland Street",
+"g": [
+42.39518,
+-71.12194
+]
+},
+{
+"b": "TJ",
+"brand": "Trader Joe's",
+"name": "Trader Joe's",
+"addr": "1999 Centre Street",
+"g": [
+42.28185,
+-71.15848
+]
+},
+{
+"b": "TJ",
+"brand": "Trader Joe's",
+"name": "Trader Joe's",
+"addr": "165 Needham Street",
+"g": [
+42.31235,
+-71.21401
+]
+},
+{
+"b": "TJ",
+"brand": "Trader Joe's",
+"name": "Trader Joe's",
+"addr": "1317 Beacon Street Brookline",
+"g": [
+42.3419,
+-71.1205
+]
+},
+{
+"b": "WF",
+"brand": "Whole Foods",
+"name": "Whole Foods Market",
+"addr": "413 Centre Street Boston",
+"g": [
+42.32151,
+-71.11088
+]
+},
+{
+"b": "WF",
+"brand": "Whole Foods",
+"name": "Whole Foods Market",
+"addr": "340 River Street Cambridge",
+"g": [
+42.361,
+-71.11396
+]
+},
+{
+"b": "WF",
+"brand": "Whole Foods",
+"name": "Whole Foods Market",
+"addr": "2151 Mystic Valley Parkway Medford",
+"g": [
+42.41701,
+-71.12663
+]
+},
+{
+"b": "TJ",
+"brand": "Trader Joe's",
+"name": "Trader Joe's",
+"addr": "44 Thomson Place Boston",
+"g": [
+42.3518,
+-71.04734
+]
+},
+{
+"b": "SM",
+"brand": "Star Market",
+"name": "Star Market",
+"addr": "1065 Commonwealth Avenue Boston",
+"g": [
+42.3527,
+-71.12356
+]
+},
+{
+"b": "S&S",
+"brand": "Stop & Shop",
+"name": "Stop & Shop",
+"addr": "155 Harvard Street Brookline",
+"g": [
+42.33825,
+-71.12038
+]
+},
+{
+"b": "SM",
+"brand": "Star Market",
+"name": "Star Market",
+"addr": "45 William T. Morrissey Boulevard Dorchester",
+"g": [
+42.3184,
+-71.05069
+]
+},
+{
+"b": "SM",
+"brand": "Star Market",
+"name": "Star Market",
+"addr": "1717 Beacon Street Brookline",
+"g": [
+42.3376,
+-71.13916
+]
+},
+{
+"b": "TG",
+"brand": "Target",
+"name": "Target",
+"addr": "1 Mystic View Road Everett",
+"g": [
+42.39876,
+-71.07235
+]
+},
+{
+"b": "SM",
+"brand": "Star Market",
+"name": "Star Market",
+"addr": "275 Beacon Street Somerville",
+"g": [
+42.38365,
+-71.11179
+]
+},
+{
+"b": "S&S",
+"brand": "Stop & Shop",
+"name": "Stop & Shop",
+"addr": "460 Blue Hill Avenue Dorchester",
+"g": [
+42.30915,
+-71.08101
+]
+},
+{
+"b": "S&S",
+"brand": "Stop & Shop",
+"name": "Stop & Shop",
+"addr": "105;115 Alewife Brook Parkway Somerville",
+"g": [
+42.40673,
+-71.13223
+]
+},
+{
+"b": "WF",
+"brand": "Whole Foods",
+"name": "Whole Foods Market",
+"addr": "115 Prospect Street Cambridge",
+"g": [
+42.36809,
+-71.1024
+]
+},
+{
+"b": "SM",
+"brand": "Star Market",
+"name": "Star Market",
+"addr": "370 Western Avenue Brighton",
+"g": [
+42.36092,
+-71.13758
+]
+},
+{
+"b": "S&S",
+"brand": "Stop & Shop",
+"name": "Stop & Shop",
+"addr": "771;775;779 McGrath Highway Somerville",
+"g": [
+42.39153,
+-71.08566
+]
+},
+{
+"b": "SM",
+"brand": "Star Market",
+"name": "Star Market",
+"addr": "75 Spring Street West Roxbury",
+"g": [
+42.27874,
+-71.16326
+]
+},
+{
+"b": "SM",
+"brand": "Star Market",
+"name": "Star Market",
+"addr": "4 River Street Dorchester",
+"g": [
+42.27188,
+-71.0697
+]
+},
+{
+"b": "WF",
+"brand": "Whole Foods",
+"name": "Whole Foods Market",
+"addr": "15 Washington Street Brighton",
+"g": [
+42.34281,
+-71.14038
+]
+},
+{
+"b": "S&S",
+"brand": "Stop & Shop",
+"name": "Stop & Shop",
+"addr": "301 Centre Street Jamaica Plain",
+"g": [
+42.32411,
+-71.10306
+]
+},
+{
+"b": "TG",
+"brand": "Target",
+"name": "Target",
+"addr": "4165 Washington Street Roslindale",
+"g": [
+42.2883,
+-71.12665
+]
+},
+{
+"b": "SM",
+"brand": "Star Market",
+"name": "Star Market",
+"addr": "33 Kilmarnock Street Boston",
+"g": [
+42.34353,
+-71.10046
+]
+},
+{
+"b": "H",
+"brand": "H Mart",
+"name": "H Mart",
+"addr": "581 Massachusetts Avenue",
+"g": [
+42.36528,
+-71.10233
+]
+},
+{
+"b": "SM",
+"brand": "Star Market",
+"name": "Star Market",
+"addr": "33 Austin Street Newtonville",
+"g": [
+42.35074,
+-71.20913
+]
+},
+{
+"b": "S&S",
+"brand": "Stop & Shop",
+"name": "Stop & Shop",
+"addr": "905 Massachusetts Avenue Arlington",
+"g": [
+42.41814,
+-71.16434
+]
+},
+{
+"b": "WF",
+"brand": "Whole Foods",
+"name": "Whole Foods Market",
+"addr": "647 Washington Street Newton",
+"g": [
+42.35415,
+-71.2001
+]
+},
+{
+"b": "TJ",
+"brand": "Trader Joe's",
+"name": "Trader Joe's",
+"addr": "1121 Washington Street West Newton",
+"g": [
+42.34984,
+-71.21938
+]
+},
+{
+"b": "S&S",
+"brand": "Stop & Shop",
+"name": "Stop & Shop",
+"addr": "700 Pleasant Street Watertown",
+"g": [
+42.36719,
+-71.21548
+]
+},
+{
+"b": "S&S",
+"brand": "Stop & Shop",
+"name": "Stop & Shop",
+"addr": "950 American Legion Highway Roslindale",
+"g": [
+42.27568,
+-71.11421
+]
+},
+{
+"b": "TG",
+"brand": "Target",
+"name": "Target",
+"addr": "550 Arsenal Street Watertown",
+"g": [
+42.36467,
+-71.15719
+]
+},
+{
+"b": "WG",
+"brand": "Wegmans",
+"name": "Wegmans",
+"addr": "200 Boylston Street Chestnut Hill",
+"g": [
+42.31888,
+-71.17516
+]
+},
+{
+"b": "SM",
+"brand": "Star Market",
+"name": "Star Market",
+"addr": "535 Trapelo Road Belmont",
+"g": [
+42.38849,
+-71.19113
+]
+},
+{
+"b": "S&S",
+"brand": "Stop & Shop",
+"name": "Stop & Shop",
+"addr": "535-555 Freeport Street Dorchester",
+"g": [
+42.29269,
+-71.04903
+]
+},
+{
+"b": "SM",
+"brand": "Star Market",
+"name": "Star Market",
+"addr": "49 White Street Cambridge",
+"g": [
+42.39004,
+-71.11825
+]
+},
+{
+"b": "WG",
+"brand": "Wegmans",
+"name": "Wegmans (Fenway)",
+"addr": "1301 Boylston Street Boston",
+"g": [
+42.34492,
+-71.09867
+]
+}
+]
+}
