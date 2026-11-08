@@ -127,7 +127,7 @@ textarea.nte{width:100%;min-height:70px;border:1px solid #f59e0b;border-radius:8
   <select id="sort"><option value="rec">추천순</option><option value="recent">최근 연락순</option><option value="rent">생활비 낮은 순</option><option value="com">출근 빠른 순</option><option value="score">점수순</option></select>
   <button class="fbtn" id="fbtn">필터</button>
   <div class="fp" id="fp">
-   <label><input type="checkbox" id="f3000"> 월세 $3,000 이하</label>
+   <label><input type="checkbox" id="f3000"> 월세 $3,300 이하</label>
    <label>구조 <select id="fbeds"><option value="">전체</option><option value="1">1베드</option><option value="2">2베드</option></select></label>
    <label><input type="checkbox" id="fpark"> 주차 되는 곳</label>
    <label><input type="checkbox" id="fwd"> 집 안 세탁기 확인</label>
@@ -144,8 +144,8 @@ textarea.nte{width:100%;min-height:70px;border:1px solid #f59e0b;border-radius:8
 </section>
 </div>
 <script>
-const UPDATED="2026-11-08 (184차)";
-const CRITERIA=[["구조","1베드 또는 2베드, 욕실 1개 이상, 집 전체 (스튜디오·쉐어 제외)"],["월세","$3,000 이하 (두 사람 다 높게 준 곳은 조금 넘어도 먼저 상의)"],["주차","필수. 방식(차고/야외/거주자 노상 허가)과 월 비용 확인"],["세탁","집 안 세탁기·건조기"],["반지하","제외 (시 자산 기록 0층 포함)"],["입주","11/25가 가장 좋고, 늦어도 그다음 주"],["계약","12개월, 연장은 나중에"],["투어","실시간 화상 투어 대신 녹화 영상. 계약금은 직접 보고 납부"],["직장","Harvard Pilgrim Health Care Institute, Landmark Center (401 Park Dr)"]];
+const UPDATED="2026-11-08 (185차)";
+const CRITERIA=[["구조","1베드 또는 2베드, 욕실 1개 이상, 집 전체 (스튜디오·쉐어 제외)"],["생활비","한 달 생활비(월세+공과금+보험+필수 요금) $3,300 이하"],["에어컨","필수 (중앙식·붙박이 선호)"],["해충","시 기록·리뷰에 해충·쥐·쓰레기 이슈 없음"],["실내","허름하지 않을 것"],["주차","필수. 방식(차고/야외/거주자 노상 허가)과 월 비용 확인"],["세탁","집 안 세탁기·건조기"],["반지하","제외 (시 자산 기록 0층 포함)"],["입주","11/25가 가장 좋고, 늦어도 그다음 주"],["계약","12개월, 연장은 나중에"],["투어","실시간 화상 투어 대신 녹화 영상. 계약금은 직접 보고 납부"],["직장","Harvard Pilgrim Health Care Institute, Landmark Center (401 Park Dr)"]];
 const SCOREHELP="100점: 면적 20 · 가격 20(월세 10 + 예상 월 총액 10) · 출근 15 · 건물·시설 15 · 치안 10 · 생활 인프라 10 · 출근 중 도보 5 · 주차 5. 살인 지점 거리는 점수에 넣지 않음.";
 const SHUTTLE="M2 셔틀(Harvard Sq ↔ LMA)은 Harvard ID가 있으면 무료, 가족은 티켓 구매. LMA 셔틀은 Longwood 회원기관 ID 필요(평일만).";
 const ARA0=__ARA__;
@@ -208,7 +208,7 @@ function tagsOf(r){const out=[];for(const [f,l] of TAGRULES){try{if(f(r))out.pus
 let SEL=null,PT={};// selected card, panel tab per card
 const TABS=[["ask","답장 필요",r=>DUE(r.n)],["go","진행 중",r=>r.k==="r"||r.k==="c"],["n","후보",r=>r.k==="n"],["x","제외·불가",r=>r.k==="x"],["all","전체",()=>true]];
 function txt(r){const t=MSGS[r.n];return (r.n+" "+(r.area||"")+" "+(r.addr||"")+" "+(r.memo||"")+" "+JSON.stringify(NT[r.n]||"")+" "+(t?JSON.stringify(t):"")).toLowerCase()}
-function passF(r){if(UI.f3000&&r.rent>3000&&r.k!=="r"&&r.k!=="c")return false;if(UI.fbeds&&!r.beds.includes(+UI.fbeds))return false;if(UI.fpark&&park(r)[1]!=="g")return false;if(UI.fwd&&r.wd!=="y")return false;if(UI.frated&&!(r.my||r.ma))return false;if(UI.q&&!txt(r).includes(UI.q.toLowerCase()))return false;return true}
+function passF(r){if(UI.f3000&&r.rent>3300&&r.k!=="r"&&r.k!=="c")return false;if(UI.fbeds&&!r.beds.includes(+UI.fbeds))return false;if(UI.fpark&&park(r)[1]!=="g")return false;if(UI.fwd&&r.wd!=="y")return false;if(UI.frated&&!(r.my||r.ma))return false;if(UI.q&&!txt(r).includes(UI.q.toLowerCase()))return false;return true}
 function sortRows(a){const K={r:0,c:1,n:2,x:3};const st=r=>(r.my||0)+(r.ma||0);
  const f={rec:(x,y)=>K[x.k]-K[y.k]||st(y)-st(x)||(y.score||0)-(x.score||0),recent:(x,y)=>lastT(y).localeCompare(lastT(x)),rent:(x,y)=>((mo(x)||{}).lo||x.rent||9e9)-((mo(y)||{}).lo||y.rent||9e9),com:(x,y)=>((x.tq&&x.tq.pass)?x.tq.min:999)-((y.tq&&y.tq.pass)?y.tq.min:999),score:(x,y)=>(y.score||0)-(x.score||0)}[UI.sort]||(()=>0);return a.sort(f)}
 function stars1(r,p){const v=p==="a"?r.ma:r.my;let h=`<span class="sr" title="${PN[p]} 별점"><span class="w">${PN[p]}</span>`;for(let i=1;i<=5;i++)h+=`<span class="st${p==="a"?" a":""}${i<=v?" on":""}" data-n="${escH(r.n)}" data-p="${p}" data-v="${i}">★</span>`;return h+"</span>"}
@@ -254,7 +254,7 @@ function render(keepScroll){const tabF=TABS.find(t=>t[0]===UI.tab)[2];
  document.getElementById("tabs").innerHTML=TABS.map(([k,l,f])=>{const n=L.filter(r=>f(r)&&passF(r)).length;const due=k==="ask"&&L.some(r=>DUE(r.n));return `<button class="tab${UI.tab===k?" on":""}" data-tab="${k}">${l}<b>${n}</b>${due?'<span class="dot" title="결정할 것 있음"></span>':""}</button>`}).join("");
  VIS=sortRows(L.filter(r=>tabF(r)&&passF(r)));
  const nr=VIS.filter(r=>r.k==="r").length,nc=VIS.filter(r=>r.k==="c").length;
- document.getElementById("cnt").textContent=UI.tab==="ask"?`답해주실 질문 ${VIS.reduce((s,r)=>s+OA(r.n).length,0)}개 · ${VIS.length}곳`:UI.tab==="go"?`답장 옴 ${nr}곳 · 답장 기다리는 곳 ${nc}곳`:UI.tab==="n"?`아직 연락 안 한 후보 ${VIS.length}곳`+(UI.f3000?" (월세 $3,000 이하)":""):`${VIS.length}곳`;
+ document.getElementById("cnt").textContent=UI.tab==="ask"?`답해주실 질문 ${VIS.reduce((s,r)=>s+OA(r.n).length,0)}개 · ${VIS.length}곳`:UI.tab==="go"?`답장 옴 ${nr}곳 · 답장 기다리는 곳 ${nc}곳`:UI.tab==="n"?`아직 연락 안 한 후보 ${VIS.length}곳`+(UI.f3000?" (월세 $3,300 이하)":""):`${VIS.length}곳`;
  const lst=document.getElementById("list"),y=lst.scrollTop;
  lst.innerHTML=(VIS.map(cardHTML).join("")||`<div class="empty">조건에 맞는 매물이 없어요</div>`)+infoHTML();
  if(keepScroll)lst.scrollTop=y;
