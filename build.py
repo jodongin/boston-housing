@@ -1,4 +1,7 @@
 import json, re
+import subprocess, sys
+_chk = subprocess.run(['node','-e',"try{new Function(require('fs').readFileSync('data/listings.js','utf8'))}catch(e){console.error(e.message);process.exit(1)}"],capture_output=True,text=True)
+if _chk.returncode: sys.exit('STOP: data/listings.js 문법 오류(사이트가 빈 화면이 됨): '+_chk.stderr.strip())
 L = open('data/listings.js', encoding='utf-8').read().strip()
 # split combined excluded rows into separate rows with links
 m1 = re.search(r' \{"?n"?:\s?"3 Essex St G2 / 356-358 Main St G2".*?\},\n', L, re.S)
