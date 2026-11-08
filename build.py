@@ -47,6 +47,7 @@ data = "const EV=%s;\nconst MURDERS=%s;\n" % (open("data/eval.json",encoding="ut
   json.dumps(T['GEO'],ensure_ascii=False), json.dumps(T['TR'],ensure_ascii=False),
   json.dumps(EX,ensure_ascii=False), json.dumps(T.get('DRIVE',{})), json.dumps(json.load(open('data/google.json',encoding='utf-8')),ensure_ascii=False), json.dumps(T.get('UNIS',{})), json.dumps(T['SHAPES']))
 tpl = open('template.html', encoding='utf-8').read()
+data += 'const PZL=%s;\n' % open('data/pzlist.json',encoding='utf-8').read()
 data += 'const STORES=%s;\n' % json.dumps(json.load(open('data/stores.json',encoding='utf-8'))['stores'],ensure_ascii=False)
 out = tpl.replace('/*DATA*/', L + '\n' + data)
 out = out.replace('__ARA__', open('data/ara.json',encoding='utf-8').read().strip() or '{}')
