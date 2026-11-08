@@ -24,7 +24,13 @@ button{font:inherit;cursor:pointer}
 .lock{font-size:12px;color:var(--mute)}
 .app{display:grid;grid-template-columns:minmax(460px,46%) 1fr;height:calc(100% - 52px)}
 .side{display:flex;flex-direction:column;min-height:0;border-right:1px solid var(--line)}
-.tabs{display:flex;gap:4px;padding:12px 14px 0}
+.tabs{display:flex;gap:6px;padding:12px 14px 6px;flex-wrap:wrap;align-items:center}
+.stc{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #ddd;border-radius:16px;font-size:13px;font-weight:600;color:var(--mute);cursor:pointer;user-select:none}
+.stc.on{color:#111;border-color:#111;background:#fff}
+.stc input{margin:0}
+.stc b{font-weight:600;opacity:.8}
+.stc .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--r)}
+.stall{font-size:12px;color:var(--mute);margin-left:4px}
 .tab{border:0;background:none;padding:7px 12px;border-radius:8px 8px 0 0;color:var(--mute);font-weight:600;font-size:13px;border-bottom:2px solid transparent}
 .tab b{font-weight:600;margin-left:3px;color:inherit;opacity:.8}
 .tab.on{color:var(--ink);border-bottom-color:var(--ink)}
@@ -144,7 +150,7 @@ textarea.nte{width:100%;min-height:70px;border:1px solid #f59e0b;border-radius:8
 </section>
 </div>
 <script>
-const UPDATED="2026-11-08 (186차)";
+const UPDATED="2026-11-08 (187차)";
 const CRITERIA=[["구조","1베드 또는 2베드, 욕실 1개 이상, 집 전체 (스튜디오·쉐어 제외)"],["생활비","한 달 생활비(월세+공과금+보험+필수 요금) $3,300 이하"],["에어컨","필수 (중앙식·붙박이 선호)"],["해충","시 기록·리뷰에 해충·쥐·쓰레기 이슈 없음"],["실내","허름하지 않을 것"],["주차","필수. 방식(차고/야외/거주자 노상 허가)과 월 비용 확인"],["세탁","집 안 세탁기·건조기"],["반지하","제외 (시 자산 기록 0층 포함)"],["입주","11/25가 가장 좋고, 늦어도 그다음 주"],["계약","12개월, 연장은 나중에"],["투어","실시간 화상 투어 대신 녹화 영상. 계약금은 직접 보고 납부"],["직장","Harvard Pilgrim Health Care Institute, Landmark Center (401 Park Dr)"]];
 const SCOREHELP="100점: 면적 20 · 가격 20(월세 10 + 예상 월 총액 10) · 출근 15 · 건물·시설 15 · 치안 10 · 생활 인프라 10 · 출근 중 도보 5 · 주차 5. 살인 지점 거리는 점수에 넣지 않음.";
 const SHUTTLE="M2 셔틀(Harvard Sq ↔ LMA)은 Harvard ID가 있으면 무료, 가족은 티켓 구매. LMA 셔틀은 Longwood 회원기관 ID 필요(평일만).";
@@ -206,7 +212,8 @@ const TAGRULES=[[r=>r.gym==="y","헬스장"],[r=>r.mgd==="y","전문 관리"],
  [r=>/중개수수료[^·]{0,4}(없음|\$0)|no broker fee|no fee/i.test((r.fees||"")+" "+(r.memo||"")),"중개수수료 없음"]];
 function tagsOf(r){const out=[];for(const [f,l] of TAGRULES){try{if(f(r))out.push(typeof l==="function"?l(r):l)}catch(e){}}for(const x of (r.tags||[]))if(!out.includes(x))out.push(x);return out}
 let SEL=null,PT={};// selected card, panel tab per card
-const TABS=[["ask","답장 필요",r=>DUE(r.n)],["go","진행 중",r=>r.k==="r"||r.k==="c"],["n","후보",r=>r.k==="n"],["x","제외·불가",r=>r.k==="x"],["all","전체",()=>true]];
+const TABS=[["ask","답장 필요",r=>DUE(r.n)],["go","진행 중",r=>r.k==="r"||r.k==="c"],["n","후보",r=>r.k==="n"],["x","제외·불가",r=>r.k==="x"]];
+if(!Array.isArray(UI.st)||!UI.st.length||UI.st.some(k=>!TABS.some(t=>t[0]===k)))UI.st=["go","n"];delete UI.tab;
 function txt(r){const t=MSGS[r.n];return (r.n+" "+(r.area||"")+" "+(r.addr||"")+" "+(r.memo||"")+" "+JSON.stringify(NT[r.n]||"")+" "+(t?JSON.stringify(t):"")).toLowerCase()}
 function passF(r){if(UI.f3000&&r.rent>3300&&r.k!=="r"&&r.k!=="c")return false;if(UI.fbeds&&!r.beds.includes(+UI.fbeds))return false;if(UI.fpark&&park(r)[1]!=="g")return false;if(UI.fwd&&r.wd!=="y")return false;if(UI.frated&&!(r.my||r.ma))return false;if(UI.q&&!txt(r).includes(UI.q.toLowerCase()))return false;return true}
 function sortRows(a){const K={r:0,c:1,n:2,x:3};const st=r=>(r.my||0)+(r.ma||0);
@@ -250,11 +257,12 @@ function setStar(n,p,v){const r=L.find(x=>x.n===n);if(!r)return;if(p==="a"){r.ma
 function setEx(n,on){const r=L.find(x=>x.n===n);if(!r)return;if(on)XU[n]=1;else delete XU[n];localStorage.setItem("bh_ex_v1",JSON.stringify(XU));r.ux=on;r.s=on?5:r.s0;r.k=kind(r);paintMarker(r)}
 // render
 let VIS=[];
-function render(keepScroll){const tabF=TABS.find(t=>t[0]===UI.tab)[2];
- document.getElementById("tabs").innerHTML=TABS.map(([k,l,f])=>{const n=L.filter(r=>f(r)&&passF(r)).length;const due=k==="ask"&&L.some(r=>DUE(r.n));return `<button class="tab${UI.tab===k?" on":""}" data-tab="${k}">${l}<b>${n}</b>${due?'<span class="dot" title="결정할 것 있음"></span>':""}</button>`}).join("");
+function render(keepScroll){const FS=TABS.filter(t=>UI.st.includes(t[0])).map(t=>t[2]);const tabF=r=>FS.some(f=>f(r));
+ document.getElementById("tabs").innerHTML=TABS.map(([k,l,f])=>{const n=L.filter(r=>f(r)&&passF(r)).length;const due=k==="ask"&&L.some(r=>DUE(r.n));return `<label class="stc${UI.st.includes(k)?" on":""}"><input type="checkbox" data-st="${k}"${UI.st.includes(k)?" checked":""}> ${l}<b>${n}</b>${due?'<span class="dot" title="결정할 것 있음"></span>':""}</label>`}).join("")+`<span class="stall">전체 ${L.filter(passF).length}</span>`;
  VIS=sortRows(L.filter(r=>tabF(r)&&passF(r)));
  const nr=VIS.filter(r=>r.k==="r").length,nc=VIS.filter(r=>r.k==="c").length;
- document.getElementById("cnt").textContent=UI.tab==="ask"?`답해주실 질문 ${VIS.reduce((s,r)=>s+OA(r.n).length,0)}개 · ${VIS.length}곳`:UI.tab==="go"?`답장 옴 ${nr}곳 · 답장 기다리는 곳 ${nc}곳`:UI.tab==="n"?`아직 연락 안 한 후보 ${VIS.length}곳`+(UI.f3000?" (월세 $3,300 이하)":""):`${VIS.length}곳`;
+ const one=UI.st.length===1?UI.st[0]:null;const nq=VIS.reduce((s,r)=>s+OA(r.n).length,0);
+ document.getElementById("cnt").textContent=!one?`${UI.st.map(k=>TABS.find(t=>t[0]===k)[1]).join(" + ")} ${VIS.length}곳`+(nq?` · 답해주실 질문 ${nq}개`:""):one==="ask"?`답해주실 질문 ${nq}개 · ${VIS.length}곳`:one==="go"?`답장 옴 ${nr}곳 · 답장 기다리는 곳 ${nc}곳`:one==="n"?`아직 연락 안 한 후보 ${VIS.length}곳`+(UI.f3000?" (월세 $3,300 이하)":""):`${VIS.length}곳`;
  const lst=document.getElementById("list"),y=lst.scrollTop;
  lst.innerHTML=(VIS.map(cardHTML).join("")||`<div class="empty">조건에 맞는 매물이 없어요</div>`)+infoHTML();
  if(keepScroll)lst.scrollTop=y;
@@ -276,7 +284,7 @@ list.addEventListener("click",e=>{const cpb=e.target.closest(".cp");if(cpb){e.st
 list.addEventListener("keydown",e=>{if(e.target.matches("textarea.nte")&&(e.metaKey||e.ctrlKey)&&e.key==="Enter"){const c=e.target.closest(".card");setNote(c.dataset.n,e.target.value);render(true)}});
 list.addEventListener("mouseover",e=>{const c=e.target.closest(".card");hl(c?c.dataset.n:null)});
 list.addEventListener("mouseleave",()=>hl(null));
-document.getElementById("tabs").onclick=e=>{const b=e.target.closest("[data-tab]");if(!b)return;UI.tab=b.dataset.tab;SEL=null;render();list.scrollTop=0};
+document.getElementById("tabs").onchange=e=>{const b=e.target.closest("[data-st]");if(!b)return;const k=b.dataset.st;UI.st=b.checked?[...new Set([...UI.st,k])]:UI.st.filter(x=>x!==k);if(!UI.st.length)UI.st=[k];SEL=null;render();list.scrollTop=0};
 const q=document.getElementById("q");q.value=UI.q;q.oninput=()=>{UI.q=q.value;render()};
 const so=document.getElementById("sort");so.value=UI.sort;so.onchange=()=>{UI.sort=so.value;render()};
 document.getElementById("fbtn").onclick=()=>{document.getElementById("fp").classList.toggle("show");document.getElementById("fbtn").classList.toggle("on")};
@@ -303,7 +311,7 @@ L.forEach(r=>{if(!r.geo)return;const m=window.L.circleMarker(r.geo,{radius:8,col
  m.on("click",()=>{SEL=r.n;render(true);goCard(r.n)});});
 M.on("popupopen",e=>{const el=e.popup.getElement();const n=e.popup._source&&Object.keys(MK).find(k=>MK[k]===e.popup._source);if(!n)return;
  el.onclick=ev=>{const s=ev.target.closest(".st");if(s){setStar(s.dataset.n,s.dataset.p,+s.dataset.v);e.popup.setContent(popHTML(L.find(x=>x.n===n)));render(true);return}
-  const b=ev.target.closest("[data-pa]");if(!b)return;if(b.dataset.pa==="go"){SEL=n;const r=L.find(x=>x.n===n);if(r.k==="x"&&UI.tab==="go")UI.tab="x";render(true);goCard(n)}
+  const b=ev.target.closest("[data-pa]");if(!b)return;if(b.dataset.pa==="go"){SEL=n;const r=L.find(x=>x.n===n);if(r.k==="x"&&!UI.st.includes("x"))UI.st=[...UI.st,"x"];render(true);goCard(n)}
   else if(b.dataset.pa==="memo"){const box=el.querySelector(".pme");const o=NT[n]||{};box.innerHTML=`<textarea class="nte" style="margin-top:6px">${escH(o[UI.who]||"")}</textarea><button class="act" data-pa="save" style="margin-top:4px">${PN[UI.who]} 메모 저장</button>`;box.querySelector("textarea").focus()}
   else if(b.dataset.pa==="save"){setNote(n,el.querySelector(".pme textarea").value);e.popup.setContent(popHTML(L.find(x=>x.n===n)));render(true)}}});
 function goCard(n){const c=list.querySelector(`.card[data-n="${CSS.escape(n)}"]`);if(!c)return;c.scrollIntoView({behavior:"smooth",block:"nearest"});c.classList.remove("flash");void c.offsetWidth;c.classList.add("flash")}
