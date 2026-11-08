@@ -200,7 +200,7 @@ table.cmp{border-collapse:separate;border-spacing:0;font-size:13px;line-height:1
  <h1>보스턴 집 찾기</h1>
  <nav class="vtabs" id="vtabs"><button data-v="pick">추리기</button><button data-v="cmp">비교·결정</button><button data-v="prog">진행 상황</button></nav>
  <span class="sp"></span>
- <span class="who"><span class="lbl">작성자</span><span class="seg" id="whoSeg"><button data-p="d">동인</button><button data-p="a">아라</button></span></span>
+ 
  <a href="#" class="lock" onclick="localStorage.removeItem('bh_msgs_pw_v1');location.reload();return false">잠그기</a>
 </header>
 <div class="app" id="app">
@@ -217,7 +217,7 @@ table.cmp{border-collapse:separate;border-spacing:0;font-size:13px;line-height:1
 <p class="upd">업데이트 <span id="upd"></span></p>
 
 <script>
-const UPDATED="2026-11-09 (224차)";
+const UPDATED="2026-11-09 (225차)";
 const CRITERIA=[["출근","평일(화) 아침 9:00에 집을 나서 대기 포함 45분 이내 도착, 환승 1번까지, 도보 합계 15분 이하 (Google 지도 대중교통, 조건 맞는 경로 중 환승이 적고 빠른 경로로 판단)"],["구조","1베드 또는 2베드, 욕실 1개 이상, 집 전체 (스튜디오·쉐어 제외)"],["생활비","한 달 생활비(월세+공과금+보험+필수 요금) $3,300 이하"],["에어컨","필수 (중앙식·붙박이 선호)"],["해충","시 기록·리뷰의 해충·쥐·쓰레기는 확인·표시만 하고 제외 여부는 사용자가 판단 (자동 탈락 없음)"],["실내","허름하지 않을 것"],["주차","필수. 방식(차고/야외/거주자 노상 허가)과 월 비용 확인"],["세탁","집 안 세탁기·건조기"],["반지하","제외 (시 자산 기록 0층 포함)"],["입주","11/25가 가장 좋고, 늦어도 그다음 주"],["계약","12개월, 연장은 나중에"],["투어","실시간 화상 투어 대신 녹화 영상. 계약금은 직접 보고 납부"],["직장","Harvard Pilgrim Health Care Institute, Landmark Center (401 Park Dr)"]];
 const SCOREHELP="100점: 면적 20 · 가격 20(월세 10 + 예상 월 총액 10) · 출근 15 · 건물·시설 15 · 치안 10 · 생활 인프라 10 · 출근 중 도보 5 · 주차 5. 살인 지점 거리는 점수에 넣지 않음.";
 const SHUTTLE="M2 셔틀(Harvard Sq ↔ LMA)은 Harvard ID가 있으면 무료, 가족은 티켓 구매. LMA 셔틀은 Longwood 회원기관 ID 필요(평일만).";
@@ -283,7 +283,7 @@ const TABS=[["ask","답장 필요",r=>DUE(r.n)],["go","진행 중",r=>r.k==="r"|
 if(!Array.isArray(UI.st)||!UI.st.length||UI.st.some(k=>!TABS.some(t=>t[0]===k)))UI.st=["go","n"];delete UI.tab;
 function txt(r){const t=MSGS[r.n];return (r.n+" "+(r.area||"")+" "+(r.addr||"")+" "+(r.memo||"")+" "+JSON.stringify(NT[r.n]||"")+" "+(t?JSON.stringify(t):"")).toLowerCase()}
 function passF(r){if(UI.f3000&&r.rent>3300&&r.k!=="r"&&r.k!=="c")return false;if(UI.fbeds&&!r.beds.includes(+UI.fbeds))return false;if(UI.fpark&&park(r)[1]!=="g")return false;if(UI.fwd&&r.wd!=="y")return false;if(UI.frated&&!(r.my||r.ma))return false;if(UI.q&&!txt(r).includes(UI.q.toLowerCase()))return false;return true}
-function sortRows(a){const K={r:0,c:1,n:2,x:3};const st=r=>(r.my||0)+(r.ma||0);
+function sortRows(a){const K={r:0,c:1,n:2,x:3};const st=r=>(r.my||0);
  const f={rec:(x,y)=>K[x.k]-K[y.k]||st(y)-st(x)||(y.score||0)-(x.score||0),recent:(x,y)=>lastT(y).localeCompare(lastT(x)),rent:(x,y)=>((mo(x)||{}).lo||x.rent||9e9)-((mo(y)||{}).lo||y.rent||9e9),com:(x,y)=>((x.tq&&x.tq.pass)?x.tq.min:999)-((y.tq&&y.tq.pass)?y.tq.min:999),score:(x,y)=>(y.score||0)-(x.score||0)}[UI.sort]||(()=>0);return a.sort(f)}
 function stars1(r,p){const v=p==="a"?r.ma:r.my;let h=`<span class="sr" title="${PN[p]} 별점"><span class="w">${PN[p]}</span>`;for(let i=1;i<=5;i++)h+=`<span class="st${p==="a"?" a":""}${i<=v?" on":""}" data-n="${escH(r.n)}" data-p="${p}" data-v="${i}">★</span>`;return h+"</span>"}
 function pzc(r){const z=r.pz;if(!z)return null;if(z.na)return["시 기록 없음","w"];const s=`시 기록(${z.since}~) 쥐 ${z.r}·해충 ${z.p+z.b}·쓰레기 ${z.t}`;const c=(z.p+z.b+z.r)>0||z.t>=20?"w":"g";return[s,c]}
@@ -301,9 +301,9 @@ function convHTML(r){const t=MSGS[r.n];const L2=[["ko","번역"],["both","원문
  return `<div class="cvi kv">${row("상태",t.status)}${row("담당",t.contact)}${row("요약",t.summary)}${row("다음",t.next)}</div>
  <div style="display:flex;justify-content:flex-end;margin-bottom:8px"><span class="seg">${L2.map(([v,l])=>`<button data-cl="${v}" class="${UI.clang===v?"on":""}">${l}</button>`).join("")}</span></div>
  <div class="msgs">${t.msgs.map(m=>{const ko=m.ko?`<div class="ko">${escH(m.ko)}</div>`:"",en=m.en?`<div class="en">${escH(m.en)}</div>`:"";return `<div class="mg ${m.dir}"><div class="mt">${escH(m.t)} · ${escH(m.who)} · ${escH(m.via)}</div>${UI.clang==="ko"?(ko||en):UI.clang==="en"?(en||ko):ko+en}</div>`}).join("")}</div>`}
-function memoHTML(r){const o=NT[r.n]||{};let h="";for(const p of["d","a"])if(o[p])h+=`<div class="nt"><b>${PN[p]}</b>${escH(o[p])}</div>`;
- return h+`<textarea class="nte" placeholder="${PN[UI.who]} 메모 (⌘+Enter 저장)">${escH(o[UI.who]||"")}</textarea><div style="display:flex;gap:6px;margin-top:6px;align-items:center"><button class="act" data-a="savememo">저장</button><small style="color:var(--mute)">${PN[UI.who]} 이름으로 저장 (위 작성자 선택)</small></div>`}
-function setNote(n,v){v=v.trim();const o=NT[n]||{};if(v)o[UI.who]=v;else delete o[UI.who];if(Object.keys(o).length)NT[n]=o;else delete NT[n];localStorage.setItem("bh_notes_v1",JSON.stringify(NT))}
+function memoHTML(r){const o=NT[r.n]||{};let h="";if(o.a)h+=`<div class="nt"><b>이전 메모</b>${escH(o.a)}</div>`;
+ return h+`<textarea class="nte" placeholder="메모 (⌘+Enter 저장)">${escH(o.d||"")}</textarea><div style="display:flex;gap:6px;margin-top:6px;align-items:center"><button class="act" data-a="savememo">저장</button><small style="color:var(--mute)">${PN[UI.who]} 이름으로 저장 (위 작성자 선택)</small></div>`}
+function setNote(n,v){v=v.trim();const o=NT[n]||{};if(v)o.d=v;else delete o.d;if(Object.keys(o).length)NT[n]=o;else delete NT[n];localStorage.setItem("bh_notes_v1",JSON.stringify(NT))}
 function setStar(n,p,v){const r=L.find(x=>x.n===n);if(!r)return;if(p==="a"){r.ma=r.ma===v?0:v;MA[n]=r.ma;localStorage.setItem("bh_stars_ara_v1",JSON.stringify(MA))}else{r.my=r.my===v?0:v;MY[n]=r.my;localStorage.setItem("bh_stars_v1",JSON.stringify(MY))}}
 function setEx(n,on){const r=L.find(x=>x.n===n);if(!r)return;if(on)XU[n]=1;else delete XU[n];localStorage.setItem("bh_ex_v1",JSON.stringify(XU));r.ux=on;r.s=on?5:r.s0;r.k=kind(r);paintMarker(r)}
 function copyAsk(n,id,btn){const x=(ASKS[n]||[]).find(a=>a.id===id);if(!x)return;const txt=`[${n}] ${x.q}\n추천: ${x.rec||"-"}\n(질문 ID: ${x.id})\n내 답: `;
@@ -334,7 +334,7 @@ if(UI.pickAll==null)UI.pickAll=false;
 if(!["rec","rent","com","recent"].includes(UI.sort))UI.sort="rec";
 const KEEP=new Set();// 이번에 별점 준 카드는 화면 바꿀 때까지 목록에 남김
 const $=id=>document.getElementById(id);
-const NR=r=>!(UI.who==="a"?r.ma:r.my);
+const NR=r=>!r.my;
 const money=v=>"$"+Number(v).toLocaleString();
 const T=s=>String(s??"").trim();
 const UNKV=v=>{const s=T(v);return !s||s==="?"||s==="-"||s==="None"||s==="undefined"||/^(미확인|미기재|모름)/.test(s)};
@@ -381,7 +381,7 @@ function yearCost(r){if(r.y1||r.y2)return{y1:r.y1,y2:r.y2};const m=String(r.memo
 function priceBox(r){const c=mo(r);if(!c)return `<div class="pr"><b>${fmt$(r.rent)}</b><small>/월</small></div>`;
  const v=c.hi>c.lo?`${money(c.lo)}~${Number(c.hi).toLocaleString()}`:money(c.lo);const k=`약 ${won(c.lo)}${c.hi>c.lo?"~"+won(c.hi):""}`;
  const cls=c.lo>3300?" bad":c.hi>3300?" q":"";return `<div class="pr"><b class="krw${cls}" tabindex="0" data-k="${k}">${v}</b><small>/월</small><span class="rt">월세 ${money(r.rent)}</span></div>`}
-function stars(r,p){const v=p==="a"?r.ma:r.my;let h=`<span class="sr${p===UI.who?" me":""}"><span class="w">${PN[p]}</span>`;for(let i=1;i<=5;i++)h+=`<span class="st${p==="a"?" a":""}${i<=v?" on":""}" data-n="${escH(r.n)}" data-p="${p}" data-v="${i}" role="button" aria-label="${PN[p]} ${i}점">★</span>`;return h+"</span>"}
+function stars(r,p){p="d";const v=r.my;let h=`<span class="sr me"><span class="w">별점</span>`;for(let i=1;i<=5;i++)h+=`<span class="st${p==="a"?" a":""}${i<=v?" on":""}" data-n="${escH(r.n)}" data-p="${p}" data-v="${i}" role="button" aria-label="${PN[p]} ${i}점">★</span>`;return h+"</span>"}
 function lastMsg(r){const t=MSGS[r.n];if(!t||!t.msgs.length)return null;return t.msgs.slice().sort((a,b)=>String(a.t).localeCompare(String(b.t))).pop()}
 function stLabel(r){if(r.k==="x")return r.pg||MSGS[r.n]?"종료":"";if(r.k==="n")return"";const lm=lastMsg(r);return lm?(lm.dir==="in"?"답장 옴":"답장 대기"):r.k==="r"?"답장 옴":"답장 대기"}
 const clean=s=>String(s||"").replace(/\s*\(asks[^)]*\)/g,"").replace(/asks\.json에\s*/g,"");
@@ -395,7 +395,7 @@ function cardHTML(r){const sel=SEL===r.n;const sf=safety(r);const sl=stLabel(r);
  <div class="cm">${comLine(r)}</div>
  ${issueHTML(r)}
  ${sf.length?`<div class="sf">치안: ${escH(sf.join(" · "))}</div>`:""}${(()=>{const z=r.pz;return z&&!z.na&&(z.r>=5||z.p>=5||z.b>=1)?`<div class="sf">시 기록: 쥐 ${z.r}·해충 ${z.p}${z.b?"·빈대 "+z.b:""}${z.sc?" ("+escH(z.sc)+")":""}</div>`:""})()}
- <div class="c4">${stars(r,"d")}${stars(r,"a")}<span class="grow"></span>${r.ux?`<button class="lnk" data-a="unex">제외 취소</button>`:r.s0===5?"":`<button class="lnk" data-a="ex">제외</button>`}</div>
+ <div class="c4">${stars(r,"d")}<span class="grow"></span>${r.ux?`<button class="lnk" data-a="unex">제외 취소</button>`:r.s0===5?"":`<button class="lnk" data-a="ex">제외</button>`}</div>
  ${sel?panelHTML(r):""}</article>`}
 // ---- 자세히 패널: 비용 → 출근 → 건물·호실 → 시 기록·리뷰 → 진행·대화 → 메모 ----
 function kv(rows){rows=rows.filter(x=>x&&x[1]!=null&&T(x[1])!=="");return rows.length?`<div class="kv">${rows.map(([k,v])=>`<span class="k">${k}</span><span>${v}</span>`).join("")}</div>`:""}
@@ -415,8 +415,8 @@ function panelHTML(r){const t=MSGS[r.n],c=mo(r),yc=yearCost(r),cc=cmt(r);const t
  const prog=kv([["상태",r.pg?`${E(r.pg.st)}${r.pg.d?` · ${E(r.pg.d)}`:""}${r.pg.via?` · ${E(r.pg.via)}`:""}`:t?E(t.status):null],["다음",nx?E(clean(nx)):null],["보낼 질문",hq.length?hq.map(x=>E(typeof x==="string"?x:x.q)).join("<br>"):null]])+(oa.length?`<div class="asks">${oa.map(x=>`<div class="aq"><b>정할 것</b> ${E(x.q)}${x.rec?`<div class="mute">추천: ${E(x.rec)}</div>`:""}<button class="lnk cp" data-cpn="${E(r.n)}" data-cpi="${E(x.id)}">질문 복사</button></div>`).join("")}</div>`:"")+(t?`<details class="more conv"${PT[r.n]==="c"?" open":""}><summary>대화 ${t.msgs.length}개 보기</summary>${convHTML(r)}</details>`:"");
  const memo=memoHTML(r)+(r.memo?`<details class="more"><summary>조사 메모 전체</summary><div class="rawm">${E(r.memo)}</div></details>`:"");
  return `<div class="panel">${link}${sec("cost","비용",cost)}${sec("com","출근",com)}${sec("bld","건물·호실",b)}${sec("rec","시 기록·리뷰",rec)}${sec("prog","진행·대화",prog)}${sec("memo","메모",memo)}</div>`}
-// ---- 비교·결정: 12A(기준) + 두 사람 다 4점 이상 ----
-function cmpRows(){return [BASE].filter(Boolean).concat(L.filter(r=>r!==BASE&&r.k!=="x"&&r.my>=4&&r.ma>=4).sort((a,b)=>((mo(a)||{}).lo||9e9)-((mo(b)||{}).lo||9e9)))}
+// ---- 비교·결정: 12A(기준) + 별점 4점 이상 ----
+function cmpRows(){return [BASE].filter(Boolean).concat(L.filter(r=>r!==BASE&&r.k!=="x"&&r.my>=4).sort((a,b)=>((mo(a)||{}).lo||9e9)-((mo(b)||{}).lo||9e9)))}
 function cmpHTML(){const R=cmpRows();const n=R.length-(BASE?1:0);
  const rowsDef=[
  ["생활비",r=>{const c=mo(r),y=yearCost(r);return c?`<b class="big">${money(c.lo)}${c.hi>c.lo?"~"+Number(c.hi).toLocaleString():""}</b><div class="mute">월세 ${money(r.rent)}${c.pk==="unk"?" · 주차비 ?":""}</div>${y&&y.y2?`<div class="q">${E(y.y2)}</div>`:""}`:'<span class="q">?</span>'}],
@@ -431,9 +431,9 @@ function cmpHTML(){const R=cmpRows();const n=R.length-(BASE?1:0);
  ["리뷰 핵심",r=>{const v=reviews(r);return v.length?v.slice(0,2).map(E).join("<br>"):'<span class="q">?</span>'}],
  ["관리",r=>r.mgr?E(r.mgr):r.mgd==="y"?"전문 관리 회사":'<span class="q">?</span>'],
  ["남은 확인",r=>{const o=issues(r).map(x=>x.t);const a=OA(r.n).length;return (o.length?`<span class="q">${E(o.join(" · "))}</span>`:"없음")+(a?`<div class="bad">우리가 정할 질문 ${a}개</div>`:"")}]];
- const head=`<tr><th class="rl"></th>${R.map(r=>`<th class="${r===BASE?"bc":""}"><div class="cn">${nameHTML(r)}${r===BASE?'<span class="base">기준</span>':""}</div><div class="mute">${E(r.area||"")} · ${unitShort(r)}</div><div class="cst">${stars(r,"d")}${stars(r,"a")}</div><button class="lnk" data-go="${E(r.n)}">자세히</button></th>`).join("")}</tr>`;
+ const head=`<tr><th class="rl"></th>${R.map(r=>`<th class="${r===BASE?"bc":""}"><div class="cn">${nameHTML(r)}${r===BASE?'<span class="base">기준</span>':""}</div><div class="mute">${E(r.area||"")} · ${unitShort(r)}</div><div class="cst">${stars(r,"d")}</div><button class="lnk" data-go="${E(r.n)}">자세히</button></th>`).join("")}</tr>`;
  const body=rowsDef.map(([k,f])=>`<tr><th class="rl">${k}</th>${R.map(r=>`<td class="${r===BASE?"bc":""}">${f(r)}</td>`).join("")}</tr>`).join("");
- return `<div class="cmpw"><p class="hint">${n?`두 사람 모두 4점 이상 준 ${n}곳을 12A(기준)와 나란히 봅니다.`:"두 사람 모두 4점 이상 준 곳이 아직 없어요. 추리기에서 별점을 주면 여기에 나옵니다."}</p><div class="tblw"><table class="cmp">${head}${body}</table></div></div>`}
+ return `<div class="cmpw"><p class="hint">${n?`별점 4점 이상 준 ${n}곳을 12A(기준)와 나란히 봅니다.`:"별점 4점 이상 준 곳이 아직 없어요. 추리기에서 별점을 주면 여기에 나옵니다."}</p><div class="tblw"><table class="cmp">${head}${body}</table></div></div>`}
 // ---- 진행 상황 ----
 function progRows(){const R=L.filter(r=>(r.pg||MSGS[r.n]||OA(r.n).length));const key=r=>(OA(r.n).length?"2":r.k==="r"?"1":"0")+lastT(r);return R.sort((a,b)=>key(b).localeCompare(key(a)))}
 function progItem(r){const t=MSGS[r.n],lm=lastMsg(r),oa=OA(r.n),hq=HOLDQ[r.n]||[];const nx=(t&&t.next)||(r.pg&&r.pg.next);const open=PT[r.n]==="pc";
@@ -452,9 +452,9 @@ function render(keep){const v=UI.view;document.body.dataset.view=v;$("vtabs").qu
  if(v==="pick"){const base=pickBase(),un=base.filter(r=>NR(r)||KEEP.has(r.n));const hid=L.filter(r=>r.k==="n"&&!passF(r)&&!UI.q).length;
   VIS=sortRows((UI.pickAll?base:un).slice());
   if(UI.showx)VIS=VIS.concat(sortRows(L.filter(r=>r.k==="x"&&passF(r))));
-  $("bar").innerHTML=`<div class="row"><span class="seg" id="pickSeg"><button data-all="0" class="${UI.pickAll?"":"on"}">${PN[UI.who]} 안 본 곳 <b>${base.filter(NR).length}</b></button><button data-all="1" class="${UI.pickAll?"on":""}">전체 <b>${base.length}</b></button></span><span class="grow"></span><input type="search" id="q" placeholder="검색" value="${E(UI.q)}"><select id="sort">${[["rec","추천순"],["rent","생활비 낮은 순"],["com","출근 빠른 순"],["recent","최근 연락순"]].map(([k,l])=>`<option value="${k}"${UI.sort===k?" selected":""}>${l}</option>`).join("")}</select></div>`;
+  $("bar").innerHTML=`<div class="row"><span class="seg" id="pickSeg"><button data-all="0" class="${UI.pickAll?"":"on"}">안 본 곳 <b>${base.filter(NR).length}</b></button><button data-all="1" class="${UI.pickAll?"on":""}">전체 <b>${base.length}</b></button></span><span class="grow"></span><input type="search" id="q" placeholder="검색" value="${E(UI.q)}"><select id="sort">${[["rec","추천순"],["rent","생활비 낮은 순"],["com","출근 빠른 순"],["recent","최근 연락순"]].map(([k,l])=>`<option value="${k}"${UI.sort===k?" selected":""}>${l}</option>`).join("")}</select></div>`;
   const xc=L.filter(r=>r.k==="x").length;
-  lst.innerHTML=(VIS.map(cardHTML).join("")||`<div class="empty">${UI.pickAll?"조건에 맞는 매물이 없어요":`${PN[UI.who]}가 아직 안 본 곳이 없어요. ‘전체’에서 다시 볼 수 있어요.`}</div>`)+`<div class="foot">${hid&&UI.f3000?`<span>월세 $3,300 넘는 미연락 후보 ${hid}곳은 숨김 <button class="lnk" data-a="f3000">보기</button></span>`:UI.f3000?"":`<span><button class="lnk" data-a="f3000">월세 $3,300 넘는 미연락 후보 숨기기</button></span>`}<span><button class="lnk" data-a="showx">${UI.showx?"제외한 곳 숨기기":`제외한 곳 ${xc}곳 보기`}</button></span></div>${infoHTML()}`;
+  lst.innerHTML=(VIS.map(cardHTML).join("")||`<div class="empty">${UI.pickAll?"조건에 맞는 매물이 없어요":`아직 안 본 곳이 없어요. ‘전체’에서 다시 볼 수 있어요.`}</div>`)+`<div class="foot">${hid&&UI.f3000?`<span>월세 $3,300 넘는 미연락 후보 ${hid}곳은 숨김 <button class="lnk" data-a="f3000">보기</button></span>`:UI.f3000?"":`<span><button class="lnk" data-a="f3000">월세 $3,300 넘는 미연락 후보 숨기기</button></span>`}<span><button class="lnk" data-a="showx">${UI.showx?"제외한 곳 숨기기":`제외한 곳 ${xc}곳 보기`}</button></span></div>${infoHTML()}`;
   L.forEach(r=>{const m=MK[r.n];if(!m)return;VIS.includes(r)?m.addTo(M):m.remove()});
  }else if(v==="cmp"){$("bar").innerHTML="";lst.innerHTML=cmpHTML()}
  else{$("bar").innerHTML="";lst.innerHTML=progHTML()}
@@ -482,12 +482,12 @@ $("bar").addEventListener("click",e=>{const b=e.target.closest("[data-all]");if(
 $("bar").addEventListener("input",e=>{if(e.target.id==="q"){UI.q=e.target.value;const pos=e.target.selectionStart;render(true);const q=$("q");q.focus();q.setSelectionRange(pos,pos)}});
 $("bar").addEventListener("change",e=>{if(e.target.id==="sort"){UI.sort=e.target.value;render()}});
 $("vtabs").onclick=e=>{const b=e.target.closest("[data-v]");if(!b)return;UI.view=b.dataset.v;KEEP.clear();SEL=null;render();list.scrollTop=0;window.scrollTo(0,0);M.closePopup()};
-const ws=$("whoSeg");const paintWho=()=>ws.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.p===UI.who));paintWho();ws.onclick=e=>{const b=e.target.closest("button");if(!b)return;UI.who=b.dataset.p;paintWho();KEEP.clear();render(true)};
+UI.who="d";
 $("upd").textContent=UPDATED;
 // ---- 지도 ----
 function goCard(n){const c=list.querySelector(`.card[data-n="${CSS.escape(n)}"]`);if(!c)return;c.scrollIntoView({behavior:"smooth",block:"nearest"});c.classList.remove("flash");void c.offsetWidth;c.classList.add("flash")}
 let HL=null;function hl(n){if(HL===n)return;if(HL&&MK[HL]){const r=L.find(x=>x.n===HL);MK[HL].setStyle({color:"#fff",weight:2});paintMarker(r);MK[HL].closeTooltip()}HL=n;if(n&&MK[n]){MK[n].setStyle({color:"#111",weight:3,radius:12});MK[n].bringToFront();MK[n].openTooltip()}}
-function popHTML(r){return `<div class="pop"><div class="pt">${nameHTML(r)}</div><div class="pa2">${escH(r.area||"")} · ${unitShort(r)}</div>${priceBox(r)}<div class="cm">${comLine(r,true)}</div>${issueHTML(r)}<div class="c4">${stars(r,"d")}${stars(r,"a")}</div><div class="pa"><button class="lnk" data-pa="go">자세히</button>${r.url?`<a href="${escH(r.url)}" target="_blank" rel="noopener">매물 페이지 ↗</a>`:""}</div></div>`}
+function popHTML(r){return `<div class="pop"><div class="pt">${nameHTML(r)}</div><div class="pa2">${escH(r.area||"")} · ${unitShort(r)}</div>${priceBox(r)}<div class="cm">${comLine(r,true)}</div>${issueHTML(r)}<div class="c4">${stars(r,"d")}</div><div class="pa"><button class="lnk" data-pa="go">자세히</button>${r.url?`<a href="${escH(r.url)}" target="_blank" rel="noopener">매물 페이지 ↗</a>`:""}</div></div>`}
 L.forEach(r=>{if(!r.geo)return;const m=window.L.circleMarker(r.geo,{radius:8,color:"#fff",weight:2,fillColor:KC[r.k],fillOpacity:.95});MK[r.n]=m;paintMarker(r);
  m.bindTooltip(r.n,{direction:"top",offset:[0,-8]});m.bindPopup(()=>popHTML(r),{maxWidth:300,autoPanPaddingTopLeft:[50,12]});
  m.on("click",()=>{if(window.innerWidth>900){SEL=r.n;render(true);goCard(r.n)}})});
