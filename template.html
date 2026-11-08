@@ -160,7 +160,7 @@ textarea.nte{width:100%;min-height:70px;border:1px solid #f59e0b;border-radius:8
 </section>
 </div>
 <script>
-const UPDATED="2026-11-08 (218차)";
+const UPDATED="2026-11-08 (219차)";
 const CRITERIA=[["출근","평일(화) 아침 9:00에 집을 나서 대기 포함 45분 이내 도착, 환승 1번까지, 도보 합계 15분 이하 (Google 지도 대중교통, 조건 맞는 경로 중 환승이 적고 빠른 경로로 판단)"],["구조","1베드 또는 2베드, 욕실 1개 이상, 집 전체 (스튜디오·쉐어 제외)"],["생활비","한 달 생활비(월세+공과금+보험+필수 요금) $3,300 이하"],["에어컨","필수 (중앙식·붙박이 선호)"],["해충","시 기록·리뷰의 해충·쥐·쓰레기는 확인·표시만 하고 제외 여부는 사용자가 판단 (자동 탈락 없음)"],["실내","허름하지 않을 것"],["주차","필수. 방식(차고/야외/거주자 노상 허가)과 월 비용 확인"],["세탁","집 안 세탁기·건조기"],["반지하","제외 (시 자산 기록 0층 포함)"],["입주","11/25가 가장 좋고, 늦어도 그다음 주"],["계약","12개월, 연장은 나중에"],["투어","실시간 화상 투어 대신 녹화 영상. 계약금은 직접 보고 납부"],["직장","Harvard Pilgrim Health Care Institute, Landmark Center (401 Park Dr)"]];
 const SCOREHELP="100점: 면적 20 · 가격 20(월세 10 + 예상 월 총액 10) · 출근 15 · 건물·시설 15 · 치안 10 · 생활 인프라 10 · 출근 중 도보 5 · 주차 5. 살인 지점 거리는 점수에 넣지 않음.";
 const SHUTTLE="M2 셔틀(Harvard Sq ↔ LMA)은 Harvard ID가 있으면 무료, 가족은 티켓 구매. LMA 셔틀은 Longwood 회원기관 ID 필요(평일만).";
@@ -242,7 +242,7 @@ function chips(r){const st=(x,pre)=>x?[String(x[0]).replace(pre,""),x[1]]:["?","
  const b=r.beds.length>1?"1~2베드":r.beds[0]+"베드";
  const el=r.elev==="y"?"엘리베이터 있음":r.elev==="n"?"엘리베이터 없음":"엘리베이터 ?";
  const bld=[(r.bt||"형태 ?"),(r.built?r.built+"년":"준공 ?"),(r.stories?r.stories+"층 건물":""),(r.fl?"내 집 "+r.fl:"층 ?"),el].filter(Boolean).join(" · ");
- const z=r.pz;const pz=!z?["?","w"]:z.na?["시 자료 없음 (보스턴 밖)","w"]:(()=>{const q=pzc(r);return[`쥐 ${z.r} · 해충 ${z.p+z.b} · 쓰레기 ${z.t} (${z.since}~)`,q[1]]})();
+ const z=r.pz;const pz=!z?["?","w"]:z.na?[/:/.test(z.na)?z.na:"시 자료 없음 (보스턴 밖)","w"]:(()=>{const q=pzc(r);return[`쥐 ${z.r} · 해충 ${z.p+z.b} · 쓰레기 ${z.t} (${z.since}~${z.src?", "+z.src:""}${z.sc?", "+z.sc:""})`,q[1]]})();
  const mv=r.move&&r.move!=="-"&&r.move!=="?"?[String(r.move).replace(/^Available /i,"").slice(0,40),""]:["?","w"];
  const wd=r.wd==="y"?["집 안에 있음","g"]:r.wd==="n"?["없음","b"]:["?","w"];
  const F=[["구조",[b+(r.sq?` · ${r.sq.toLocaleString()} sq ft`:" · 면적 ?"),""]],["건물",[bld,r.elev==="n"?"b":(r.bt&&r.built&&r.fl)?"":"w"]],["출근",st(com(r),/^출근 /)],["주차",parkTxt(r)],["세탁기",wd],["에어컨",st(acc(r),/^에어컨 /)],["시 기록",pz],["입주",mv],["공과금",["__UTIL__",""]],["필수 월 요금",r.mfee?[r.mfee,/없음/.test(r.mfee)?"g":""]:["?","w"]],["할인",r.disc?[r.disc,"g"]:["없음/?","w"]],["계약별 가격",r.lpx?[r.lpx,""]:["?","w"]],["보험",r.insr?[r.insr,""]:["?","w"]],["장보기",shopNear(r)]];
