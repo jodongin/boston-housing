@@ -158,7 +158,7 @@ textarea.nte{width:100%;min-height:70px;border:1px solid #f59e0b;border-radius:8
 </section>
 </div>
 <script>
-const UPDATED="2026-11-08 (209차)";
+const UPDATED="2026-11-08 (210차)";
 const CRITERIA=[["출근","평일(화) 아침 9:00에 집을 나서 대기 포함 45분 이내 도착, 환승 1번까지, 도보 합계 15분 이하 (Google 지도 대중교통, 조건 맞는 경로 중 환승이 적고 빠른 경로로 판단)"],["구조","1베드 또는 2베드, 욕실 1개 이상, 집 전체 (스튜디오·쉐어 제외)"],["생활비","한 달 생활비(월세+공과금+보험+필수 요금) $3,300 이하"],["에어컨","필수 (중앙식·붙박이 선호)"],["해충","시 기록·리뷰의 해충·쥐·쓰레기는 확인·표시만 하고 제외 여부는 사용자가 판단 (자동 탈락 없음)"],["실내","허름하지 않을 것"],["주차","필수. 방식(차고/야외/거주자 노상 허가)과 월 비용 확인"],["세탁","집 안 세탁기·건조기"],["반지하","제외 (시 자산 기록 0층 포함)"],["입주","11/25가 가장 좋고, 늦어도 그다음 주"],["계약","12개월, 연장은 나중에"],["투어","실시간 화상 투어 대신 녹화 영상. 계약금은 직접 보고 납부"],["직장","Harvard Pilgrim Health Care Institute, Landmark Center (401 Park Dr)"]];
 const SCOREHELP="100점: 면적 20 · 가격 20(월세 10 + 예상 월 총액 10) · 출근 15 · 건물·시설 15 · 치안 10 · 생활 인프라 10 · 출근 중 도보 5 · 주차 5. 살인 지점 거리는 점수에 넣지 않음.";
 const SHUTTLE="M2 셔틀(Harvard Sq ↔ LMA)은 Harvard ID가 있으면 무료, 가족은 티켓 구매. LMA 셔틀은 Longwood 회원기관 ID 필요(평일만).";
@@ -169,7 +169,7 @@ const ASKS=__ASKS__;
 /*DATA*/
 const LS=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||"null")??d}catch(e){return d}};
 let MY=LS("bh_stars_v1",{}),MA=LS("bh_stars_ara_v1",{}),XU=LS("bh_ex_v1",{}),NT=LS("bh_notes_v1",{});
-const UI=Object.assign({tab:"go",sort:"rec",q:"",f3000:true,fbeds:"",fpark:false,fwd:false,frated:false,uni:false,mur:false,sto:true,who:"d",clang:"ko"},LS("bh_ui2",{}));
+const UI=Object.assign({tab:"go",sort:"rec",q:"",f3000:true,fbeds:"",fpark:false,fwd:false,frated:false,uni:false,mur:false,sto:true,unr:false,who:"d",clang:"ko"},LS("bh_ui2",{}));
 const saveUI=()=>localStorage.setItem("bh_ui2",JSON.stringify(UI));
 const PN={d:"동인",a:"아라"};
 const escH=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -271,8 +271,8 @@ function setStar(n,p,v){const r=L.find(x=>x.n===n);if(!r)return;if(p==="a"){r.ma
 function setEx(n,on){const r=L.find(x=>x.n===n);if(!r)return;if(on)XU[n]=1;else delete XU[n];localStorage.setItem("bh_ex_v1",JSON.stringify(XU));r.ux=on;r.s=on?5:r.s0;r.k=kind(r);paintMarker(r)}
 // render
 let VIS=[];
-function render(keepScroll){const FS=TABS.filter(t=>UI.st.includes(t[0])).map(t=>t[2]);const tabF=r=>FS.some(f=>f(r));
- document.getElementById("tabs").innerHTML=TABS.map(([k,l,f])=>{const n=L.filter(r=>f(r)&&passF(r)).length;const due=k==="ask"&&L.some(r=>DUE(r.n));return `<label class="stc${UI.st.includes(k)?" on":""}"><input type="checkbox" data-st="${k}"${UI.st.includes(k)?" checked":""}> ${l}<b>${n}</b>${due?'<span class="dot" title="결정할 것 있음"></span>':""}</label>`}).join("")+`<span class="stall">전체 ${L.filter(passF).length}</span>`;
+function render(keepScroll){const FS=TABS.filter(t=>UI.st.includes(t[0])).map(t=>t[2]);const NR=r=>!(UI.who==="a"?r.ma:r.my);const tabF=r=>FS.some(f=>f(r))&&(!UI.unr||NR(r));
+ document.getElementById("tabs").innerHTML=TABS.map(([k,l,f])=>{const n=L.filter(r=>f(r)&&passF(r)).length;const due=k==="ask"&&L.some(r=>DUE(r.n));return `<label class="stc${UI.st.includes(k)?" on":""}"><input type="checkbox" data-st="${k}"${UI.st.includes(k)?" checked":""}> ${l}<b>${n}</b>${due?'<span class="dot" title="결정할 것 있음"></span>':""}</label>`}).join("")+`<span class="stall">전체 ${L.filter(passF).length}</span><label class="stc${UI.unr?" on":""}" title="오른쪽 위에서 고른 작성자의 별점이 없는 매물만"><input type="checkbox" data-unr="1"${UI.unr?" checked":""}> 별점 안 준 곳만 <b>평가 남음 ${L.filter(r=>FS.some(f=>f(r))&&passF(r)&&NR(r)).length}</b></label>`;
  VIS=sortRows(L.filter(r=>tabF(r)&&passF(r)));
  const nr=VIS.filter(r=>r.k==="r").length,nc=VIS.filter(r=>r.k==="c").length;
  const one=UI.st.length===1?UI.st[0]:null;const nq=VIS.reduce((s,r)=>s+OA(r.n).length,0);
@@ -298,7 +298,7 @@ list.addEventListener("click",e=>{const cpb=e.target.closest(".cp");if(cpb){e.st
 list.addEventListener("keydown",e=>{if(e.target.matches("textarea.nte")&&(e.metaKey||e.ctrlKey)&&e.key==="Enter"){const c=e.target.closest(".card");setNote(c.dataset.n,e.target.value);render(true)}});
 list.addEventListener("mouseover",e=>{const c=e.target.closest(".card");hl(c?c.dataset.n:null)});
 list.addEventListener("mouseleave",()=>hl(null));
-document.getElementById("tabs").onchange=e=>{const b=e.target.closest("[data-st]");if(!b)return;const k=b.dataset.st;UI.st=b.checked?[...new Set([...UI.st,k])]:UI.st.filter(x=>x!==k);if(!UI.st.length)UI.st=[k];SEL=null;render();list.scrollTop=0};
+document.getElementById("tabs").onchange=e=>{if(e.target.dataset.unr){UI.unr=e.target.checked;SEL=null;render();list.scrollTop=0;return}const b=e.target.closest("[data-st]");if(!b)return;const k=b.dataset.st;UI.st=b.checked?[...new Set([...UI.st,k])]:UI.st.filter(x=>x!==k);if(!UI.st.length)UI.st=[k];SEL=null;render();list.scrollTop=0};
 const q=document.getElementById("q");q.value=UI.q;q.oninput=()=>{UI.q=q.value;render()};
 const so=document.getElementById("sort");so.value=UI.sort;so.onchange=()=>{UI.sort=so.value;render()};
 document.getElementById("fbtn").onclick=()=>{document.getElementById("fp").classList.toggle("show");document.getElementById("fbtn").classList.toggle("on")};
