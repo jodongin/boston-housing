@@ -60,6 +60,11 @@ button{font:inherit;cursor:pointer}
 .stg{font-size:11px;font-weight:650;padding:1px 7px;border-radius:999px;white-space:nowrap}
 .stg.k-r{background:var(--rs);color:var(--r)}.stg.k-c{background:var(--cs);color:var(--c)}.stg.k-n{background:var(--ns);color:var(--n)}.stg.k-x{background:var(--xs);color:#5f6368}
 .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.facts{display:grid;grid-template-columns:52px 1fr 52px 1fr;gap:3px 10px;margin-top:8px;font-size:12.5px;line-height:1.45;color:#1f2937}
+.fk{color:var(--mute);font-size:11.5px}
+.fv.g{color:var(--ok)}.fv.b{color:var(--bad)}.fv.w{color:var(--warn)}
+.pc{font-size:12.5px;margin-top:5px;color:#374151}.pc.cn{color:var(--bad)}.pc .fk{margin-right:6px}
+.pop .facts{grid-template-columns:48px 1fr;font-size:12px}
 .ch{font-size:12px;padding:1px 8px;border-radius:6px;background:var(--soft);color:#374151;white-space:nowrap}
 .ch.g{background:#e8f5ec;color:var(--ok)}.ch.b{background:#fdecec;color:var(--bad)}.ch.w{background:#fdf3e4;color:var(--warn)}
 .nx{margin-top:7px;font-size:13px;color:#374151;display:flex;gap:6px}
@@ -150,7 +155,7 @@ textarea.nte{width:100%;min-height:70px;border:1px solid #f59e0b;border-radius:8
 </section>
 </div>
 <script>
-const UPDATED="2026-11-08 (188차)";
+const UPDATED="2026-11-08 (189차)";
 const CRITERIA=[["구조","1베드 또는 2베드, 욕실 1개 이상, 집 전체 (스튜디오·쉐어 제외)"],["생활비","한 달 생활비(월세+공과금+보험+필수 요금) $3,300 이하"],["에어컨","필수 (중앙식·붙박이 선호)"],["해충","시 기록·리뷰에 해충·쥐·쓰레기 이슈 없음"],["실내","허름하지 않을 것"],["주차","필수. 방식(차고/야외/거주자 노상 허가)과 월 비용 확인"],["세탁","집 안 세탁기·건조기"],["반지하","제외 (시 자산 기록 0층 포함)"],["입주","11/25가 가장 좋고, 늦어도 그다음 주"],["계약","12개월, 연장은 나중에"],["투어","실시간 화상 투어 대신 녹화 영상. 계약금은 직접 보고 납부"],["직장","Harvard Pilgrim Health Care Institute, Landmark Center (401 Park Dr)"]];
 const SCOREHELP="100점: 면적 20 · 가격 20(월세 10 + 예상 월 총액 10) · 출근 15 · 건물·시설 15 · 치안 10 · 생활 인프라 10 · 출근 중 도보 5 · 주차 5. 살인 지점 거리는 점수에 넣지 않음.";
 const SHUTTLE="M2 셔틀(Harvard Sq ↔ LMA)은 Harvard ID가 있으면 무료, 가족은 티켓 구매. LMA 셔틀은 Longwood 회원기관 ID 필요(평일만).";
@@ -221,13 +226,17 @@ function sortRows(a){const K={r:0,c:1,n:2,x:3};const st=r=>(r.my||0)+(r.ma||0);
 function stars1(r,p){const v=p==="a"?r.ma:r.my;let h=`<span class="sr" title="${PN[p]} 별점"><span class="w">${PN[p]}</span>`;for(let i=1;i<=5;i++)h+=`<span class="st${p==="a"?" a":""}${i<=v?" on":""}" data-n="${escH(r.n)}" data-p="${p}" data-v="${i}">★</span>`;return h+"</span>"}
 function pzc(r){const z=r.pz;if(!z)return null;if(z.na)return["시 기록 없음","w"];const s=`시 기록(${z.since}~) 쥐 ${z.r}·해충 ${z.p+z.b}·쓰레기 ${z.t}`;const c=(z.p+z.b)>0||z.r>=3?"b":(z.r>0||z.t>=20)?"w":"g";return[s,c]}
 function acc(r){const a=r.ac;if(!a)return["에어컨 ?","w"];const c=a.k==="c"||a.k==="u"?"g":a.k==="w"||a.k==="y"?"":"b";return["에어컨 "+a.t,a.k==="?"?"w":c]}
-function chips(r){const out=[];const b=r.beds.length>1?"1~2베드":r.beds[0]+"베드";out.push([b+(r.sq?` · ${r.sq.toLocaleString()} sq ft`:""),""]);
- out.push([(r.bt||"건물 형태 ?")+" · "+(r.built?r.built+"년 준공":"준공 ?")+(r.stories?` · ${r.stories}층 건물`:""),(r.bt&&r.built)?"":"w"]);
- const el=r.elev==="y"?"엘리베이터 있음":r.elev==="n"?"엘리베이터 없음":"";const fl=r.fl?("내 집 "+r.fl):"";
- if(fl||el)out.push([[fl,el].filter(Boolean).join(" · "),r.elev==="n"?"b":(fl&&el?"g":"")]);else out.push(["층 ?","w"]);
- const c=com(r);if(c)out.push(c);out.push(park(r).slice(0,2));out.push(wdc(r));{const z=pzc(r);if(z)out.push(z);}out.push(acc(r));if(r.move&&r.move!=="-"&&r.move!=="?")out.push(["입주 "+String(r.move).replace(/^Available /i,"").slice(0,22),""]);
- const tg=tagsOf(r).map(x=>x[0]==="-"?[x.slice(1),"b"]:[x,"t"]);
- return `<div class="chips">${out.map(([t,c])=>`<span class="ch ${c}">${escH(t)}</span>`).join("")}</div>${tg.length?`<div class="chips">${tg.map(([t,c])=>`<span class="ch ${c}">${escH(t)}</span>`).join("")}</div>`:""}`}
+function chips(r){const st=(x,pre)=>x?[String(x[0]).replace(pre,""),x[1]]:["?","w"];
+ const b=r.beds.length>1?"1~2베드":r.beds[0]+"베드";
+ const el=r.elev==="y"?"엘리베이터 있음":r.elev==="n"?"엘리베이터 없음":"엘리베이터 ?";
+ const bld=[(r.bt||"형태 ?"),(r.built?r.built+"년":"준공 ?"),(r.stories?r.stories+"층 건물":""),(r.fl?"내 집 "+r.fl:"층 ?"),el].filter(Boolean).join(" · ");
+ const z=r.pz;const pz=!z?["?","w"]:z.na?["시 자료 없음 (보스턴 밖)","w"]:(()=>{const q=pzc(r);return[`쥐 ${z.r} · 해충 ${z.p+z.b} · 쓰레기 ${z.t} (${z.since}~)`,q[1]]})();
+ const mv=r.move&&r.move!=="-"&&r.move!=="?"?[String(r.move).replace(/^Available /i,"").slice(0,40),""]:["?","w"];
+ const wd=r.wd==="y"?["집 안에 있음","g"]:r.wd==="n"?["없음","b"]:["?","w"];
+ const F=[["구조",[b+(r.sq?` · ${r.sq.toLocaleString()} sq ft`:" · 면적 ?"),""]],["건물",[bld,r.elev==="n"?"b":(r.bt&&r.built&&r.fl)?"":"w"]],["출근",st(com(r),/^출근 /)],["주차",st(park(r).slice(0,2),/^주차 /)],["세탁기",wd],["에어컨",st(acc(r),/^에어컨 /)],["시 기록",pz],["입주",mv]];
+ const DUP=/^-?(에어컨|에어컨 미확인|엘리베이터 있음|엘리베이터 없음|신축 \d{4}|출근 미확인|세탁기 호실 확인|주차 포함)$/;
+ const tg=tagsOf(r).filter(x=>!DUP.test(x));const pro=tg.filter(x=>x[0]!=="-"),con=tg.filter(x=>x[0]==="-").map(x=>x.slice(1));
+ return `<div class="facts">${F.map(([k,[v,c]])=>`<span class="fk">${k}</span><span class="fv ${c}">${escH(v)}</span>`).join("")}</div>${pro.length?`<div class="pc"><span class="fk">장점</span> ${escH(pro.join(" · "))}</div>`:""}${con.length?`<div class="pc cn"><span class="fk">주의</span> ${escH(con.join(" · "))}</div>`:""}`}
 function mediaHTML(r){const m=r.media||[];if(!m.length)return"";return `<div class="med">${m.map(x=>`<a href="${escH(x.u)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="${escH((x.src||"")+(x.d?" · "+x.d:""))}">${/영상|투어|tour|video/i.test(x.t)?"▶ ":"📎 "}${escH(x.t)}</a>`).join("")}</div>`}
 function askBlock(r){const a=OA(r.n);if(!a.length)return"";return `<div class="asks"><div class="ah">답해주실 것</div>${a.map(x=>`<div class="aq">• ${escH(x.q)}<button class="cp" data-cpn="${escH(r.n)}" data-cpi="${escH(x.id)}">질문 복사</button><div class="ar"><b>추천</b> ${escH(x.rec||"")}</div></div>`).join("")}</div>`}
 function askHTML(r){const a=ASKS[r.n]||[];if(!a.length)return `<div style="color:var(--mute)">답해주실 질문이 없어요</div>`;return a.map(x=>`<div class="aqd${x.status==="done"?" done":""}"><div class="k">${x.status==="done"?"답함 "+escH(x.ansd||""):"답장 필요"} · ${escH(x.d||"")}</div><div style="margin:3px 0;font-weight:600">${escH(x.q)}${x.status!=="done"?`<button class="cp" data-cpn="${escH(r.n)}" data-cpi="${escH(x.id)}">질문 복사</button>`:""}</div>${x.rec?`<div><span class="k">추천</span> ${escH(x.rec)}</div>`:""}${x.why?`<div><span class="k">이유</span> ${escH(x.why)}</div>`:""}${(x.opts||[]).length&&x.status!=="done"?`<div>${x.opts.map(o=>`<span class="op">${escH(o)}</span>`).join("")}</div>`:""}${x.ans?`<div><span class="k">답</span> ${escH(x.ans)}</div>`:""}</div>`).join("")+`<div style="font-size:12px;color:var(--mute)">답은 Aside 세션에서 알려주시면 반영하고 표시를 지울게요.</div>`}
@@ -304,7 +313,7 @@ const MK={};
 function popHTML(r){const t=MSGS[r.n];const nx=(t&&t.next)||(r.pg&&r.pg.next);const o=NT[r.n]||{};
  return `<div class="pop"><div class="pt"><span class="stg k-${r.k}">${KL[r.k]}</span><b>${escH(r.n)}</b></div><div>${(()=>{const c=mo(r);return c?`생활비 ${fmt$(c.lo)}${c.hi>c.lo?"~"+Number(c.hi).toLocaleString():""}/월 (월세 ${fmt$(r.rent)})`:fmt$(r.rent)+"/월"})()} · ${escH(r.area||"")}</div>${chips(r)}${nx?`<div class="pn"><b style="font-size:11px;color:var(--mute)">다음</b> ${escH(nx)}</div>`:""}
  <div style="margin-top:6px">${stars1(r,"d")} ${stars1(r,"a")}</div>${["d","a"].filter(p=>o[p]).map(p=>`<div class="nt" style="margin-top:6px"><b>${PN[p]}</b>${escH(o[p])}</div>`).join("")}
- <div class="pa"><button class="act" data-pa="go">목록에서 보기${t?` · 대화 ${t.msgs.length}`:""}</button><button class="act" data-pa="memo">메모</button>${r.url?`<a class="act" href="${escH(r.url)}" target="_blank">매물 보기 ↗</a>`:""}</div><div class="pme"></div></div>`}
+ <div class="pa"><button class="act" data-pa="go">목록에서 보기${t?` · 대화 ${t.msgs.length}`:""}</button><button class="act" data-pa="memo">메모</button>${r.url?`<a class="act" href="${escH(r.url)}" target="_blank">매물 보기 ↗</a>`:""}${r.addr?`<a class="act" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.addr)}" target="_blank">지도 보기 ↗</a>`:""}</div><div class="pme"></div></div>`}
 function paintMarker(r){const m=MK[r.n];if(!m)return;m.setStyle({fillColor:KC[r.k],radius:r.k==="x"?5:r.k==="n"?7:9,fillOpacity:r.k==="x"?.6:.95})}
 L.forEach(r=>{if(!r.geo)return;const m=window.L.circleMarker(r.geo,{radius:8,color:"#fff",weight:2,fillColor:KC[r.k],fillOpacity:.95});MK[r.n]=m;paintMarker(r);
  m.bindTooltip(r.n,{direction:"top",offset:[0,-8]});m.bindPopup(()=>popHTML(r),{maxWidth:320});
