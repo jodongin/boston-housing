@@ -49,6 +49,16 @@ data = "const EV=%s;\nconst MURDERS=%s;\n" % (open("data/eval.json",encoding="ut
 tpl = open('template.html', encoding='utf-8').read()
 data += 'const PZL=%s;\n' % open('data/pzlist.json',encoding='utf-8').read()
 data += 'const STORES=%s;\n' % json.dumps(json.load(open('data/stores.json',encoding='utf-8'))['stores'],ensure_ascii=False)
+# 후보·경계 행이 화면에서 빠질 수 있는 누락 경고
+try:
+    _G=json.load(open('data/transit.json',encoding='utf-8'))['GEO']
+    for _l in open('data/listings.js',encoding='utf-8'):
+        if '"n": ' not in _l: continue
+        _r=json.loads(_l.strip().rstrip(','))
+        if _r.get('s') in (1,2,3):
+            _m=[k for k,ok in (('좌표',_r['n'] in _G),('월세',isinstance(_r.get('rent'),(int,float))),('url',bool(_r.get('url')))) if not ok]
+            if _m: print('WARN 후보 화면 필드 누락:',_r['n'],_m)
+except Exception as _e: print('WARN 후보 점검 실패',_e)
 out = tpl.replace('/*DATA*/', L + '\n' + data)
 out = out.replace('__ARA__', open('data/ara.json',encoding='utf-8').read().strip() or '{}')
 out = out.replace('__DONGIN__', open('data/dongin.json',encoding='utf-8').read().strip() or '{}')
